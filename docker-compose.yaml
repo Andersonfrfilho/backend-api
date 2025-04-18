@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: backend-api-service-nestjs
+    container_name: ${API_APP_CONTAINER_NAME}
     environment:
       - PORT=${PORT}
     ports:
