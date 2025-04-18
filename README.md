@@ -44,6 +44,9 @@ $ mau deploy
 ## Resources
 
 Check out a few resources that may come in handy when working with NestJS:
+- [x] Docker 
+- [x] Docker Development
+- [x] Env config validation 
 - [] Singleton
 - [] 
 - [] Tratamento erros globais
@@ -54,8 +57,6 @@ Check out a few resources that may come in handy when working with NestJS:
 - [] Sonar 
 - [] Github Actions 
 - [] (lint, commit-lint, test-unitario, teste de integracao, deploy stg, sonar, fortify, deploy, producao ) 
-- [] Docker 
-- [] Docker Development 
 - [] Teste Unitarios 
 - [] Middleware de validacao de schemas 
 - [] swagger docs 
