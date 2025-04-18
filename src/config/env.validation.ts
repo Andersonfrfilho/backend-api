@@ -5,4 +5,5 @@ export default Joi.object({
     .valid('development', 'production', 'test')
     .default('development'),
   PORT: Joi.number().default(3333),
+  API_APP_CONTAINER_NAME: Joi.string().default('backend-api-service'),
 });
