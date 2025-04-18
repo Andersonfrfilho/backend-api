@@ -47,8 +47,6 @@ Check out a few resources that may come in handy when working with NestJS:
 - [x] Docker 
 - [x] Docker Development
 - [x] Env config validation 
-- [] Singleton
-- [] 
 - [] Tratamento erros globais
 - [] Logger 
 - [] Logger Obfucator 
