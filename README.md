@@ -46,6 +46,8 @@ $ mau deploy
 Check out a few resources that may come in handy when working with NestJS:
 - [] Singleton
 - [] 
+- [x] Makefile - MacOs | Linux 
+- [ ] Makefile - Windows
 - [] Tratamento erros globais
 - [] Logger 
 - [] Logger Obfucator 
