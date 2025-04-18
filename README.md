@@ -47,6 +47,8 @@ Check out a few resources that may come in handy when working with NestJS:
 - [x] Docker 
 - [x] Docker Development
 - [x] Env config validation 
+- [x] Adicionar Modulo de usuario exemplo
+- [ ] Adicionar versionamento de rota
 - [] Singleton
 - [] 
 - [x] Makefile - MacOs | Linux 
