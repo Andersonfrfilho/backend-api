@@ -1,8 +1,14 @@
+import { Inject, Injectable } from '@nestjs/common';
 import { LogProviderInterface } from './log.interface';
 import { WinstonLogProvider } from './providers/winston.log.provider';
+import { WINSTON_LOG_PROVIDER } from './providers/winston.log.provider.interface';
 
+@Injectable()
 export class LogProvider implements LogProviderInterface {
-  constructor(private readonly winstonLogProvider: WinstonLogProvider) {}
+  constructor(
+    @Inject(WINSTON_LOG_PROVIDER)
+    private winstonLogProvider: WinstonLogProvider,
+  ) {}
   info() {
     this.winstonLogProvider.info();
   }
