@@ -9,8 +9,8 @@ export class LogProvider implements LogProviderInterface {
     @Inject(WINSTON_LOG_PROVIDER)
     private winstonLogProvider: WinstonLogProvider,
   ) {}
-  info() {
-    this.winstonLogProvider.info();
+  info(params?: any) {
+    this.winstonLogProvider.info(params);
   }
   error() {
     this.winstonLogProvider.error();

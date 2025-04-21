@@ -10,8 +10,8 @@ export class WinstonLogProvider implements WinstonLogProviderInterface {
   ) {
     this.id = randomUUID();
   }
-  info() {
-    this.loggerWinston.log(`info %%%%%%%%%%% ${this.id}`);
+  info(params?: any) {
+    this.loggerWinston.log(`${params} ${this.id}`);
   }
   error() {
     console.log('error');
