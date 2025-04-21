@@ -1,13 +1,17 @@
 import { randomUUID } from 'crypto';
-import { LogProviderInterface } from '../log.interface';
+import { WINSTON_MODULE_NEST_PROVIDER, WinstonLogger } from 'nest-winston';
+import { Inject } from '@nestjs/common';
+import { WinstonLogProviderInterface } from './winston.log.provider.interface';
 
-export class WinstonLogProvider implements LogProviderInterface {
+export class WinstonLogProvider implements WinstonLogProviderInterface {
   id: string;
-  constructor() {
+  constructor(
+    @Inject(WINSTON_MODULE_NEST_PROVIDER) private loggerWinston: WinstonLogger,
+  ) {
     this.id = randomUUID();
   }
   info() {
-    console.log('info - ', this.id);
+    this.loggerWinston.log(`info %%%%%%%%%%% ${this.id}`);
   }
   error() {
     console.log('error');
