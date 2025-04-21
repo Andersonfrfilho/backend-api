@@ -6,9 +6,11 @@ import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './modules/user/user.module';
 import { HealthModule } from './modules/health/health.module';
 import { ProviderModule } from './providers/provider.module';
+import { InterceptorModule } from './interceptors/interceptor.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, validationSchema: envValidation }),
+    InterceptorModule,
     ProviderModule,
     HealthModule,
     UserModule,

@@ -37,6 +37,7 @@ import {
     {
       provide: LOG_PROVIDER,
       useClass: LogProvider,
+      scope: Scope.REQUEST,
     },
   ],
   exports: [LOG_PROVIDER],
