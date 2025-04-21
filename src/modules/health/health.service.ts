@@ -12,7 +12,7 @@ import {
 export class HealthCheckService implements HealthCheckServiceInterface {
   @Inject(LOG_PROVIDER) private logProvider: LogProviderInterface;
   healthCheck(): HealthCheckMethodServiceResponse {
-    this.logProvider.info();
+    this.logProvider.info('service');
     return {
       status: true,
     };
