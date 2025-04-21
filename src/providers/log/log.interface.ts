@@ -5,4 +5,5 @@ export interface LogProviderInterface {
   error: (params?: string | object) => void;
   warn: (params?: string | object) => void;
   debug: (params?: string | object) => void;
+  setRequestId: (requestId: string) => void;
 }

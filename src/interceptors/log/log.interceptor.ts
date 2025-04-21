@@ -21,19 +21,21 @@ export class LoggingInterceptor implements NestInterceptor {
     @Inject(LOG_PROVIDER) private logProvider: LogProviderInterface,
   ) {}
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    try {
-      this.logProvider.info('interceptor - before');
+    this.logProvider.info('interceptor - before');
+    const request = context.switchToHttp().getRequest();
 
-      const now = Date.now();
-      return next
-        .handle()
-        .pipe(
-          tap(() =>
-            this.logProvider.info(`interceptor - after ${Date.now() - now}ms`),
-          ),
-        );
-    } catch (error) {
-      console.log(error);
+    const hasRequestId = request.headers['x-request-id'] || '';
+
+    if (hasRequestId) {
+      this.logProvider.setRequestId(hasRequestId);
     }
+    const now = Date.now();
+    return next
+      .handle()
+      .pipe(
+        tap(() =>
+          this.logProvider.info(`interceptor - after ${Date.now() - now}ms`),
+        ),
+      );
   }
 }
