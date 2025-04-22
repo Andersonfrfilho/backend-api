@@ -1,5 +1,6 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import {
+  HealthCheckMethodResponse,
   HealthCheckMethodServiceResponse,
   HealthCheckServiceInterface,
 } from './health.service.interfaces';
@@ -10,11 +11,19 @@ import {
 
 @Injectable()
 export class HealthCheckService implements HealthCheckServiceInterface {
-  @Inject(LOG_PROVIDER) private logProvider: LogProviderInterface;
-  healthCheck(): HealthCheckMethodServiceResponse {
-    this.logProvider.info('service');
-    return {
-      status: true,
-    };
+  healthCheck(): Promise<HealthCheckMethodResponse> {
+    try {
+      throw new Error('Method not implemented.');
+    } catch (error) {
+      throw error;
+    }
   }
+  @Inject(LOG_PROVIDER) private logProvider: LogProviderInterface;
+  // async healthCheck(): Promise<HealthCheckMethodServiceResponse> {
+  //   this.logProvider.info('service');
+  //   throw new ForbiddenException();
+  //   // return {
+  //   //   status: true,
+  //   // };
+  // }
 }

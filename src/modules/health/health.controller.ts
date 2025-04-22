@@ -19,8 +19,12 @@ export class HealthController {
 
   @Get()
   check(): HealthCheckMethodControllerResponse {
-    //TODO:: add log testing to show same id request
-    this.logProvider.info('controller');
-    return this.healthCheckService.healthCheck();
+    try {
+      //TODO:: add log testing to show same id request
+      this.logProvider.info('controller');
+      return this.healthCheckService.healthCheck();
+    } catch (error) {
+      throw error;
+    }
   }
 }
