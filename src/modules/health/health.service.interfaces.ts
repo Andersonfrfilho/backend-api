@@ -2,12 +2,12 @@ export interface HealthCheckMethodResponse {
   status: boolean;
 }
 export interface HealthCheckMethodServiceResponse
-  extends HealthCheckMethodResponse {}
+  extends Promise<HealthCheckMethodResponse> {}
 export interface HealthCheckMethodControllerResponse
-  extends HealthCheckMethodResponse {}
+  extends Promise<HealthCheckMethodResponse> {}
 
 export interface HealthCheckInterface {
-  healthCheck(): HealthCheckMethodResponse;
+  healthCheck(): Promise<HealthCheckMethodResponse>;
 }
 
 export interface HealthCheckServiceInterface extends HealthCheckInterface {}

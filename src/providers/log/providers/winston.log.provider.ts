@@ -11,7 +11,6 @@ export class WinstonLogProvider implements WinstonLogProviderInterface {
     this.id = randomUUID();
   }
   setRequestId(requestId: string) {
-    console.log('##########=>id', requestId);
     this.id = requestId;
   }
   info(params?: any) {
