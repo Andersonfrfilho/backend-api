@@ -7,9 +7,11 @@ import { UserModule } from './modules/user/user.module';
 import { HealthModule } from './modules/health/health.module';
 import { ProviderModule } from './providers/provider.module';
 import { InterceptorModule } from './interceptors/interceptor.module';
+import { ErrorModule } from './error/error.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, validationSchema: envValidation }),
+    ErrorModule,
     InterceptorModule,
     ProviderModule,
     HealthModule,
