@@ -1,4 +1,4 @@
-import { CommonInterfaceFormScreen } from 'src/modules/commons/commons.interface';
+import { CommonInterfaceFormScreen } from '@common/interfaces/commons.interface';
 
 export interface AuthLoginSessionUseCaseResponse
   extends CommonInterfaceFormScreen {}

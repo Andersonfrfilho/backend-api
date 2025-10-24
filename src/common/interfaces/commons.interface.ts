@@ -1,5 +1,5 @@
-import { PAGES_SCREENS_NAMES } from './commons.constant';
-import { TypeForm } from './commons.enum';
+import { PAGES_SCREENS_NAMES } from '@common/constants/commons.constant';
+import { TypeForm } from '@common/enums/commons.enum';
 export type PageScreenName =
   (typeof PAGES_SCREENS_NAMES)[keyof typeof PAGES_SCREENS_NAMES];
 interface Fields {

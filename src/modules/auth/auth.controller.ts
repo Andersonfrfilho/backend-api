@@ -1,20 +1,19 @@
 import { Controller, Get, Inject, Injectable } from '@nestjs/common';
-import {
-  LOG_PROVIDER,
-  LogProviderInterface,
-} from 'src/providers/log/log.interface';
-import {
-  AUTH_SERVICE_PROVIDE,
+import { LOG_PROVIDER } from '@core/providers/log/log.interface';
+import type { LogProviderInterface } from '@core/providers/log/log.interface';
+import { AUTH_SERVICE_PROVIDE } from '@modules/auth/auth.interface';
+import type {
   AuthServiceInterface,
   AuthServiceInterfaceLoginSessionServiceResponse,
-} from './auth.interface';
+} from '@modules/auth/auth.interface';
 
 @Injectable()
 @Controller('/auth')
 export class AuthController {
   constructor(
-    @Inject(LOG_PROVIDER) private logProvider: LogProviderInterface,
-    @Inject(AUTH_SERVICE_PROVIDE) private authService: AuthServiceInterface,
+    @Inject(LOG_PROVIDER) private readonly logProvider: LogProviderInterface,
+    @Inject(AUTH_SERVICE_PROVIDE)
+    private readonly authService: AuthServiceInterface,
   ) {}
 
   @Get('/login-session')

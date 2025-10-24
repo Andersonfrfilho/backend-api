@@ -1,30 +1,20 @@
 import { Controller, Get, Inject, Injectable } from '@nestjs/common';
-import {
-  HealthCheckControllerInterface,
-  HealthCheckMethodControllerResponse,
-} from './health.service.interfaces';
+import type { HealthCheckMethodControllerResponse } from './health.service.interfaces';
 import { HealthCheckService } from './health.service';
-import {
-  LOG_PROVIDER,
-  LogProviderInterface,
-} from 'src/providers/log/log.interface';
+import { LOG_PROVIDER } from '@core/providers/log/log.interface';
+import type { LogProviderInterface } from '@core/providers/log/log.interface';
 
 @Injectable()
 @Controller('/health')
 export class HealthController {
   constructor(
-    @Inject(LOG_PROVIDER) private logProvider: LogProviderInterface,
+    @Inject(LOG_PROVIDER) private readonly logProvider: LogProviderInterface,
     private readonly healthCheckService: HealthCheckService,
   ) {}
 
   @Get()
   check(): HealthCheckMethodControllerResponse {
-    try {
-      //TODO:: add log testing to show same id request
-      this.logProvider.info('controller');
-      return this.healthCheckService.healthCheck();
-    } catch (error) {
-      throw error;
-    }
+    this.logProvider.info('controller');
+    return this.healthCheckService.healthCheck();
   }
 }

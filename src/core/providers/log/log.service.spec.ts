@@ -1,10 +1,11 @@
-// log.provider.spec.ts
-
-import { WinstonLogProvider } from './providers/winston.log.provider';
-import { LOG_PROVIDER, LogProviderInterface } from './log.interface';
-import { WINSTON_LOG_PROVIDER } from './providers/winston.log.provider.interface';
+import { WinstonLogProvider } from '@core/providers/log/implementations/winston/winston.log.provider';
+import {
+  LOG_PROVIDER,
+  LogProviderInterface,
+} from '@core/providers/log/log.interface';
+import { WINSTON_LOG_PROVIDER } from '@core/providers/log/implementations/winston/winston.log.provider.interface';
 import { Test, TestingModule } from '@nestjs/testing';
-import { LogProvider } from './log.service';
+import { LogProvider } from '@core/providers/log/log.provider';
 
 describe('LogProvider', () => {
   let logProvider: LogProviderInterface;
@@ -35,26 +36,31 @@ describe('LogProvider', () => {
 
   it('should call setRequestId on winstonLogProvider', () => {
     logProvider.setRequestId('req-id');
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(mockWinston.setRequestId).toHaveBeenCalledWith('req-id');
   });
 
   it('should call info on winstonLogProvider', () => {
     logProvider.info({ msg: 'Hello' });
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(mockWinston.info).toHaveBeenCalledWith({ msg: 'Hello' });
   });
 
   it('should call error on winstonLogProvider', () => {
     logProvider.error();
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(mockWinston.error).toHaveBeenCalled();
   });
 
   it('should call warn on winstonLogProvider', () => {
     logProvider.warn();
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(mockWinston.warn).toHaveBeenCalled();
   });
 
   it('should call debug on winstonLogProvider', () => {
     logProvider.debug();
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(mockWinston.debug).toHaveBeenCalled();
   });
 });

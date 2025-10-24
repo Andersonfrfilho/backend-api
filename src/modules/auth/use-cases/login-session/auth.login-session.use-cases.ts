@@ -1,21 +1,19 @@
 import { Inject, Injectable } from '@nestjs/common';
-import {
-  LOG_PROVIDER,
-  LogProviderInterface,
-} from '../../../../providers/log/log.interface';
+import { LOG_PROVIDER } from '@core/providers/log/log.interface';
+import type { LogProviderInterface } from '@core/providers/log/log.interface';
 import {
   AuthLoginSessionUseCaseInterface,
   AuthLoginSessionUseCaseResponse,
 } from '../use-cases.interface';
-import { TypeForm } from '../../../../modules/commons/commons.enum';
-import { PAGES_SCREENS_NAMES } from '../../../../modules/commons/commons.constant';
+import { TypeForm } from '@common/enums/commons.enum';
+import { PAGES_SCREENS_NAMES } from '@common/constants/commons.constant';
 
 @Injectable()
 export class AuthLoginSessionUseCase
   implements AuthLoginSessionUseCaseInterface
 {
   constructor(
-    @Inject(LOG_PROVIDER) private logProvider: LogProviderInterface,
+    @Inject(LOG_PROVIDER) private readonly logProvider: LogProviderInterface,
   ) {}
   execute(): Promise<AuthLoginSessionUseCaseResponse> {
     this.logProvider.info('AuthLoginSessionUseCase');
