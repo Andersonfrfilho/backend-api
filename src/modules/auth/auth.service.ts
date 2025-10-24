@@ -1,10 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-import {
-  LOG_PROVIDER,
-  LogProviderInterface,
-} from 'src/providers/log/log.interface';
+import { LOG_PROVIDER } from '@core/providers/log/log.interface';
+import type { LogProviderInterface } from '@core/providers/log/log.interface';
 import { AUTH_LOGIN_SESSION_USE_CASES_PROVIDE } from './use-cases/login-session/auth.login-session.use-cases.interface';
-import { AuthLoginSessionUseCaseInterface } from './use-cases/use-cases.interface';
+import type { AuthLoginSessionUseCaseInterface } from './use-cases/use-cases.interface';
 import {
   AuthServiceInterface,
   AuthServiceInterfaceLoginSessionServiceResponse,
@@ -13,9 +11,9 @@ import {
 @Injectable()
 export class AuthService implements AuthServiceInterface {
   constructor(
-    @Inject(LOG_PROVIDER) private logProvider: LogProviderInterface,
+    @Inject(LOG_PROVIDER) private readonly logProvider: LogProviderInterface,
     @Inject(AUTH_LOGIN_SESSION_USE_CASES_PROVIDE)
-    private authLoginSessionUseCases: AuthLoginSessionUseCaseInterface,
+    private readonly authLoginSessionUseCases: AuthLoginSessionUseCaseInterface,
   ) {}
   async loginSessionService(): Promise<AuthServiceInterfaceLoginSessionServiceResponse> {
     this.logProvider.info('loginSessionService');

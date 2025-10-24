@@ -1,13 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { LogProviderInterface } from './log.interface';
-import { WinstonLogProvider } from './providers/winston.log.provider';
-import { WINSTON_LOG_PROVIDER } from './providers/winston.log.provider.interface';
+import { LogProviderInterface } from '@core/providers/log/log.interface';
+import { WinstonLogProvider } from '@core/providers/log/implementations/winston/winston.log.provider';
+import { WINSTON_LOG_PROVIDER } from '@core/providers/log/implementations/winston/winston.log.provider.interface';
 
 @Injectable()
 export class LogProvider implements LogProviderInterface {
   constructor(
     @Inject(WINSTON_LOG_PROVIDER)
-    private winstonLogProvider: WinstonLogProvider,
+    private readonly winstonLogProvider: WinstonLogProvider,
   ) {}
   setRequestId(requestId: string) {
     this.winstonLogProvider.setRequestId(requestId);

@@ -1,19 +1,27 @@
 import { Module } from '@nestjs/common';
+import { register as tsConfigPathsRegister } from 'tsconfig-paths';
+import * as tsConfig from '../tsconfig.json';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import envValidation from './config/env.validation';
 import { ConfigModule } from '@nestjs/config';
-import { HealthModule } from './modules/health/health.module';
-import { ProviderModule } from './providers/provider.module';
-import { InterceptorModule } from './interceptors/interceptor.module';
-import { ErrorModule } from './error/error.module';
-import { AuthModule } from './modules/auth/auth.module';
+import { HealthModule } from '@modules/health/health.module';
+import { AuthModule } from '@modules/auth/auth.module';
+import { CoreModule } from '@core/core.module';
+
+const compilerOptions = tsConfig.compilerOptions;
+tsConfigPathsRegister({
+  baseUrl: compilerOptions.baseUrl,
+  paths: compilerOptions.paths,
+});
+
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true, validationSchema: envValidation }),
-    ErrorModule,
-    InterceptorModule,
-    ProviderModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      validationSchema: envValidation,
+    }),
+    CoreModule,
     HealthModule,
     AuthModule,
   ],
