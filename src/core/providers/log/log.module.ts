@@ -1,13 +1,13 @@
 import { Module, Scope } from '@nestjs/common';
-import { LogProvider } from './log.service';
-import { LOG_PROVIDER } from './log.interface';
-import { WinstonLogProvider } from './providers/winston.log.provider';
-import { WINSTON_LOG_PROVIDER } from './providers/winston.log.provider.interface';
+import { LOG_PROVIDER } from '@core/providers/log/log.interface';
+import { WinstonLogProvider } from '@core/providers/log/implementations/winston/winston.log.provider';
+import { WINSTON_LOG_PROVIDER } from '@core/providers/log/implementations/winston/winston.log.provider.interface';
 import * as winston from 'winston';
 import {
   utilities as nestWinstonModuleUtilities,
   WinstonModule,
 } from 'nest-winston';
+import { LogProvider } from './log.provider';
 
 @Module({
   imports: [

@@ -1,7 +1,7 @@
 import { Module, Scope } from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';
-import { HttpExceptionFilter } from './error-filter';
-import { LogModule } from 'src/providers/log/log.module';
+import { HttpExceptionFilter } from '@common/filters/error-filter';
+import { LogModule } from '@core/providers/log/log.module';
 @Module({
   imports: [LogModule],
   providers: [
@@ -12,4 +12,4 @@ import { LogModule } from 'src/providers/log/log.module';
     },
   ],
 })
-export class ErrorModule {}
+export class FilterModule {}

@@ -1,12 +1,12 @@
 // log.provider.spec.ts
 
 import { Test, TestingModule } from '@nestjs/testing';
-import { AUTH_LOGIN_SESSION_USE_CASES_PROVIDE } from './auth.login-session.use-cases.interface';
-import { AuthLoginSessionUseCase } from './auth.login-session.use-cases';
+import { AUTH_LOGIN_SESSION_USE_CASES_PROVIDE } from '@modules/auth/use-cases/login-session/auth.login-session.use-cases.interface';
+import { AuthLoginSessionUseCase } from '@modules/auth/use-cases/login-session/auth.login-session.use-cases';
 import {
   LOG_PROVIDER,
   LogProviderInterface,
-} from '../../../../providers/log/log.interface';
+} from '@core/providers/log/log.interface';
 
 describe('AuthLoginSessionUseCase', () => {
   let authLoginSessionUseCase: AuthLoginSessionUseCase;

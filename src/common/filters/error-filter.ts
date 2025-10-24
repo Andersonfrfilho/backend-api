@@ -1,3 +1,5 @@
+import { LOG_PROVIDER } from '@core/providers/log/log.interface';
+import type { LogProviderInterface } from '@core/providers/log/log.interface';
 import {
   ExceptionFilter,
   Catch,
@@ -8,12 +10,7 @@ import {
   Injectable,
   Scope,
 } from '@nestjs/common';
-import { ModuleRef } from '@nestjs/core';
 import { Request, Response } from 'express';
-import {
-  LOG_PROVIDER,
-  LogProviderInterface,
-} from 'src/providers/log/log.interface';
 
 @Catch()
 @Injectable({ scope: Scope.REQUEST })
@@ -21,7 +18,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
   constructor(
     @Inject(LOG_PROVIDER) private readonly logProvider: LogProviderInterface,
   ) {}
-  async catch(exception: any, host: ArgumentsHost) {
+  catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();

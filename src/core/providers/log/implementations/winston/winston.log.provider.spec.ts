@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { WinstonLogProvider } from './winston.log.provider';
-import { WINSTON_LOG_PROVIDER } from './winston.log.provider.interface';
+import { WinstonLogProvider } from '@core/providers/log/implementations/winston/winston.log.provider';
+import { WINSTON_LOG_PROVIDER } from '@core/providers/log/implementations/winston/winston.log.provider.interface';
 
 describe('WinstonLogProvider (with real Winston)', () => {
   let provider: WinstonLogProvider;
