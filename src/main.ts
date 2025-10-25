@@ -1,10 +1,17 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { VersioningType } from '@nestjs/common';
-import { HttpExceptionFilter } from './error/error-filter';
+import {
+  FastifyAdapter,
+  NestFastifyApplication,
+} from '@nestjs/platform-fastify';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const instanceFastify = new FastifyAdapter();
+  const app = await NestFactory.create<NestFastifyApplication>(
+    AppModule,
+    instanceFastify,
+  );
   app.enableVersioning({
     type: VersioningType.URI,
   });

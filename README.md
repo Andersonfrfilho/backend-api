@@ -88,15 +88,16 @@ Check out a few resources that may come in handy when working with NestJS:
 - [x] Docker
 - [x] Docker Development
 - [x] Env config validation
-- [x] Adicionar Modulo de usuario exemplo
+- [x] Adicionar Modulo de usuário exemplo
+- [ ] Adicionar FastiFy
 - [ ] Adicionar versionamento de rota
-- [] Singleton
-- []
+- [ ] Singleton
+- [x] path alias
 - [x] Makefile - MacOs | Linux
 - [ ] Makefile - Windows
 - [] Tratamento erros globais
-- [] Logger
-- [] Logger Obfucator
+- [x] Logger
+- [x] Logger Obfucator
 - [] Middleware Oauth
 - [] global state
 - [] Sonar
@@ -109,7 +110,7 @@ Check out a few resources that may come in handy when working with NestJS:
 - [] conexao com banco de dados noSQL
 - [] conexao com bando de dados de cache
 - [] conexao com rabbitmq producer
-- [] DDD
+- [] TDD
 - [] Clean Architecture
 
 ## Support
