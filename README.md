@@ -89,7 +89,7 @@ Check out a few resources that may come in handy when working with NestJS:
 - [x] Docker Development
 - [x] Env config validation
 - [x] Adicionar Modulo de usuário exemplo
-- [ ] Adicionar FastiFy
+- [x] Adicionar FastiFy
 - [ ] Adicionar versionamento de rota
 - [ ] Singleton
 - [x] path alias

@@ -3,6 +3,11 @@ import { WINSTON_MODULE_NEST_PROVIDER, WinstonLogger } from 'nest-winston';
 import { Inject } from '@nestjs/common';
 import { WinstonLogProviderInterface } from './winston.log.provider.interface';
 
+interface LogsParams {
+  message?: string;
+  context?: string;
+  [key: string]: any;
+}
 export class WinstonLogProvider implements WinstonLogProviderInterface {
   id: string;
   constructor(
@@ -11,19 +16,34 @@ export class WinstonLogProvider implements WinstonLogProviderInterface {
   ) {
     this.id = randomUUID();
   }
+  debug: (params?: string | object) => void;
   setRequestId(requestId: string) {
     this.id = requestId;
   }
-  info(params?: any) {
-    this.loggerWinston.log(`${params} ${this.id}`);
+  info(params: LogsParams) {
+    this.loggerWinston.log({
+      level: 'info',
+      message: params?.message,
+      context: params?.context,
+      requestId: this.id,
+      ...params,
+    });
   }
-  error() {
-    console.log('error');
+
+  error(params: LogsParams) {
+    this.loggerWinston.error({
+      message: params?.message,
+      context: params?.context,
+      requestId: this.id,
+      ...params,
+    });
   }
-  warn() {
-    console.log('warn');
-  }
-  debug() {
-    console.log('debug');
+  warn(params: LogsParams) {
+    this.loggerWinston.warn({
+      message: params?.message,
+      context: params?.context,
+      requestId: this.id,
+      ...params,
+    });
   }
 }

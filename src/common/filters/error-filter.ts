@@ -22,21 +22,43 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
+    let status = HttpStatus.INTERNAL_SERVER_ERROR;
 
-    if (exception instanceof Error) {
-      return response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-        timestamp: new Date().toISOString(),
-        path: request.url,
-      });
-    }
+    // Adicione contexto ao log de erro
+    this.logProvider.error({
+      message: 'Exception caught in filter',
+      context: 'HttpExceptionFilter',
+      exception,
+      stack: exception instanceof Error ? exception.stack : null,
+      request: {
+        method: request.method,
+        url: request.url,
+        headers: request.headers,
+      },
+    });
+
     if (exception instanceof HttpException) {
-      const status = exception.getStatus();
+      status = exception.getStatus();
+      const exceptionResponse = exception.getResponse();
 
-      return response.status(status).json({
+      // Envie a resposta diretamente (sem return)
+      response.status(status).json({
         statusCode: status,
         timestamp: new Date().toISOString(),
         path: request.url,
+        message:
+          typeof exceptionResponse === 'string'
+            ? exceptionResponse
+            : (exceptionResponse as any).message || 'Error',
+      });
+    } else {
+      // Para erros genéricos (não HttpException)
+      // Envie a resposta diretamente (sem return)
+      response.status(status).json({
+        statusCode: status,
+        timestamp: new Date().toISOString(),
+        path: request.url,
+        message: 'Internal server error',
       });
     }
   }

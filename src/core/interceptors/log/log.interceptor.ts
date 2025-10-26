@@ -20,7 +20,10 @@ export class LoggingInterceptor implements NestInterceptor {
     @Inject(LOG_PROVIDER) private readonly logProvider: LogProviderInterface,
   ) {}
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
-    this.logProvider.info('interceptor - before');
+    this.logProvider.info({
+      message: 'interceptor - before',
+      context: 'LoggingInterceptor',
+    });
     const request = context.switchToHttp().getRequest<Request>();
 
     const rawRequestId = request.headers['x-request-id'];

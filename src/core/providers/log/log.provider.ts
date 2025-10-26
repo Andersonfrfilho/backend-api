@@ -15,13 +15,13 @@ export class LogProvider implements LogProviderInterface {
   info(params?: any) {
     this.winstonLogProvider.info(params);
   }
-  error() {
-    this.winstonLogProvider.error();
+  error(params?: any) {
+    this.winstonLogProvider.error(params);
   }
-  warn() {
-    this.winstonLogProvider.warn();
+  warn(params?: any) {
+    this.winstonLogProvider.warn(params);
   }
-  debug() {
-    this.winstonLogProvider.debug();
+  debug(params?: any) {
+    this.winstonLogProvider.debug(params);
   }
 }

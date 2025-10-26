@@ -8,21 +8,31 @@ import {
   WinstonModule,
 } from 'nest-winston';
 import { LogProvider } from './log.provider';
-
+console.log(process.env);
 @Module({
   imports: [
     WinstonModule.forRoot({
       transports: [
         new winston.transports.Console({
           format: winston.format.combine(
-            winston.format.timestamp(),
-            winston.format.ms(),
-            nestWinstonModuleUtilities.format.nestLike('MyApp', {
-              colors: true,
-              prettyPrint: true,
-              processId: true,
-              appName: true,
-            }),
+            winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+            winston.format.ms(), // Mantém +13s
+            winston.format((info) => {
+              // Prependa requestId à mensagem se existir
+              if (info.requestId) {
+                info.message = `[${info.requestId}] ${info.message || ''}`;
+              }
+              return info;
+            })(),
+            nestWinstonModuleUtilities.format.nestLike(
+              process.env.PROJECT_NAME || 'NestWinstonApp',
+              {
+                colors: true,
+                prettyPrint: true,
+                processId: true, // Desabilita PID
+                appName: true, // Desabilita [NestWinston] ou nome da app
+              },
+            ),
           ),
         }),
       ],
