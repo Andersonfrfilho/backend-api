@@ -2,12 +2,8 @@ import { randomUUID } from 'node:crypto';
 import { WINSTON_MODULE_NEST_PROVIDER, WinstonLogger } from 'nest-winston';
 import { Inject } from '@nestjs/common';
 import { WinstonLogProviderInterface } from './winston.log.provider.interface';
+import type { LogsParams } from '@core/providers/log/implementations/winston/winton.log.types.ts';
 
-interface LogsParams {
-  message?: string;
-  context?: string;
-  [key: string]: any;
-}
 export class WinstonLogProvider implements WinstonLogProviderInterface {
   id: string;
   constructor(

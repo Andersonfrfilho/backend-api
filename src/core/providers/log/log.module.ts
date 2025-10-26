@@ -8,7 +8,8 @@ import {
   WinstonModule,
 } from 'nest-winston';
 import { LogProvider } from './log.provider';
-console.log(process.env);
+import path from 'node:path';
+
 @Module({
   imports: [
     WinstonModule.forRoot({
@@ -16,9 +17,8 @@ console.log(process.env);
         new winston.transports.Console({
           format: winston.format.combine(
             winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-            winston.format.ms(), // Mantém +13s
+            winston.format.ms(),
             winston.format((info) => {
-              // Prependa requestId à mensagem se existir
               if (info.requestId) {
                 info.message = `[${info.requestId}] ${info.message || ''}`;
               }
@@ -29,11 +29,17 @@ console.log(process.env);
               {
                 colors: true,
                 prettyPrint: true,
-                processId: true, // Desabilita PID
-                appName: true, // Desabilita [NestWinston] ou nome da app
+                processId: true,
+                appName: true,
               },
             ),
           ),
+        }),
+        new winston.transports.File({
+          filename: path.join(__dirname, '../../../../../logs/error.log'),
+        }),
+        new winston.transports.File({
+          filename: path.join(__dirname, '../../../../../logs/combined.log'),
         }),
       ],
     }),
