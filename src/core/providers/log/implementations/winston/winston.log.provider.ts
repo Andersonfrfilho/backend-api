@@ -16,30 +16,25 @@ export class WinstonLogProvider implements WinstonLogProviderInterface {
   setRequestId(requestId: string) {
     this.id = requestId;
   }
+
   info(params: LogsParams) {
     this.loggerWinston.log({
-      level: 'info',
-      message: params?.message,
-      context: params?.context,
-      requestId: this.id,
       ...params,
+      requestId: this.id,
     });
   }
 
   error(params: LogsParams) {
     this.loggerWinston.error({
-      message: params?.message,
-      context: params?.context,
-      requestId: this.id,
       ...params,
+      requestId: this.id,
     });
   }
+
   warn(params: LogsParams) {
     this.loggerWinston.warn({
-      message: params?.message,
-      context: params?.context,
-      requestId: this.id,
       ...params,
+      requestId: this.id,
     });
   }
 }

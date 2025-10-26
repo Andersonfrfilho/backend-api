@@ -8,6 +8,10 @@ import type {
   LogsInfoParams,
   LogsWarnParams,
 } from '@core/providers/log/log.types';
+import {
+  obfuscatorInfo,
+  ObfuscatorInfoParams,
+} from '@core/providers/log/log.utils';
 
 @Injectable()
 export class LogProvider implements LogProviderInterface {
@@ -19,15 +23,55 @@ export class LogProvider implements LogProviderInterface {
     this.winstonLogProvider.setRequestId(requestId);
   }
   info(params: LogsInfoParams) {
-    this.winstonLogProvider.info(params);
+    const { message, context, ...rest } = params;
+    const newRest: unknown = obfuscatorInfo(
+      rest as unknown as ObfuscatorInfoParams,
+    );
+    const logParams = {
+      level: 'info',
+      message,
+      context,
+      ...(newRest as LogsInfoParams),
+    } as unknown as LogsInfoParams;
+    this.winstonLogProvider.info(logParams);
   }
   error(params: LogsErrorParams) {
-    this.winstonLogProvider.error(params);
+    const { message, context, ...rest } = params;
+    const newRest: unknown = obfuscatorInfo(
+      rest as unknown as ObfuscatorInfoParams,
+    );
+    const logParams = {
+      level: 'error',
+      message,
+      context,
+      ...(newRest as LogsErrorParams),
+    } as unknown as LogsErrorParams;
+    this.winstonLogProvider.error(logParams);
   }
   warn(params: LogsWarnParams) {
-    this.winstonLogProvider.warn(params);
+    const { message, context, ...rest } = params;
+    const newRest: unknown = obfuscatorInfo(
+      rest as unknown as ObfuscatorInfoParams,
+    );
+    const logParams = {
+      level: 'warn',
+      message,
+      context,
+      ...(newRest as LogsWarnParams),
+    } as unknown as LogsWarnParams;
+    this.winstonLogProvider.warn(logParams);
   }
   debug(params: LogsDebugParams) {
-    this.winstonLogProvider.debug(params);
+    const { message, context, ...rest } = params;
+    const newRest: unknown = obfuscatorInfo(
+      rest as unknown as ObfuscatorInfoParams,
+    );
+    const logParams = {
+      level: 'debug',
+      message,
+      context,
+      ...(newRest as LogsDebugParams),
+    } as unknown as LogsDebugParams;
+    this.winstonLogProvider.debug(logParams);
   }
 }
