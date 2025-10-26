@@ -8,6 +8,9 @@ services:
       - PORT=${PORT}
       - API_APP_CONTAINER_NAME=${API_APP_CONTAINER_NAME}
       - PROJECT_NAME=${PROJECT_NAME}
+      - SONAR_HOST_URL=${SONAR_HOST_URL}
+      - SONAR_TOKEN=${SONAR_TOKEN}
+      - SONAR_PROJECT_KEY=${SONAR_PROJECT_KEY}
     ports:
       - '${PORT}:${PORT}'
     volumes:
