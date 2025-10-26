@@ -90,12 +90,12 @@ Check out a few resources that may come in handy when working with NestJS:
 - [x] Env config validation
 - [x] Adicionar Modulo de usuário exemplo
 - [x] Adicionar FastiFy
-- [ ] Adicionar versionamento de rota
-- [ ] Singleton
+- [x] Adicionar versionamento de rota
+- [x] Singleton
 - [x] path alias
 - [x] Makefile - MacOs | Linux
 - [ ] Makefile - Windows
-- [] Tratamento erros globais
+- [ ] Tratamento erros globais
 - [x] Logger
 - [x] Logger Obfucator
 - [] Middleware Oauth
