@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { HealthModule } from '@modules/health/health.module';
 import { AuthModule } from '@modules/auth/auth.module';
 import { CoreModule } from '@core/core.module';
+import { CommonModule } from './common/common.module';
 
 const compilerOptions = tsConfig.compilerOptions;
 tsConfigPathsRegister({
@@ -20,7 +21,9 @@ tsConfigPathsRegister({
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: envValidation,
+      envFilePath: '.env',
     }),
+    CommonModule,
     CoreModule,
     HealthModule,
     AuthModule,

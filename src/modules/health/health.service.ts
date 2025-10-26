@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import {
   HealthCheckMethodResponse,
   HealthCheckServiceInterface,
@@ -8,7 +8,7 @@ import type { LogProviderInterface } from '@core/providers/log/log.interface';
 @Injectable()
 export class HealthCheckService implements HealthCheckServiceInterface {
   healthCheck(): Promise<HealthCheckMethodResponse> {
-    throw new Error('Method not implemented.');
+    throw new ForbiddenException();
   }
   @Inject(LOG_PROVIDER) private readonly logProvider: LogProviderInterface;
   // async healthCheck(): Promise<HealthCheckMethodServiceResponse> {
