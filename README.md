@@ -103,6 +103,7 @@ Check out a few resources that may come in handy when working with NestJS:
 - [] Sonar
 - [] Github Actions
 - [] (lint, commit-lint, test-unitario, teste de integracao, deploy stg, sonar, fortify, deploy, producao )
+- [] Validações com swagger docs
 - [] Teste Unitarios
 - [] Middleware de validacao de schemas
 - [] swagger docs
@@ -126,3 +127,17 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+## Sonar Run local
+
+- Crie o token local
+  - http://localhost:9000 - login padrão: admin/admin
+  - gerar token
+  - adicionar token via env
+  - SONAR_HOST_URL=http://sonarqube:9000
+  - SONAR_TOKEN=sqa_67c22563e8b6f0ef7c4224ea45120b667f29d9f8
+  - SONAR_PROJECT_KEY=backend-api-service
+- execute o sh do container do app
+  - docker exec -it backend-api-service sh
+  - npm run sonar
+  - verifique no painel
