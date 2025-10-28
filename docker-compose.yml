@@ -1,0 +1,51 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ${API_APP_CONTAINER_NAME}
+    environment:
+      - PORT=${PORT}
+      - API_APP_CONTAINER_NAME=${API_APP_CONTAINER_NAME}
+      - PROJECT_NAME=${PROJECT_NAME}
+      - SONAR_HOST_URL=${SONAR_HOST_URL}
+      - SONAR_TOKEN=${SONAR_TOKEN}
+      - SONAR_PROJECT_KEY=${SONAR_PROJECT_KEY}
+    ports:
+      - '${PORT}:${PORT}'
+    volumes:
+      - ./src:/app/src
+      - ./logs:/app/logs
+
+  ### SONAR_QUBE SERVICES
+  sonarqube:
+    image: sonarqube:community
+    depends_on:
+      - sonar-db
+    environment:
+      SONAR_JDBC_URL: jdbc:postgresql://sonar-db:5432/sonar
+      SONAR_JDBC_USERNAME: sonar
+      SONAR_JDBC_PASSWORD: sonar
+    ports:
+      - '9000:9000'
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+
+  sonar-db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: sonar
+      POSTGRES_PASSWORD: sonar
+      POSTGRES_DB: sonar
+    volumes:
+      - sonar-db:/var/lib/postgresql
+      - sonar-db_data:/var/lib/postgresql/data
+
+volumes:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:
+  sonar-db:
+  sonar-db_data:
