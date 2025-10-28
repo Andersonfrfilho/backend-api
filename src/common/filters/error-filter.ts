@@ -8,12 +8,11 @@ import {
   HttpStatus,
   Inject,
   Injectable,
-  Scope,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 
 @Catch()
-@Injectable({ scope: Scope.REQUEST })
+@Injectable()
 export class HttpExceptionFilter implements ExceptionFilter {
   constructor(
     @Inject(LOG_PROVIDER) private readonly logProvider: LogProviderInterface,
@@ -24,7 +23,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const request = ctx.getRequest<Request>();
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
 
-    // Adicione contexto ao log de erro
     this.logProvider.error({
       message: 'Exception caught in filter',
       context: 'HttpExceptionFilter',
@@ -41,7 +39,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
       status = exception.getStatus();
       const exceptionResponse = exception.getResponse();
 
-      // Envie a resposta diretamente (sem return)
       response.status(status).json({
         statusCode: status,
         timestamp: new Date().toISOString(),
@@ -52,8 +49,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
             : (exceptionResponse as any).message || 'Error',
       });
     } else {
-      // Para erros genéricos (não HttpException)
-      // Envie a resposta diretamente (sem return)
       response.status(status).json({
         statusCode: status,
         timestamp: new Date().toISOString(),
