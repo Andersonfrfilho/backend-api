@@ -1,4 +1,4 @@
-import { Module, Scope } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { LOG_PROVIDER } from '@core/providers/log/log.interface';
 import { WinstonLogProvider } from '@core/providers/log/implementations/winston/winston.log.provider';
 import { WINSTON_LOG_PROVIDER } from '@core/providers/log/implementations/winston/winston.log.provider.interface';
@@ -48,12 +48,10 @@ import path from 'node:path';
     {
       provide: WINSTON_LOG_PROVIDER,
       useClass: WinstonLogProvider,
-      scope: Scope.REQUEST,
     },
     {
       provide: LOG_PROVIDER,
       useClass: LogProvider,
-      scope: Scope.REQUEST,
     },
   ],
   exports: [LOG_PROVIDER],

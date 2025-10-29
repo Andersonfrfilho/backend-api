@@ -27,7 +27,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       message: 'Exception caught in filter',
       context: 'HttpExceptionFilter',
       exception,
-      stack: exception instanceof Error ? exception.stack : null,
+      stack: exception instanceof Error && exception.stack,
       request: {
         method: request.method,
         url: request.url,
@@ -38,23 +38,22 @@ export class HttpExceptionFilter implements ExceptionFilter {
     if (exception instanceof HttpException) {
       status = exception.getStatus();
       const exceptionResponse = exception.getResponse();
-
-      response.status(status).json({
+      const messageIsString = typeof exceptionResponse === 'string';
+      return response.status(status).json({
         statusCode: status,
         timestamp: new Date().toISOString(),
         path: request.url,
-        message:
-          typeof exceptionResponse === 'string'
-            ? exceptionResponse
-            : (exceptionResponse as any).message || 'Error',
-      });
-    } else {
-      response.status(status).json({
-        statusCode: status,
-        timestamp: new Date().toISOString(),
-        path: request.url,
-        message: 'Internal server error',
+        message: messageIsString
+          ? exceptionResponse
+          : (exceptionResponse as Record<string, unknown>).message || 'Error',
       });
     }
+
+    return response.status(status).json({
+      statusCode: status,
+      timestamp: new Date().toISOString(),
+      path: request.url,
+      message: 'Internal server error',
+    });
   }
 }

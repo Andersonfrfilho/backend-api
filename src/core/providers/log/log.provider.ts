@@ -19,9 +19,7 @@ export class LogProvider implements LogProviderInterface {
     @Inject(WINSTON_LOG_PROVIDER)
     private readonly winstonLogProvider: WinstonLogProvider,
   ) {}
-  setRequestId(requestId: string) {
-    this.winstonLogProvider.setRequestId(requestId);
-  }
+
   info(params: LogsInfoParams) {
     const { message, context, ...rest } = params;
     const newRest: unknown = obfuscatorInfo(
