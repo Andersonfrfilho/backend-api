@@ -1,15 +1,27 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HealthController } from './health.controller';
 import { HealthCheckService } from './health.service';
-import { LOG_PROVIDER } from '@core/providers/log/log.interface';
+import {
+  LOG_PROVIDER,
+  LogProviderInterface,
+} from '@core/providers/log/log.interface';
 
 describe('HealthController', () => {
   let controller: HealthController;
   let healthCheckService: jest.Mocked<HealthCheckService>;
-  let logProvider: jest.Mock;
+  let logProvider: LogProviderInterface;
+  const mockLogProviderInfo = jest.fn();
+  const mockLogProviderError = jest.fn();
+  const mockLogProviderWarn = jest.fn();
+  const mockLogProviderDebug = jest.fn();
 
   beforeEach(async () => {
-    logProvider = jest.fn();
+    logProvider = {
+      info: mockLogProviderInfo,
+      error: mockLogProviderError,
+      warn: mockLogProviderWarn,
+      debug: mockLogProviderDebug,
+    };
     const mockHealthCheckService = {
       healthCheck: jest.fn().mockReturnValue({ status: 'ok' }),
     };
@@ -23,9 +35,7 @@ describe('HealthController', () => {
         },
         {
           provide: LOG_PROVIDER,
-          useValue: {
-            info: jest.fn(),
-          },
+          useValue: logProvider,
         },
       ],
     }).compile();

@@ -21,7 +21,7 @@ export class WinstonLogProvider implements WinstonLogProviderInterface {
   }
 
   debug(params: LogsParams) {
-    this.loggerWinston.log({
+    this.loggerWinston.debug({
       ...params,
       level: 'debug',
       requestId: this.getRequestId(),
@@ -29,7 +29,7 @@ export class WinstonLogProvider implements WinstonLogProviderInterface {
   }
 
   info(params: LogsParams) {
-    this.loggerWinston.log({
+    this.loggerWinston.info({
       ...params,
       requestId: this.getRequestId(),
     });

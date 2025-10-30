@@ -44,9 +44,9 @@ describe('AuthController', () => {
   describe('loginSession', () => {
     it('should call logProvider.info with AuthController', async () => {
       // Arrange
-      const mockResponse: AuthServiceInterfaceLoginSessionServiceResponse = {
+      const mockResponse = {
         sessionId: 'test-session',
-      };
+      } as unknown as AuthServiceInterfaceLoginSessionServiceResponse;
       authService.loginSessionService.mockResolvedValue(mockResponse);
 
       // Act
@@ -57,9 +57,9 @@ describe('AuthController', () => {
     });
     it('should call authService.loginSessionService', async () => {
       // Arrange
-      const mockResponse: AuthServiceInterfaceLoginSessionServiceResponse = {
+      const mockResponse = {
         sessionId: 'test-session',
-      };
+      } as unknown as AuthServiceInterfaceLoginSessionServiceResponse;
       authService.loginSessionService.mockResolvedValue(mockResponse);
 
       // Act
@@ -71,9 +71,9 @@ describe('AuthController', () => {
 
     it('should return the loginSessionService response', async () => {
       // Arrange
-      const mockResponse: AuthServiceInterfaceLoginSessionServiceResponse = {
+      const mockResponse = {
         sessionId: 'test-session',
-      };
+      } as unknown as AuthServiceInterfaceLoginSessionServiceResponse;
       authService.loginSessionService.mockResolvedValue(mockResponse);
 
       // Act
