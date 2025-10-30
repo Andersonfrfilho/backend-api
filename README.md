@@ -100,7 +100,7 @@ Check out a few resources that may come in handy when working with NestJS:
 - [x] Logger Obfucator
 - [] Middleware Oauth
 - [] global state
-- [] Sonar
+- [x] Sonar
 - [] Github Actions
 - [] (lint, commit-lint, test-unitario, teste de integracao, deploy stg, sonar, fortify, deploy, producao )
 - [] Validações com swagger docs

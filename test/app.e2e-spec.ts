@@ -17,9 +17,15 @@ describe('AppController (e2e)', () => {
   });
 
   it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
+    // Arrange - App is initialized in beforeEach
+
+    // Act
+    return (
+      request(app.getHttpServer())
+        .get('/')
+        // Assert
+        .expect(200)
+        .expect('Hello World!')
+    );
   });
 });

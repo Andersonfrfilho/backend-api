@@ -1,12 +1,5 @@
-import {
-  OBFUSCATOR_FIELDS,
-  ObfuscatorInfoItemsParams,
-} from '@core/providers/log/log.constant';
-
-export interface ObfuscatorInfoParams {
-  params: unknown;
-  fields?: ObfuscatorInfoItemsParams[];
-}
+import { OBFUSCATOR_FIELDS } from '@core/providers/log/log.obfuscator';
+import type { ObfuscatorInfoParams } from './log.interface';
 
 export const isPrimitive = (v: unknown) =>
   v === null ||
@@ -22,17 +15,14 @@ export const obfuscatorInfo = ({
   params,
   fields = OBFUSCATOR_FIELDS,
 }: ObfuscatorInfoParams): unknown => {
-  // primitivas e funções: não altera
   if (isPrimitive(params) || isDate(params)) {
     return params;
   }
 
-  // arrays: map recursivamente
   if (Array.isArray(params)) {
     return params.map((item) => obfuscatorInfo({ params: item, fields }));
   }
 
-  // objetos: percorre todas as chaves
   if (typeof params === 'object' && params !== null) {
     const obj = params as Record<string, unknown>;
     const result: Record<string, unknown> = {};
@@ -41,7 +31,6 @@ export const obfuscatorInfo = ({
       (p: string | number | undefined) => string
     >();
 
-    // preparar um lookup case-insensitive
     for (const f of fields) {
       lowerToPattern.set(f.field.toLowerCase(), f.pattern);
     }
@@ -51,10 +40,8 @@ export const obfuscatorInfo = ({
       const lowerKey = key.toLowerCase();
 
       if (lowerToPattern.has(lowerKey)) {
-        // aplicar pattern (garantir que pattern não quebre com undefined/null)
         const pattern = lowerToPattern.get(lowerKey)!;
         try {
-          // converter números para string quando necessário; pattern aceita number|string|undefined
           if (value === null || value === undefined) {
             result[key] = pattern(undefined);
           } else if (typeof value === 'number') {
@@ -63,11 +50,9 @@ export const obfuscatorInfo = ({
             result[key] = pattern(String(value));
           }
         } catch (err) {
-          // fallback seguro em caso de erro na pattern
           result[key] = '***';
         }
       } else {
-        // não é campo a ser obfuscado → recursão
         result[key] = obfuscatorInfo({ params: value, fields });
       }
     }
@@ -75,6 +60,5 @@ export const obfuscatorInfo = ({
     return result;
   }
 
-  // fallback: retorna como está
   return params;
 };
