@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { LogModule } from '@core/providers/log/log.module';
-import { AUTH_LOGIN_SESSION_SERVICE_PROVIDE } from './login-session/auth.login-session.interface';
-import { AuthLoginSessionService } from './login-session/auth.login-session.service';
+import { AUTH_LOGIN_SESSION_SERVICE_PROVIDE } from '@modules/auth/services/login-session/auth.login-session.interface';
+import { AuthLoginSessionService } from '@modules/auth/services/login-session/auth.login-session.service';
 @Module({
   imports: [LogModule],
   providers: [

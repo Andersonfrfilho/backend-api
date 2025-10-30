@@ -114,6 +114,8 @@ Check out a few resources that may come in handy when working with NestJS:
 - [] TDD
 - [] Clean Architecture
 - [] provider http client
+- [] Ajustar erros swagger
+- [] adicionar Variaveis de ambiente nas base urls
 
 ## Support
 

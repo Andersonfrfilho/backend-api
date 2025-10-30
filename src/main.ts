@@ -25,6 +25,7 @@ async function bootstrap() {
     AppModule,
     instanceFastify,
   );
+
   app.enableVersioning({
     type: VersioningType.URI,
   });

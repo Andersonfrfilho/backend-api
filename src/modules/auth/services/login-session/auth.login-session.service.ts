@@ -5,7 +5,7 @@ import {
   AuthLoginSessionServiceInterface,
   AuthLoginSessionServiceParams,
   AuthLoginSessionServiceResponse,
-} from './auth.login-session.interface';
+} from '@modules/auth/services/login-session/auth.login-session.interface';
 
 @Injectable()
 export class AuthLoginSessionService
