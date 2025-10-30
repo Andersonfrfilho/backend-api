@@ -9,7 +9,7 @@ import {
   Inject,
   Injectable,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { FastifyReply, FastifyRequest } from 'fastify';
 
 @Catch()
 @Injectable()
@@ -17,10 +17,11 @@ export class HttpExceptionFilter implements ExceptionFilter {
   constructor(
     @Inject(LOG_PROVIDER) private readonly logProvider: LogProviderInterface,
   ) {}
+
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
-    const response = ctx.getResponse<Response>();
-    const request = ctx.getRequest<Request>();
+    const response = ctx.getResponse<FastifyReply>();
+    const request = ctx.getRequest<FastifyRequest>();
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
 
     this.logProvider.error({
@@ -39,7 +40,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       status = exception.getStatus();
       const exceptionResponse = exception.getResponse();
       const messageIsString = typeof exceptionResponse === 'string';
-      return response.status(status).json({
+      return response.status(status).send({
         statusCode: status,
         timestamp: new Date().toISOString(),
         path: request.url,
@@ -49,7 +50,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       });
     }
 
-    return response.status(status).json({
+    return response.status(status).send({
       statusCode: status,
       timestamp: new Date().toISOString(),
       path: request.url,

@@ -11,7 +11,8 @@ import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import { SwaggerModule } from '@nestjs/swagger';
 import { join } from 'node:path';
 import { writeFileSync } from 'node:fs';
-import { swaggerConfig } from './config/swagger.config';
+import { swaggerConfig } from '@config/swagger.config';
+import { docsFactory } from '@core/interceptors/docs';
 
 const compilerOptions = tsConfig.compilerOptions;
 tsConfigPathsRegister({
@@ -20,7 +21,10 @@ tsConfigPathsRegister({
 });
 
 async function bootstrap() {
-  const instanceFastify = new FastifyAdapter();
+  const instanceFastify = new FastifyAdapter({
+    bodyLimit: 1048576,
+  });
+
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
     instanceFastify,
@@ -30,13 +34,17 @@ async function bootstrap() {
     type: VersioningType.URI,
   });
   app.useGlobalPipes(new ValidationPipe());
+  app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('docs', app, document);
   const outputPath = join(process.cwd(), 'swagger-spec.json');
   writeFileSync(outputPath, JSON.stringify(document, null, 2));
 
-  app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
-  await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
+  // Registrar rotas de documentação
+  docsFactory({ app, document });
+
+  await app.listen(process.env.PORT ?? 3333, '0.0.0.0');
 }
+
 bootstrap();
