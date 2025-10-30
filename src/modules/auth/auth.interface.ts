@@ -1,9 +1,10 @@
-import { CommonInterfaceFormScreen } from '@common/interfaces/commons.interface';
+import { ApiExtraModels } from '@nestjs/swagger';
+import {
+  AuthLoginSessionParamsDto,
+  AuthLoginSessionResponseDto,
+} from './services/login-session/auth.login-session.dto';
 
-export const AUTH_SERVICE_PROVIDE = 'AUTH_SERVICE_PROVIDE';
-export interface AuthServiceInterfaceLoginSessionServiceResponse
-  extends CommonInterfaceFormScreen {}
-
-export interface AuthServiceInterface {
-  loginSessionService(): Promise<AuthServiceInterfaceLoginSessionServiceResponse>;
-}
+@ApiExtraModels(AuthLoginSessionParamsDto)
+export class AuthLoginSessionControllerParams extends AuthLoginSessionParamsDto {}
+@ApiExtraModels(AuthLoginSessionResponseDto)
+export class AuthLoginSessionControllerResponse extends AuthLoginSessionResponseDto {}

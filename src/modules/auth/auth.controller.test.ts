@@ -4,7 +4,6 @@ import { LOG_PROVIDER } from '@core/providers/log/log.interface';
 import {
   AUTH_SERVICE_PROVIDE,
   AuthServiceInterface,
-  AuthServiceInterfaceLoginSessionServiceResponse,
 } from '@modules/auth/auth.interface';
 import type { LogProviderInterface } from '@core/providers/log/log.interface';
 
