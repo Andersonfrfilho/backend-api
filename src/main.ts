@@ -2,12 +2,16 @@ import { register as tsConfigPathsRegister } from 'tsconfig-paths';
 import * as tsConfig from '../tsconfig.json';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { VersioningType } from '@nestjs/common';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
 import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import { SwaggerModule } from '@nestjs/swagger';
+import { join } from 'node:path';
+import { writeFileSync } from 'node:fs';
+import { swaggerConfig } from './config/swagger.config';
 
 const compilerOptions = tsConfig.compilerOptions;
 tsConfigPathsRegister({
@@ -24,6 +28,13 @@ async function bootstrap() {
   app.enableVersioning({
     type: VersioningType.URI,
   });
+  app.useGlobalPipes(new ValidationPipe());
+
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
+  SwaggerModule.setup('docs', app, document);
+  const outputPath = join(process.cwd(), 'swagger-spec.json');
+  writeFileSync(outputPath, JSON.stringify(document, null, 2));
+
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
   await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
 }
