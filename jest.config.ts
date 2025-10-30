@@ -53,6 +53,7 @@ const config: Config.InitialOptions = {
     '^@core/(.*)$': '<rootDir>/src/core/$1',
     '^@modules/(.*)$': '<rootDir>/src/modules/$1',
   },
+  coverageProvider: 'v8',
 };
 
 export default config;

@@ -1,17 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { LogProviderInterface } from '@core/providers/log/log.interface';
-import { WinstonLogProvider } from '@core/providers/log/implementations/winston/winston.log.provider';
-import { WINSTON_LOG_PROVIDER } from '@core/providers/log/implementations/winston/winston.log.provider.interface';
-import type {
+import {
+  LogProviderInterface,
   LogsDebugParams,
   LogsErrorParams,
   LogsInfoParams,
   LogsWarnParams,
-} from '@core/providers/log/log.types';
-import {
-  obfuscatorInfo,
   ObfuscatorInfoParams,
-} from '@core/providers/log/log.utils';
+} from '@core/providers/log/log.interface';
+import { WinstonLogProvider } from '@core/providers/log/implementations/winston/winston.log.provider';
+import { WINSTON_LOG_PROVIDER } from '@core/providers/log/implementations/winston/winston.log.provider.interface';
+
+import { obfuscatorInfo } from '@core/providers/log/log.utils';
 
 @Injectable()
 export class LogProvider implements LogProviderInterface {

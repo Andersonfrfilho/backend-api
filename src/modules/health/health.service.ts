@@ -7,7 +7,7 @@ import { LOG_PROVIDER } from '@core/providers/log/log.interface';
 import type { LogProviderInterface } from '@core/providers/log/log.interface';
 @Injectable()
 export class HealthCheckService implements HealthCheckServiceInterface {
-  healthCheck(): Promise<HealthCheckMethodResponse> {
+  async healthCheck(): Promise<HealthCheckMethodResponse> {
     throw new ForbiddenException();
   }
   @Inject(LOG_PROVIDER) private readonly logProvider: LogProviderInterface;

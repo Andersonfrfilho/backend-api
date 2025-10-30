@@ -1,19 +1,31 @@
-import { WINSTON_MODULE_NEST_PROVIDER, WinstonLogger } from 'nest-winston';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import { Inject } from '@nestjs/common';
-import { WinstonLogProviderInterface } from './winston.log.provider.interface';
-import type { LogsParams } from '@core/providers/log/implementations/winston/winton.log.types.ts';
+import type {
+  WinstonLogProviderInterface,
+  LogsParams,
+} from './winston.log.provider.interface';
 import { requestContext } from '@app/core/context/request-context';
 
 export class WinstonLogProvider implements WinstonLogProviderInterface {
   constructor(
     @Inject(WINSTON_MODULE_NEST_PROVIDER)
-    private readonly loggerWinston: WinstonLogger,
+    private readonly loggerWinston: WinstonLogProviderInterface,
   ) {}
-  debug: (params?: string | object) => void;
 
   private getRequestId(): string {
     const store = requestContext.getStore();
-    return store?.requestId || '';
+    if (store?.requestId) {
+      return store.requestId;
+    }
+    return '';
+  }
+
+  debug(params: LogsParams) {
+    this.loggerWinston.log({
+      ...params,
+      level: 'debug',
+      requestId: this.getRequestId(),
+    });
   }
 
   info(params: LogsParams) {

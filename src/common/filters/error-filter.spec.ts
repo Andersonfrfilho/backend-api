@@ -53,14 +53,20 @@ describe('HttpExceptionFilter', () => {
   });
 
   it('should be defined', () => {
+    // Arrange - Filter is properly instantiated in beforeEach
+
+    // Act & Assert
     expect(filter).toBeDefined();
   });
 
   it('should handle HttpException and log error', () => {
+    // Arrange
     const exception = new HttpException('Not Found', HttpStatus.NOT_FOUND);
 
+    // Act
     filter.catch(exception, mockArgumentsHost);
 
+    // Assert
     expect(mockStatus).toHaveBeenCalledWith(HttpStatus.NOT_FOUND);
     expect(mockJson).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -69,15 +75,17 @@ describe('HttpExceptionFilter', () => {
         path: '/test-url',
       }),
     );
-
     expect(errorMock).toHaveBeenCalled();
   });
 
   it('should handle throw Error and log error', () => {
+    // Arrange
     const exception = new Error('Any Error');
 
+    // Act
     filter.catch(exception, mockArgumentsHost);
 
+    // Assert
     expect(mockStatus).toHaveBeenCalledWith(HttpStatus.INTERNAL_SERVER_ERROR);
     expect(mockJson).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -87,19 +95,21 @@ describe('HttpExceptionFilter', () => {
         timestamp: expect.any(String) as string,
       }),
     );
-
     expect(errorMock).toHaveBeenCalled();
   });
 
   it('should handle throw Error and exception getResponse', () => {
+    // Arrange
     const customMessageMock = 'Custom error message';
     const exception = new HttpException(
       { message: customMessageMock },
       HttpStatus.BAD_REQUEST,
     );
 
+    // Act
     filter.catch(exception, mockArgumentsHost);
 
+    // Assert
     expect(mockStatus).toHaveBeenCalledWith(HttpStatus.BAD_REQUEST);
     expect(mockJson).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -109,18 +119,20 @@ describe('HttpExceptionFilter', () => {
         timestamp: expect.any(String) as string,
       }),
     );
-
     expect(errorMock).toHaveBeenCalled();
   });
 
   it('should handle throw Error and exception getResponse when message undefined', () => {
+    // Arrange
     const exception = new HttpException(
       { message: undefined },
       HttpStatus.BAD_REQUEST,
     );
 
+    // Act
     filter.catch(exception, mockArgumentsHost);
 
+    // Assert
     expect(mockStatus).toHaveBeenCalledWith(HttpStatus.BAD_REQUEST);
     expect(mockJson).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -130,7 +142,6 @@ describe('HttpExceptionFilter', () => {
         timestamp: expect.any(String) as string,
       }),
     );
-
     expect(errorMock).toHaveBeenCalled();
   });
 });
