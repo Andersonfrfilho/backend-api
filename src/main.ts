@@ -1,3 +1,5 @@
+import { register as tsConfigPathsRegister } from 'tsconfig-paths';
+import * as tsConfig from '../tsconfig.json';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { VersioningType } from '@nestjs/common';
@@ -6,6 +8,12 @@ import {
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+
+const compilerOptions = tsConfig.compilerOptions;
+tsConfigPathsRegister({
+  baseUrl: compilerOptions.baseUrl,
+  paths: compilerOptions.paths,
+});
 
 async function bootstrap() {
   const instanceFastify = new FastifyAdapter();
