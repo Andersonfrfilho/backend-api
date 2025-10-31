@@ -18,17 +18,29 @@ export class HttpExceptionFilter implements ExceptionFilter {
     @Inject(LOG_PROVIDER) private readonly logProvider: LogProviderInterface,
   ) {}
 
-  catch(exception: unknown, host: ArgumentsHost) {
+  async catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<FastifyReply>();
     const request = ctx.getRequest<FastifyRequest>();
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
 
+    console.error('=== FILTER EXCEPTION ===');
+    console.error('Exception type:', typeof exception);
+    console.error('Exception:', exception);
+    console.error(
+      'Exception instanceof HttpException:',
+      exception instanceof HttpException,
+    );
+    console.error('Exception instanceof Error:', exception instanceof Error);
+
     this.logProvider.error({
       message: 'Exception caught in filter',
       context: 'HttpExceptionFilter',
       exception,
-      stack: exception instanceof Error && exception.stack,
+      exceptionType: typeof exception,
+      exceptionString: String(exception),
+      stack:
+        exception instanceof Error ? exception.stack : 'Not an Error instance',
       request: {
         method: request.method,
         url: request.url,
@@ -40,7 +52,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       status = exception.getStatus();
       const exceptionResponse = exception.getResponse();
       const messageIsString = typeof exceptionResponse === 'string';
-      return response.status(status).send({
+      await response.status(status).send({
         statusCode: status,
         timestamp: new Date().toISOString(),
         path: request.url,
@@ -48,9 +60,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
           ? exceptionResponse
           : (exceptionResponse as Record<string, unknown>).message || 'Error',
       });
+      return;
     }
 
-    return response.status(status).send({
+    await response.status(status).send({
       statusCode: status,
       timestamp: new Date().toISOString(),
       path: request.url,
