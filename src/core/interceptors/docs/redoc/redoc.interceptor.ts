@@ -1,18 +1,12 @@
 import { NestFastifyApplication } from '@nestjs/platform-fastify';
-import { generateReDocHtml } from './redoc.factory';
-import { ReDocConfig } from './redoc.config';
+import { REDOC_HTML } from './redoc.constant';
 
-export function redocInterceptor(
-  app: NestFastifyApplication,
-  config?: Partial<ReDocConfig>,
-) {
-  const redocHtml = generateReDocHtml(config);
-
+export function redocInterceptor(app: NestFastifyApplication) {
   app
     .getHttpAdapter()
     .getInstance()
     .get('/re-docs', (_, reply) => {
       reply.header('Content-Type', 'text/html');
-      return reply.send(redocHtml);
+      return reply.send(REDOC_HTML);
     });
 }

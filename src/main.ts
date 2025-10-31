@@ -41,7 +41,6 @@ async function bootstrap() {
   const outputPath = join(process.cwd(), 'swagger-spec.json');
   writeFileSync(outputPath, JSON.stringify(document, null, 2));
 
-  // Registrar rotas de documentação
   docsFactory({ app, document });
 
   await app.listen(process.env.PORT ?? 3333, '0.0.0.0');

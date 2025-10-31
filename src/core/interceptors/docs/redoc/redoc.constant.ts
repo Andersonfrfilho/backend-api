@@ -1,12 +1,21 @@
-/**
- * @deprecated Este arquivo é apenas para referência histórica.
- * Use `redoc.factory.ts` e `generateReDocHtml()` em vez disso.
- *
- * O REDOC_HTML abaixo NÃO funciona porque templates estáticos não podem
- * executar funções JavaScript. Use o redoc.factory.ts para geração dinâmica.
- */
-
-// Não exportar constante estática - usar redoc.factory.ts
-export const REDOC_HTML_DEPRECATED = `
-  <!-- This is deprecated. Use generateReDocHtml() from redoc.factory.ts instead -->
-`;
+export const REDOC_HTML = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>ReDoc - API Documentation</title>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700" rel="stylesheet">
+        <style>
+          body {
+            margin: 0;
+            padding: 0;
+          }
+        </style>
+      </head>
+      <body>
+        <redoc spec-url='/swagger-spec'></redoc>
+        <script src="https://cdn.jsdelivr.net/npm/redoc/bundles/redoc.standalone.js"></script>
+      </body>
+    </html>
+  `;
