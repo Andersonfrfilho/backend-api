@@ -14,6 +14,7 @@ import { writeFileSync } from 'node:fs';
 import { swaggerConfig } from '@config/swagger.config';
 import { swaggerCustomOptions } from '@config/swagger-custom.config';
 import { docsFactory } from '@core/interceptors/docs';
+import { AppErrorFactory } from '@common/errors';
 
 const compilerOptions = tsConfig.compilerOptions;
 tsConfigPathsRegister({
@@ -40,6 +41,9 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
       transform: true,
       whitelist: true,
+      exceptionFactory: (errors) => {
+        return AppErrorFactory.fromValidationErrors(errors);
+      },
     }),
   );
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
