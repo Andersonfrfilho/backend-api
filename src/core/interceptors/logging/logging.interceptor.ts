@@ -7,7 +7,6 @@ import {
   CallHandler,
   Inject,
 } from '@nestjs/common';
-import type { Request } from 'express';
 import { Observable } from 'rxjs';
 import { requestContext } from '@core/context/request-context';
 import { randomUUID } from 'node:crypto';
@@ -34,16 +33,22 @@ export class LoggingInterceptor implements NestInterceptor {
         });
 
         const now = Date.now();
+        let responseData: unknown;
+
         next
           .handle()
           .pipe()
           .subscribe({
-            next: (val) => subscriber.next(val),
+            next: (val) => {
+              responseData = val;
+              subscriber.next(val);
+            },
             error: (err) => {
               this.logProvider.error({
                 message: `Request failed after ${Date.now() - now}ms`,
                 context: 'LoggingInterceptor',
-                error: err,
+                error: String(err),
+                statusCode: err?.status || 500,
               });
               subscriber.error(err);
             },
@@ -51,6 +56,7 @@ export class LoggingInterceptor implements NestInterceptor {
               this.logProvider.info({
                 message: `Request completed in ${Date.now() - now}ms`,
                 context: 'LoggingInterceptor',
+                params: responseData,
               });
               subscriber.complete();
             },
