@@ -50,7 +50,6 @@ export class AuthController {
     `,
   })
   @ApiOkResponse({ type: AuthLoginSessionResponseDto })
-  @ApiBearerAuth()
   @ApiNotFoundResponse({
     type: AuthLoginSessionServiceErrorNotFoundDto,
     examples: {
@@ -74,6 +73,7 @@ export class AuthController {
   @ApiInternalServerErrorResponse({
     type: AuthLoginSessionServiceInternalServerErrorDto,
   })
+  @ApiBearerAuth()
   @ApiBody({ type: AuthLoginSessionParamsDto })
   async loginSession(
     @Body() params: AuthLoginSessionControllerParams,

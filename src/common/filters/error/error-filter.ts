@@ -9,6 +9,7 @@ import {
   Inject,
   Injectable,
 } from '@nestjs/common';
+import { ValidationError } from 'class-validator';
 import { FastifyReply, FastifyRequest } from 'fastify';
 
 @Catch()
@@ -18,13 +19,14 @@ export class HttpExceptionFilter implements ExceptionFilter {
     @Inject(LOG_PROVIDER) private readonly logProvider: LogProviderInterface,
   ) {}
 
-  catch(exception: unknown, host: ArgumentsHost) {
+  catch(exception: any, host: ArgumentsHost) {
+    console.log('############ exception caught #############', exception);
+    console.log('Exception response:', exception instanceof ValidationError);
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<FastifyReply>();
     const request = ctx.getRequest<FastifyRequest>();
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
     let message = 'Internal server error';
-
     if (!response?.raw) {
       return;
     }

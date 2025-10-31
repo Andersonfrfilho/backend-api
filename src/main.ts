@@ -34,7 +34,14 @@ async function bootstrap() {
   app.enableVersioning({
     type: VersioningType.URI,
   });
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      forbidUnknownValues: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+      whitelist: true,
+    }),
+  );
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);
@@ -47,4 +54,5 @@ async function bootstrap() {
   await app.listen(process.env.PORT ?? 3333, '0.0.0.0');
 }
 
+// eslint-disable-next-line @typescript-eslint/no-floating-promises
 bootstrap();
