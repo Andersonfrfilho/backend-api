@@ -12,6 +12,7 @@ import { SwaggerModule } from '@nestjs/swagger';
 import { join } from 'node:path';
 import { writeFileSync } from 'node:fs';
 import { swaggerConfig } from '@config/swagger.config';
+import { swaggerCustomOptions } from '@config/swagger-custom.config';
 import { docsFactory } from '@core/interceptors/docs';
 
 const compilerOptions = tsConfig.compilerOptions;
@@ -37,7 +38,7 @@ async function bootstrap() {
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup('docs', app, document);
+  SwaggerModule.setup('docs', app, document, swaggerCustomOptions);
   const outputPath = join(process.cwd(), 'swagger-spec.json');
   writeFileSync(outputPath, JSON.stringify(document, null, 2));
 
