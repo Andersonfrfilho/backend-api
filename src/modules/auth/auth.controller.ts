@@ -7,8 +7,8 @@ import {
   Version,
 } from '@nestjs/common';
 import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
-  ApiBody,
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -16,22 +16,24 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
-import type {
+import {
   AuthLoginSessionControllerParams,
   AuthLoginSessionControllerResponse,
 } from '@modules/auth/auth.interface';
 import {
-  AuthLoginSessionParamsDto,
   AuthLoginSessionResponseDto,
   AuthLoginSessionServiceErrorInvalidCredentialsDto,
   AuthLoginSessionServiceErrorNotFoundDto,
-  ERRORS_AUTH_LOGIN_SESSION,
 } from '@modules/auth/services/login-session/auth.login-session.dto';
-import { AUTH_LOGIN_SESSION_SERVICE_PROVIDE } from '@modules/auth/services/login-session/auth.login-session.interface';
 import type { AuthLoginSessionServiceInterface } from '@modules/auth/services/login-session/auth.login-session.interface';
-import { AuthLoginSessionServiceInternalServerErrorDto } from '@modules/error/dtos/errors.dto';
-import { LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/log.interface';
+import { AUTH_LOGIN_SESSION_SERVICE_PROVIDE } from '@modules/auth/services/login-session/auth.login-session.interface';
 import type { LogProviderInterface } from '@modules/shared/infrastructure/providers/log/log.interface';
+import { LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/log.interface';
+
+import {
+  AuthBadRequestErrorValidationRequestDto,
+  AuthLoginSessionServiceInternalServerErrorDto,
+} from './auth.dtos';
 
 @Injectable()
 @Controller('/auth')
@@ -53,29 +55,17 @@ export class AuthController {
   @ApiOkResponse({ type: AuthLoginSessionResponseDto })
   @ApiNotFoundResponse({
     type: AuthLoginSessionServiceErrorNotFoundDto,
-    examples: {
-      missingField: {
-        summary: 'User not found error',
-        value: ERRORS_AUTH_LOGIN_SESSION.MISSING_CREDENTIALS,
-      },
-      notFound: {
-        summary: 'Any way',
-        value: {
-          statusCode: 404,
-          message: 'User not found',
-          code: 404,
-        },
-      },
-    },
   })
   @ApiUnauthorizedResponse({
     type: AuthLoginSessionServiceErrorInvalidCredentialsDto,
+  })
+  @ApiBadRequestResponse({
+    type: AuthBadRequestErrorValidationRequestDto,
   })
   @ApiInternalServerErrorResponse({
     type: AuthLoginSessionServiceInternalServerErrorDto,
   })
   @ApiBearerAuth()
-  @ApiBody({ type: AuthLoginSessionParamsDto })
   async loginSession(
     @Body() params: AuthLoginSessionControllerParams,
   ): Promise<AuthLoginSessionControllerResponse> {
