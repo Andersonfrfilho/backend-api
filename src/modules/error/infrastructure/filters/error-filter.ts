@@ -1,3 +1,4 @@
+import { AppError } from '@modules/error';
 import { LOG_PROVIDER } from '@core/providers/log/log.interface';
 import type { LogProviderInterface } from '@core/providers/log/log.interface';
 import {
@@ -10,6 +11,8 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { FastifyReply, FastifyRequest } from 'fastify';
+import { APP_ERROR_TYPE } from '@modules/error/infrastructure/filters/error-filter.constant';
+import { requestContext } from '@core/context/request-context';
 
 @Catch()
 @Injectable()
@@ -17,70 +20,156 @@ export class HttpExceptionFilter implements ExceptionFilter {
   constructor(
     @Inject(LOG_PROVIDER) private readonly logProvider: LogProviderInterface,
   ) {}
+  logResponse(
+    exception: AppError | HttpException | Error,
+    request: FastifyRequest,
+    responseBody?: Record<string, unknown>,
+  ) {
+    try {
+      const rawRequestId = request.headers['x-request-id'];
+      const headerRequestId =
+        (Array.isArray(rawRequestId) ? rawRequestId[0] : rawRequestId) ?? '';
 
-  catch(exception: any, host: ArgumentsHost) {
+      this.logProvider.error({
+        message: 'Exception caught in filter',
+        context: 'HttpExceptionFilter',
+        requestId: headerRequestId,
+        params: {
+          request: {
+            query: request.query,
+            params: request.params,
+            headers: request.headers,
+            method: request.method,
+            url: request.url,
+          },
+          exceptionType:
+            exception instanceof AppError ? exception.type : 'Error',
+          exceptionMessage:
+            exception instanceof Error ? exception.message : String(exception),
+          details:
+            exception instanceof AppError ? exception.details : undefined,
+          responseBody,
+        },
+      });
+    } catch (logError) {
+      console.error('[HttpExceptionFilter] Logger failed:', String(logError));
+    }
+  }
+  private getRequestId(request: FastifyRequest): string {
+    const requestIdFromRequest = (request as any).requestId;
+    if (requestIdFromRequest) {
+      return requestIdFromRequest;
+    }
+
+    const contextStore = requestContext.getStore();
+    console.log('######### contextStore:', requestContext, contextStore);
+    if (contextStore?.requestId) {
+      return contextStore.requestId;
+    }
+
+    // 3. Try to get from x-request-id header (last resort)
+    const rawRequestId = request.headers['x-request-id'];
+    return (Array.isArray(rawRequestId) ? rawRequestId[0] : rawRequestId) ?? '';
+  }
+
+  catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<FastifyReply>();
     const request = ctx.getRequest<FastifyRequest>();
-    let status = HttpStatus.INTERNAL_SERVER_ERROR;
-    let message = 'Internal server error';
+
     if (!response?.raw) {
       return;
     }
 
+    const requestId = this.getRequestId(request);
+    response.header('x-request-id', requestId);
+
+    let details: unknown;
+
     try {
-      try {
-        this.logProvider.error({
-          message: 'Exception caught in filter',
-          context: 'HttpExceptionFilter',
-          exception: String(exception),
-          exceptionType: typeof exception,
-          stack:
-            exception instanceof Error
-              ? exception.stack
-              : 'Not an Error instance',
-          request: {
-            method: request.method,
-            url: request.url,
-          },
-        });
-      } catch (logError) {
-        console.error('[HttpExceptionFilter] Logger failed:', String(logError));
+      if (exception instanceof AppError) {
+        const status = exception.statusCode;
+        const message = exception.message;
+
+        if ((exception.type as string) === APP_ERROR_TYPE.VALIDATION) {
+          details = exception.details;
+        }
+
+        const responseBody: Record<string, unknown> = {
+          statusCode: status,
+          timestamp: new Date().toISOString(),
+          path: request.url,
+          message,
+        };
+
+        if (details) {
+          responseBody.details = details;
+        }
+
+        this.logResponse(exception, request, responseBody);
+        response.status(status).send(responseBody);
+        return;
       }
 
-      if (exception instanceof HttpException) {
-        status = exception.getStatus();
-        const exceptionResponse = exception.getResponse();
-        message =
-          typeof exceptionResponse === 'string'
-            ? exceptionResponse
-            : ((exceptionResponse as Record<string, unknown>).message as
-                | string
-                | undefined) || 'Error';
-      } else if (exception instanceof Error) {
-        message = exception.message || 'Internal server error';
-      }
-
-      response.status(status).send({
-        statusCode: status,
-        timestamp: new Date().toISOString(),
-        path: request.url,
-        message,
-      });
+      this.handleNonAppError(exception, request, response);
     } catch (sendError) {
-      try {
-        this.logProvider.error({
-          message: 'Failed to send error response',
-          context: 'HttpExceptionFilter',
-        });
-      } catch (logError) {
-        console.error(
-          '[HttpExceptionFilter] Failed to send response:',
-          String(sendError),
-          'Logging error:',
-          String(logError),
-        );
-      }
+      this.handleFilterError(sendError);
+    }
+  }
+
+  private handleNonAppError(
+    exception: unknown,
+    request: FastifyRequest,
+    response: FastifyReply,
+  ) {
+    const status = this.getStatus(exception);
+    const message = this.getMessage(exception);
+
+    const errorResponseBody = {
+      statusCode: status,
+      timestamp: new Date().toISOString(),
+      path: request.url,
+      message,
+    };
+    this.logResponse(exception as Error, request, errorResponseBody);
+    response.status(status).send(errorResponseBody);
+  }
+
+  private getStatus(exception: unknown): number {
+    if (exception instanceof HttpException) {
+      return exception.getStatus();
+    }
+    return HttpStatus.INTERNAL_SERVER_ERROR;
+  }
+
+  private getMessage(exception: unknown): string {
+    if (exception instanceof HttpException) {
+      const exceptionResponse = exception.getResponse();
+      return typeof exceptionResponse === 'string'
+        ? exceptionResponse
+        : ((exceptionResponse as Record<string, unknown>).message as
+            | string
+            | undefined) || 'Error';
+    }
+    if (exception instanceof Error) {
+      return exception.message || 'Internal server error';
+    }
+    return 'Internal server error';
+  }
+
+  private handleFilterError(sendError: unknown) {
+    try {
+      this.logProvider.error({
+        message: 'Failed to send error response',
+        context: 'HttpExceptionFilter',
+      });
+    } catch (logError) {
+      console.error(
+        '[HttpExceptionFilter] Failed to send response:',
+        String(sendError),
+        'Logging error:',
+        String(logError),
+      );
     }
   }
 }
