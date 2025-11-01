@@ -1,20 +1,24 @@
-import { register as tsConfigPathsRegister } from 'tsconfig-paths';
-import * as tsConfig from '../tsconfig.json';
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 import { ValidationPipe, VersioningType } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
 import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
-import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import { SwaggerModule } from '@nestjs/swagger';
-import { join } from 'node:path';
-import { writeFileSync } from 'node:fs';
-import { swaggerConfig } from '@config/swagger.config';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import { register as tsConfigPathsRegister } from 'tsconfig-paths';
+
 import { swaggerCustomOptions } from '@config/swagger-custom.config';
-import { docsFactory } from '@core/interceptors/docs';
+import { swaggerConfig } from '@config/swagger.config';
 import { AppErrorFactory } from '@modules/error';
+import { docsFactory } from '@modules/shared/infrastructure/interceptors/docs';
+
+import * as tsConfig from '../tsconfig.json';
+
+import { AppModule } from './app.module';
 
 const compilerOptions = tsConfig.compilerOptions;
 tsConfigPathsRegister({
@@ -42,6 +46,10 @@ async function bootstrap() {
       transform: true,
       whitelist: true,
       exceptionFactory: (errors) => {
+        console.log(
+          '######### errors validation pipe main.ts #########',
+          errors,
+        );
         return AppErrorFactory.fromValidationErrors(errors);
       },
     }),

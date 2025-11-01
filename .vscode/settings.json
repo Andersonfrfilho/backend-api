@@ -1,0 +1,53 @@
+{
+  "// ===== TYPESCRIPT =====": "",
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "typescript.autoImportSuggestions.enabled": true,
+  "typescript.suggest.autoImports": true,
+  "typescript.suggest.enabled": true,
+
+  "// ===== IMPORTS COM ALIAS PATHS =====": "",
+  "typescript.preferences.importModuleSpecifierFormat": "absolute",
+  "typescript.preferences.importModuleSpecifierEndingPreference": "minimal",
+  "typescript.preferences.importModuleSpecifierStyle": "non-relative",
+  "typescript.preferences.quotePreference": "single",
+
+  "// ===== PRETTIER =====": "",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": [
+      "source.fixAll.eslint",
+      "source.organizeImports"
+    ]
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": [
+      "source.fixAll.eslint",
+      "source.organizeImports"
+    ]
+  },
+
+  "// ===== ESLINT =====": "",
+  "eslint.validate": ["javascript", "typescript"],
+  "eslint.format.enable": true,
+
+  "// ===== CODE ACTIONS =====": "",
+  "editor.codeActionsOnSave": [
+    "source.fixAll.eslint",
+    "source.organizeImports"
+  ],
+
+  "// ===== EDITOR BEHAVIOR =====": "",
+  "editor.quickSuggestions": {
+    "strings": true,
+    "comments": true,
+    "other": true
+  },
+  "editor.suggest.localityBonus": true,
+  "editor.suggest.shareSuggestSelections": true
+}

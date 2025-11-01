@@ -1,18 +1,19 @@
 import { Controller, Get, Inject, Injectable, Version } from '@nestjs/common';
-import { LOG_PROVIDER } from '@core/providers/log/log.interface';
-import type { LogProviderInterface } from '@core/providers/log/log.interface';
-import {
-  HEALTH_CHECK_SERVICE_PROVIDER,
-  type HealthCheckControllerResponse,
-  type HealthCheckServiceInterface,
-} from '@modules/health/health.interfaces';
 import {
   ApiInternalServerErrorResponse,
   ApiOkResponse,
   ApiOperation,
 } from '@nestjs/swagger';
-import { HealthCheckResponseDto } from '@modules/health/health.dto';
+
 import { AuthLoginSessionServiceInternalServerErrorDto } from '@modules/error/dtos/errors.dto';
+import { HealthCheckResponseDto } from '@modules/health/health.dto';
+import {
+  HEALTH_CHECK_SERVICE_PROVIDER,
+  type HealthCheckControllerResponse,
+  type HealthCheckServiceInterface,
+} from '@modules/health/health.interfaces';
+import { LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/log.interface';
+import type { LogProviderInterface } from '@modules/shared/infrastructure/providers/log/log.interface';
 
 @Injectable()
 @Controller('/health')

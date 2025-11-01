@@ -1,11 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthController } from './auth.controller';
-import { LOG_PROVIDER } from '@core/providers/log/log.interface';
+
 import {
   AUTH_SERVICE_PROVIDE,
   AuthServiceInterface,
 } from '@modules/auth/auth.interface';
-import type { LogProviderInterface } from '@core/providers/log/log.interface';
+import { LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/log.interface';
+import type { LogProviderInterface } from '@modules/shared/infrastructure/providers/log/log.interface';
+
+import { AuthController } from './auth.controller';
 
 describe('AuthController', () => {
   let controller: AuthController;

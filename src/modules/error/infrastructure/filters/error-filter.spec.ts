@@ -1,8 +1,9 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { HttpExceptionFilter } from './error-filter';
-import { HttpException, HttpStatus } from '@nestjs/common';
 import { LOG_PROVIDER } from '@app/core/providers/log/log.interface';
+import { HttpException, HttpStatus } from '@nestjs/common';
 import type { ArgumentsHost } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+
+import { HttpExceptionFilter } from './error-filter';
 
 let mockJson: jest.Mock;
 let mockStatus: jest.Mock;

@@ -1,7 +1,7 @@
-import { IsEmail, IsStrongPassword } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
 import { faker } from '@faker-js/faker';
 import { HttpStatus } from '@nestjs/common';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsEmail, IsStrongPassword } from 'class-validator';
 
 export class AuthLoginSessionParamsDto {
   @ApiProperty({

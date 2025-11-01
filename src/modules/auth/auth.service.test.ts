@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { LOG_PROVIDER } from '@core/providers/log/log.interface';
+
+import { LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/log.interface';
 
 describe('AuthService', () => {
   let service: AuthService;

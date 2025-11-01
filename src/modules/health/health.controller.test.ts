@@ -1,10 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { HealthController } from './health.controller';
-import { HealthCheckService } from './health.service';
+
 import {
   LOG_PROVIDER,
   LogProviderInterface,
-} from '@core/providers/log/log.interface';
+} from '@modules/shared/infrastructure/providers/log/log.interface';
+
+import { HealthController } from './health.controller';
+import { HealthCheckService } from './health.service';
 
 describe('HealthController', () => {
   let controller: HealthController;

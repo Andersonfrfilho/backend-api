@@ -1,6 +1,3 @@
-import { AppError } from '@modules/error';
-import { LOG_PROVIDER } from '@core/providers/log/log.interface';
-import type { LogProviderInterface } from '@core/providers/log/log.interface';
 import {
   ExceptionFilter,
   Catch,
@@ -11,8 +8,12 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { FastifyReply, FastifyRequest } from 'fastify';
+
+import { AppError } from '@modules/error';
 import { APP_ERROR_TYPE } from '@modules/error/infrastructure/filters/error-filter.constant';
-import { requestContext } from '@core/context/request-context';
+import { requestContext } from '@modules/shared/infrastructure/context/request-context';
+import type { LogProviderInterface } from '@modules/shared/infrastructure/providers/log/log.interface';
+import { LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/log.interface';
 
 @Catch()
 @Injectable()

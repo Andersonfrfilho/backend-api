@@ -1,11 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { LOG_PROVIDER } from '@core/providers/log/log.interface';
-import type { LogProviderInterface } from '@core/providers/log/log.interface';
+
 import {
   AuthLoginSessionServiceInterface,
   AuthLoginSessionServiceParams,
   AuthLoginSessionServiceResponse,
 } from '@modules/auth/services/login-session/auth.login-session.interface';
+import { LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/log.interface';
+import type { LogProviderInterface } from '@modules/shared/infrastructure/providers/log/log.interface';
 
 @Injectable()
 export class AuthLoginSessionService

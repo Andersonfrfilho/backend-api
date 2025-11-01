@@ -1,7 +1,10 @@
 import { ForbiddenException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { LOG_PROVIDER } from '@core/providers/log/log.interface';
+
+import { LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/log.interface';
+
 import { HealthCheckServiceInterface } from '../health.interfaces';
+
 import { HealthCheckService } from './healthCheck.service';
 
 describe('HealthCheckService', () => {

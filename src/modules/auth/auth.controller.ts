@@ -6,21 +6,6 @@ import {
   Post,
   Version,
 } from '@nestjs/common';
-import { LOG_PROVIDER } from '@core/providers/log/log.interface';
-import type { LogProviderInterface } from '@core/providers/log/log.interface';
-import type {
-  AuthLoginSessionControllerParams,
-  AuthLoginSessionControllerResponse,
-} from '@modules/auth/auth.interface';
-import { AUTH_LOGIN_SESSION_SERVICE_PROVIDE } from '@modules/auth/services/login-session/auth.login-session.interface';
-import type { AuthLoginSessionServiceInterface } from '@modules/auth/services/login-session/auth.login-session.interface';
-import {
-  AuthLoginSessionParamsDto,
-  AuthLoginSessionResponseDto,
-  AuthLoginSessionServiceErrorInvalidCredentialsDto,
-  AuthLoginSessionServiceErrorNotFoundDto,
-  ERRORS_AUTH_LOGIN_SESSION,
-} from '@modules/auth/services/login-session/auth.login-session.dto';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -30,7 +15,23 @@ import {
   ApiOperation,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+
+import type {
+  AuthLoginSessionControllerParams,
+  AuthLoginSessionControllerResponse,
+} from '@modules/auth/auth.interface';
+import {
+  AuthLoginSessionParamsDto,
+  AuthLoginSessionResponseDto,
+  AuthLoginSessionServiceErrorInvalidCredentialsDto,
+  AuthLoginSessionServiceErrorNotFoundDto,
+  ERRORS_AUTH_LOGIN_SESSION,
+} from '@modules/auth/services/login-session/auth.login-session.dto';
+import { AUTH_LOGIN_SESSION_SERVICE_PROVIDE } from '@modules/auth/services/login-session/auth.login-session.interface';
+import type { AuthLoginSessionServiceInterface } from '@modules/auth/services/login-session/auth.login-session.interface';
 import { AuthLoginSessionServiceInternalServerErrorDto } from '@modules/error/dtos/errors.dto';
+import { LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/log.interface';
+import type { LogProviderInterface } from '@modules/shared/infrastructure/providers/log/log.interface';
 
 @Injectable()
 @Controller('/auth')
