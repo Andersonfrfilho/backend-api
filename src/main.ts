@@ -41,17 +41,16 @@ async function bootstrap() {
   });
   app.useGlobalPipes(
     new ValidationPipe({
-      forbidUnknownValues: true,
+      forbidUnknownValues: false,
       forbidNonWhitelisted: true,
       transform: true,
       whitelist: true,
-      exceptionFactory: (errors) => {
-        console.log(
-          '######### errors validation pipe main.ts #########',
-          errors,
-        );
-        return AppErrorFactory.fromValidationErrors(errors);
+      skipMissingProperties: false,
+      transformOptions: {
+        enableImplicitConversion: true,
       },
+      exceptionFactory: (errors) =>
+        AppErrorFactory.fromValidationErrors(errors),
     }),
   );
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));

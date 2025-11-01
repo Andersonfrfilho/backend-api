@@ -74,9 +74,20 @@ export class AppErrorFactory {
   }
 
   static fromValidationErrors(errors: unknown[]): AppError {
+    const validationErrors = Array.isArray(errors)
+      ? errors.map((error: any) => ({
+          field: error.property,
+          constraints: error.constraints,
+          children:
+            error.children && error.children.length > 0
+              ? error.children
+              : undefined,
+        }))
+      : [];
+
     const details = {
-      validationErrors: errors,
-      count: Array.isArray(errors) ? errors.length : 1,
+      validationErrors,
+      count: validationErrors.length,
     };
 
     return this.validation('Validation failed', details);

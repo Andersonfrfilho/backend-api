@@ -1,7 +1,7 @@
 import {
-  ExceptionFilter,
-  Catch,
   ArgumentsHost,
+  Catch,
+  ExceptionFilter,
   HttpException,
   HttpStatus,
   Inject,
@@ -27,7 +27,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
     responseBody?: Record<string, unknown>,
   ) {
     try {
-      // Extract requestId from header as fallback (validation errors happen before interceptor sets context)
       const rawRequestId = request.headers['x-request-id'];
       const headerRequestId =
         (Array.isArray(rawRequestId) ? rawRequestId[0] : rawRequestId) ?? '';
