@@ -144,3 +144,24 @@ Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
   - docker exec -it backend-api-service sh
   - npm run sonar
   - verifique no painel
+
+src/modules/errors/ # Módulo centralizado e organizado
+├── domain/ # Entidades puras (AppError, ErrorType)
+├── application/ # Lógica de caso de uso (AppErrorFactory)
+├── infrastructure/ # Implementações técnicas (Filter, DTOs)
+├── errors.module.ts # Declaração do módulo
+└── index.ts # API pública
+
+Estrutura e Responsabilidades
+Camada Arquivo Responsabilidade
+Domain app.error.ts Define ErrorType enum e classe AppError (pura, sem dependências)
+Application app.error.factory.ts Factory com métodos estáticos para criar erros tipados
+Infrastructure http-exception.filter.ts Filtro global que captura erros e responde com formato consistente
+Infrastructure errors.dto.ts DTOs para documentação Swagger
+Benefícios
+✅ Separação de Responsabilidades - cada camada tem uma função clara
+✅ Testabilidade - domain não depende de frameworks
+✅ Extensibilidade - adicionar novo tipo de erro é trivial (novo valor em enum + método na factory)
+✅ Compatibilidade - re-exports em @common/errors para código legado
+✅ Type-Safe - factory garante status codes corretos
+✅ Logs Estruturados - requestId, tipo de erro, detalhes de validação

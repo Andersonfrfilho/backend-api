@@ -1,4 +1,4 @@
-import { AppError, ErrorType } from '@common/errors/app.error';
+import { AppError, ErrorType } from '@modules/error/domain/AppError';
 
 export class AppErrorFactory {
   static validation(

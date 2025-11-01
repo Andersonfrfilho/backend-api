@@ -30,7 +30,7 @@ import {
   ApiOperation,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { AuthLoginSessionServiceInternalServerErrorDto } from '@app/common/dtos/error/errors.dto';
+import { AuthLoginSessionServiceInternalServerErrorDto } from '@modules/error/dtos/errors.dto';
 
 @Injectable()
 @Controller('/auth')

@@ -14,7 +14,7 @@ import { writeFileSync } from 'node:fs';
 import { swaggerConfig } from '@config/swagger.config';
 import { swaggerCustomOptions } from '@config/swagger-custom.config';
 import { docsFactory } from '@core/interceptors/docs';
-import { AppErrorFactory } from '@common/errors';
+import { AppErrorFactory } from '@modules/error';
 
 const compilerOptions = tsConfig.compilerOptions;
 tsConfigPathsRegister({

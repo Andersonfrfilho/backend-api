@@ -12,7 +12,7 @@ import {
   ApiOperation,
 } from '@nestjs/swagger';
 import { HealthCheckResponseDto } from '@modules/health/health.dto';
-import { AuthLoginSessionServiceInternalServerErrorDto } from '@app/common/dtos/error/errors.dto';
+import { AuthLoginSessionServiceInternalServerErrorDto } from '@modules/error/dtos/errors.dto';
 
 @Injectable()
 @Controller('/health')

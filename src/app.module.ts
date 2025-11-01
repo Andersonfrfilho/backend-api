@@ -7,6 +7,7 @@ import { HealthModule } from '@modules/health/health.module';
 import { AuthModule } from '@modules/auth/auth.module';
 import { CoreModule } from '@core/core.module';
 import { CommonModule } from '@common/common.module';
+import { ErrorModule } from '@modules/error/error.module';
 
 const compilerOptions = tsConfig.compilerOptions;
 tsConfigPathsRegister({
@@ -23,6 +24,7 @@ tsConfigPathsRegister({
     }),
     CommonModule,
     CoreModule,
+    ErrorModule,
     HealthModule,
     AuthModule,
   ],
