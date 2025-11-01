@@ -8,8 +8,6 @@ import {
   Inject,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { requestContext } from '@core/context/request-context';
-import { randomUUID } from 'node:crypto';
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
@@ -20,48 +18,41 @@ export class LoggingInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const request = context.switchToHttp().getRequest<Request>();
 
-    const rawRequestId = request.headers['x-request-id'];
-    const requestId: string =
-      (Array.isArray(rawRequestId) ? rawRequestId[0] : rawRequestId) ??
-      randomUUID();
-
     return new Observable((subscriber) => {
-      requestContext.run({ requestId }, () => {
-        this.logProvider.info({
-          message: `Request started - ${request.method} ${request.url}`,
-          context: 'LoggingInterceptor',
-        });
-
-        const now = Date.now();
-        let responseData: unknown;
-
-        next
-          .handle()
-          .pipe()
-          .subscribe({
-            next: (val) => {
-              responseData = val;
-              subscriber.next(val);
-            },
-            error: (err) => {
-              this.logProvider.error({
-                message: `Request failed after ${Date.now() - now}ms`,
-                context: 'LoggingInterceptor',
-                error: String(err),
-                statusCode: err?.status || 500,
-              });
-              subscriber.error(err);
-            },
-            complete: () => {
-              this.logProvider.info({
-                message: `Request completed in ${Date.now() - now}ms`,
-                context: 'LoggingInterceptor',
-                params: responseData,
-              });
-              subscriber.complete();
-            },
-          });
+      this.logProvider.info({
+        message: `Request started - ${request.method} ${request.url}`,
+        context: 'LoggingInterceptor',
       });
+
+      const now = Date.now();
+      let responseData: unknown;
+
+      next
+        .handle()
+        .pipe()
+        .subscribe({
+          next: (val) => {
+            responseData = val;
+            subscriber.next(val);
+          },
+          error: (err) => {
+            this.logProvider.error({
+              message: `Request failed after ${Date.now() - now}ms`,
+              context: 'LoggingInterceptor',
+              error: String(err),
+              statusCode: err?.status || 500,
+            });
+            subscriber.error(err);
+          },
+          complete: () => {
+            this.logProvider.info({
+              message: `Request completed in ${Date.now() - now}ms`,
+              context: 'LoggingInterceptor',
+              params: responseData,
+            });
+            subscriber.complete();
+          },
+        });
     });
   }
 }

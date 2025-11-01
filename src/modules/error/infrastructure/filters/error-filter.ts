@@ -26,6 +26,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     responseBody?: Record<string, unknown>,
   ) {
     try {
+      // Extract requestId from header as fallback (validation errors happen before interceptor sets context)
       const rawRequestId = request.headers['x-request-id'];
       const headerRequestId =
         (Array.isArray(rawRequestId) ? rawRequestId[0] : rawRequestId) ?? '';
@@ -56,13 +57,14 @@ export class HttpExceptionFilter implements ExceptionFilter {
     }
   }
   private getRequestId(request: FastifyRequest): string {
+    // 1. Try to get requestId from request object (set by LoggingInterceptor)
     const requestIdFromRequest = (request as any).requestId;
     if (requestIdFromRequest) {
       return requestIdFromRequest;
     }
 
+    // 2. Try to get from requestContext (fallback)
     const contextStore = requestContext.getStore();
-    console.log('######### contextStore:', requestContext, contextStore);
     if (contextStore?.requestId) {
       return contextStore.requestId;
     }
