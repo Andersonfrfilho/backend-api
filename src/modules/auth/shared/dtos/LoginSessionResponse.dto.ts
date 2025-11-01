@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { ApiExtraModels, ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class AuthLoginSessionResponseDto {
   @ApiProperty({
@@ -14,6 +14,3 @@ export class AuthLoginSessionResponseDto {
   })
   refreshToken: string;
 }
-
-@ApiExtraModels(AuthLoginSessionResponseDto)
-export class AuthLoginSessionControllerResponseDto extends AuthLoginSessionResponseDto {}

@@ -9,24 +9,23 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
-import { AuthLoginSessionControllerRequestDto } from '@modules/auth/application/dtos/LoginSessionRequest.dto';
-import { AuthLoginSessionControllerResponseDto } from '@modules/auth/application/dtos/LoginSessionResponse.dto';
-import type {
-  AuthLoginSessionControllerInterface,
-  AuthLoginSessionServiceInterface,
-} from '@modules/auth/auth.interface';
+import type { AuthLoginSessionServiceInterface } from '@modules/auth/domain/auth.login-session.interface';
 import {
   AuthBadRequestErrorValidationRequestDto,
   AuthLoginSessionServiceErrorInvalidCredentialsDto,
   AuthLoginSessionServiceErrorNotFoundDto,
   AuthLoginSessionServiceInternalServerErrorDto,
 } from '@modules/auth/domain/exceptions';
+import { AUTH_LOGIN_SESSION_SERVICE_PROVIDE } from '@modules/auth/infrastructure/auth.provider';
 
-import { AUTH_LOGIN_SESSION_SERVICE_PROVIDE } from './infrastructure/auth.provider';
+import {
+  AuthLoginSessionRequestDto as AuthLoginSessionRequestParamsDto,
+  AuthLoginSessionResponseDto as AuthLoginSessionResponseController,
+} from './shared/dtos';
 
 @Injectable()
 @Controller('/auth')
-export class AuthController implements AuthLoginSessionControllerInterface {
+export class AuthController {
   constructor(
     @Inject(AUTH_LOGIN_SESSION_SERVICE_PROVIDE)
     private readonly authLoginSessionServiceProvider: AuthLoginSessionServiceInterface,
@@ -40,7 +39,7 @@ export class AuthController implements AuthLoginSessionControllerInterface {
       Esta rota realiza a autenticação do usuário e retorna os tokens de acesso e atualização.
     `,
   })
-  @ApiOkResponse({ type: AuthLoginSessionControllerResponseDto })
+  @ApiOkResponse({ type: AuthLoginSessionRequestParamsDto })
   @ApiNotFoundResponse({
     type: AuthLoginSessionServiceErrorNotFoundDto,
   })
@@ -55,8 +54,8 @@ export class AuthController implements AuthLoginSessionControllerInterface {
   })
   @ApiBearerAuth()
   async loginSession(
-    @Body() params: AuthLoginSessionControllerRequestDto,
-  ): Promise<AuthLoginSessionControllerResponseDto> {
+    @Body() params: AuthLoginSessionRequestParamsDto,
+  ): Promise<AuthLoginSessionResponseController> {
     return this.authLoginSessionServiceProvider.execute(params);
   }
 }

@@ -1,11 +1,9 @@
 import { Module } from '@nestjs/common';
 
-import { LogModule } from '@app/modules/shared/infrastructure/providers/log/log.module';
-
-import { AuthApplicationUseCaseModule } from '../../application/auth.use-cases.module';
-import { AUTH_LOGIN_SESSION_SERVICE_PROVIDE } from '../auth.provider';
-
-import { AuthLoginSessionService } from './auth.login-session.service';
+import { AuthApplicationUseCaseModule } from '@modules/auth/application/auth.use-cases.module';
+import { AUTH_LOGIN_SESSION_SERVICE_PROVIDE } from '@modules/auth/infrastructure/auth.provider';
+import { AuthLoginSessionService } from '@modules/auth/infrastructure/service/auth.login-session.service';
+import { LogModule } from '@modules/shared/infrastructure/providers/log/log.module';
 
 @Module({
   imports: [LogModule, AuthApplicationUseCaseModule],

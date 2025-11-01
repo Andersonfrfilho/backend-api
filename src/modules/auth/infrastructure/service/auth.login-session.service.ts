@@ -1,24 +1,28 @@
-import { Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 
+import type {
+  AuthLoginSessionServiceInterface,
+  AuthLoginSessionUseCaseInterface,
+} from '@modules/auth/domain/auth.login-session.interface';
+import { AUTH_LOGIN_SESSION_USE_CASE_PROVIDE } from '@modules/auth/infrastructure/auth.provider';
+import {
+  AuthLoginSessionRequestDto as AuthLoginSessionRequestServiceParams,
+  AuthLoginSessionResponseDto as AuthLoginSessionResponseServiceParams,
+} from '@modules/auth/shared/dtos';
 import {
   LOG_PROVIDER,
   type LogProviderInterface,
-} from '@app/modules/shared/infrastructure/providers/log/log.interface';
+} from '@modules/shared/infrastructure/providers/log/log.interface';
 
-import { AuthLoginSessionServiceRequestDto } from '../../application/dtos/LoginSessionRequest.dto';
-import { AuthLoginSessionServiceResponseDto } from '../../application/dtos/LoginSessionResponse.dto';
-import { AuthLoginSessionServiceInterface } from '../../auth.interface';
-import type { AuthLoginSessionUseCaseInterface } from '../../domain/auth.login-session.interface';
-import { AUTH_LOGIN_SESSION_USE_CASE_PROVIDE } from '../auth.provider';
-
+@Injectable()
 export class AuthLoginSessionService implements AuthLoginSessionServiceInterface {
   @Inject(LOG_PROVIDER) private readonly loggerProvider: LogProviderInterface;
   @Inject(AUTH_LOGIN_SESSION_USE_CASE_PROVIDE)
   private readonly authLoginSessionUseCase: AuthLoginSessionUseCaseInterface;
 
   async execute(
-    params: AuthLoginSessionServiceRequestDto,
-  ): Promise<AuthLoginSessionServiceResponseDto> {
+    params: AuthLoginSessionRequestServiceParams,
+  ): Promise<AuthLoginSessionResponseServiceParams> {
     this.loggerProvider.info({
       context: 'AuthLoginSessionService - execute',
       params,

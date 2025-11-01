@@ -40,8 +40,6 @@ describe('AuthLoginSessionUseCase', () => {
 
   it('should call info with "AuthLoginSessionUseCase"', async () => {
     await authLoginSessionUseCase.execute();
-    expect(mockLogProvider.info).toHaveBeenCalledWith(
-      'AuthLoginSessionUseCase',
-    );
+    expect(mockLogProvider.info).toHaveBeenCalledWith('AuthLoginSessionUseCase');
   });
 });

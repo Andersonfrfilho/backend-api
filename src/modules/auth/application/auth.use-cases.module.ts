@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common';
 
-import { AUTH_LOGIN_SESSION_USE_CASE_PROVIDE } from '../infrastructure/auth.provider';
-
-import { AuthLoginSessionUseCase } from './use-cases/LoginSessionUseCase';
+import { AuthLoginSessionUseCase } from '@modules/auth/application/use-cases/auth-login-session.use-case';
+import { AUTH_LOGIN_SESSION_USE_CASE_PROVIDE } from '@modules/auth/infrastructure/auth.provider';
 
 @Module({
   providers: [
