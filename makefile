@@ -77,7 +77,12 @@ clean-all: setup-env
 	# Remove redes do projeto (se restarem)
 	-docker network rm $(shell docker network ls --filter name=$(PROJECT_NAME) -q)
 
+rebuild-app: setup-env
+	@echo "🔄 Rebuildando a imagem do serviço 'app' após instalação de dependências..."
+	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) build app
+	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) up -d --force-recreate app
+
 all: setup-env
 	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) up -d  # Inicia todos os serviços, incluindo app e sonar
 
-.PHONY: all setup-env clean-all clean-images force-remove down stop app sonar-up sonar-down sonar-scan clean-safe
+.PHONY: all rebuild-app setup-env clean-all clean-images force-remove down stop app sonar-up sonar-down sonar-scan clean-safe

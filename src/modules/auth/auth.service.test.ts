@@ -1,7 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthService } from './auth.service';
 import { LOG_PROVIDER } from '@core/providers/log/log.interface';
-import { AUTH_LOGIN_SESSION_USE_CASES_PROVIDE } from './use-cases/login-session/auth.login-session.use-cases.interface';
 
 describe('AuthService', () => {
   let service: AuthService;

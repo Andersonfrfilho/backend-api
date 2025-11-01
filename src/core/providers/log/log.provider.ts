@@ -28,7 +28,7 @@ export class LogProvider implements LogProviderInterface {
       level: 'info',
       message,
       context,
-      ...(newRest as LogsInfoParams),
+      metadata: { ...(newRest as LogsInfoParams) },
     } as unknown as LogsInfoParams;
     this.winstonLogProvider.info(logParams);
   }
@@ -41,7 +41,7 @@ export class LogProvider implements LogProviderInterface {
       level: 'error',
       message,
       context,
-      ...(newRest as LogsErrorParams),
+      metadata: { ...(newRest as LogsErrorParams) },
     } as unknown as LogsErrorParams;
     this.winstonLogProvider.error(logParams);
   }
@@ -54,7 +54,7 @@ export class LogProvider implements LogProviderInterface {
       level: 'warn',
       message,
       context,
-      ...(newRest as LogsWarnParams),
+      metadata: { ...(newRest as LogsWarnParams) },
     } as unknown as LogsWarnParams;
     this.winstonLogProvider.warn(logParams);
   }
@@ -67,7 +67,7 @@ export class LogProvider implements LogProviderInterface {
       level: 'debug',
       message,
       context,
-      ...(newRest as LogsDebugParams),
+      metadata: { ...(newRest as LogsDebugParams) },
     } as unknown as LogsDebugParams;
     this.winstonLogProvider.debug(logParams);
   }

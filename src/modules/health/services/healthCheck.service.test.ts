@@ -1,10 +1,11 @@
 import { ForbiddenException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { HealthCheckService } from './health.service';
 import { LOG_PROVIDER } from '@core/providers/log/log.interface';
+import { HealthCheckServiceInterface } from '../health.interfaces';
+import { HealthCheckService } from './healthCheck.service';
 
 describe('HealthCheckService', () => {
-  let service: HealthCheckService;
+  let service: HealthCheckServiceInterface;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -20,7 +21,7 @@ describe('HealthCheckService', () => {
       ],
     }).compile();
 
-    service = module.get<HealthCheckService>(HealthCheckService);
+    service = module.get<HealthCheckServiceInterface>(HealthCheckService);
   });
 
   it('should be defined', () => {
@@ -35,7 +36,7 @@ describe('HealthCheckService', () => {
       // Arrange - Service is properly instantiated in beforeEach
 
       // Act
-      const result = service.healthCheck();
+      const result = service.execute();
 
       // Assert
       await expect(result).rejects.toThrow(ForbiddenException);

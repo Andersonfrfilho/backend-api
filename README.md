@@ -113,6 +113,9 @@ Check out a few resources that may come in handy when working with NestJS:
 - [] conexao com rabbitmq producer
 - [] TDD
 - [] Clean Architecture
+- [] provider http client
+- [] Ajustar erros swagger
+- [] adicionar Variaveis de ambiente nas base urls
 
 ## Support
 

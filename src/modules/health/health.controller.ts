@@ -1,53 +1,45 @@
 import { Controller, Get, Inject, Injectable, Version } from '@nestjs/common';
-import type { HealthCheckMethodControllerResponse } from './health.service.interfaces';
-import { HealthCheckService } from './health.service';
 import { LOG_PROVIDER } from '@core/providers/log/log.interface';
 import type { LogProviderInterface } from '@core/providers/log/log.interface';
+import {
+  HEALTH_CHECK_SERVICE_PROVIDER,
+  type HealthCheckControllerResponse,
+  type HealthCheckServiceInterface,
+} from '@modules/health/health.interfaces';
+import {
+  ApiInternalServerErrorResponse,
+  ApiOkResponse,
+  ApiOperation,
+} from '@nestjs/swagger';
+import { HealthCheckResponseDto } from '@modules/health/health.dto';
+import { AuthLoginSessionServiceInternalServerErrorDto } from '@app/common/dtos/error/errors.dto';
 
 @Injectable()
 @Controller('/health')
 export class HealthController {
   constructor(
     @Inject(LOG_PROVIDER) private readonly logProvider: LogProviderInterface,
-    private readonly healthCheckService: HealthCheckService,
+    @Inject(HEALTH_CHECK_SERVICE_PROVIDER)
+    private readonly healthCheckService: HealthCheckServiceInterface,
   ) {}
 
   @Version('1')
   @Get()
-  check(): HealthCheckMethodControllerResponse {
+  @ApiOperation({
+    summary: 'Verifica a saúde do serviço',
+    description: `
+      Esta rota realiza uma verificação de saúde do serviço.
+    `,
+  })
+  @ApiOkResponse({ type: HealthCheckResponseDto })
+  @ApiInternalServerErrorResponse({
+    type: AuthLoginSessionServiceInternalServerErrorDto,
+  })
+  check(): HealthCheckControllerResponse {
     this.logProvider.info({
-      message: 'controller',
-      context: 'HealthController',
-      params: {
-        phone: '123-456-7890',
-        phoneNumber: '123-456-7890',
-        email: 'john.doe@example.com',
-        password: 'superSecretPassword',
-        date: new Date(),
-        list: [1, 2, 3],
-        listedObj: [
-          { password: 1, secret: 2 },
-          { password: 3, secret: 4 },
-        ],
-        undefinedType: undefined,
-        nullType: null,
-        nested: {
-          password: 'nestedPassword',
-          secret: 'nestedSecret',
-        },
-        passwordUndefined: undefined,
-      },
-    });
-    return this.healthCheckService.healthCheck();
-  }
-
-  @Version('2')
-  @Get()
-  checkV2(): HealthCheckMethodControllerResponse {
-    this.logProvider.info({
-      message: 'controller v2',
+      message: 'Health check requested',
       context: 'HealthController',
     });
-    return this.healthCheckService.healthCheck();
+    return this.healthCheckService.execute();
   }
 }

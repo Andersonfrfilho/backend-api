@@ -9,8 +9,8 @@ import {
   Inject,
   Injectable,
 } from '@nestjs/common';
+import { ValidationError } from 'class-validator';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { AppError } from '@common/errors';
 
 @Catch()
 @Injectable()
@@ -19,67 +19,38 @@ export class HttpExceptionFilter implements ExceptionFilter {
     @Inject(LOG_PROVIDER) private readonly logProvider: LogProviderInterface,
   ) {}
 
-  catch(exception: unknown, host: ArgumentsHost) {
+  catch(exception: any, host: ArgumentsHost) {
+    console.log('############ exception caught #############', exception);
+    console.log('Exception response:', exception instanceof ValidationError);
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<FastifyReply>();
     const request = ctx.getRequest<FastifyRequest>();
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
     let message = 'Internal server error';
-
     if (!response?.raw) {
       return;
     }
 
     try {
       try {
-        if (exception instanceof AppError) {
-          this.logProvider.error({
-            message: `[${exception.type}] ${exception.message}`,
-            context: 'HttpExceptionFilter',
-            errorType: exception.type,
-            statusCode: exception.statusCode,
-            details: exception.details,
-            stack: exception.stack,
-            request: {
-              method: request.method,
-              url: request.url,
-            },
-          });
-        } else {
-          this.logProvider.error({
-            message: 'Exception caught in filter',
-            context: 'HttpExceptionFilter',
-            exception: String(exception),
-            exceptionType: typeof exception,
-            stack:
-              exception instanceof Error
-                ? exception.stack
-                : 'Not an Error instance',
-            request: {
-              method: request.method,
-              url: request.url,
-            },
-          });
-        }
+        this.logProvider.error({
+          message: 'Exception caught in filter',
+          context: 'HttpExceptionFilter',
+          exception: String(exception),
+          exceptionType: typeof exception,
+          stack:
+            exception instanceof Error
+              ? exception.stack
+              : 'Not an Error instance',
+          request: {
+            method: request.method,
+            url: request.url,
+          },
+        });
       } catch (logError) {
         console.error('[HttpExceptionFilter] Logger failed:', String(logError));
       }
 
-      if (exception instanceof AppError) {
-        status = exception.statusCode;
-        message = exception.message;
-        response.status(status).send({
-          statusCode: status,
-          timestamp: exception.timestamp,
-          path: request.url,
-          message,
-          type: exception.type,
-          details: exception.details,
-        });
-        return;
-      }
-
-      // Tratamento para HttpException
       if (exception instanceof HttpException) {
         status = exception.getStatus();
         const exceptionResponse = exception.getResponse();
