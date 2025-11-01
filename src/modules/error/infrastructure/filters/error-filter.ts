@@ -18,9 +18,7 @@ import { LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/log.i
 @Catch()
 @Injectable()
 export class HttpExceptionFilter implements ExceptionFilter {
-  constructor(
-    @Inject(LOG_PROVIDER) private readonly logProvider: LogProviderInterface,
-  ) {}
+  constructor(@Inject(LOG_PROVIDER) private readonly logProvider: LogProviderInterface) {}
   logResponse(
     exception: AppError | HttpException | Error,
     request: FastifyRequest,
@@ -28,8 +26,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
   ) {
     try {
       const rawRequestId = request.headers['x-request-id'];
-      const headerRequestId =
-        (Array.isArray(rawRequestId) ? rawRequestId[0] : rawRequestId) ?? '';
+      const headerRequestId = (Array.isArray(rawRequestId) ? rawRequestId[0] : rawRequestId) ?? '';
 
       this.logProvider.error({
         message: 'Exception caught in filter',
@@ -43,12 +40,9 @@ export class HttpExceptionFilter implements ExceptionFilter {
             method: request.method,
             url: request.url,
           },
-          exceptionType:
-            exception instanceof AppError ? exception.type : 'Error',
-          exceptionMessage:
-            exception instanceof Error ? exception.message : String(exception),
-          details:
-            exception instanceof AppError ? exception.details : undefined,
+          exceptionType: exception instanceof AppError ? exception.type : 'Error',
+          exceptionMessage: exception instanceof Error ? exception.message : String(exception),
+          details: exception instanceof AppError ? exception.details : undefined,
           responseBody,
         },
       });
@@ -119,11 +113,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     }
   }
 
-  private handleNonAppError(
-    exception: unknown,
-    request: FastifyRequest,
-    response: FastifyReply,
-  ) {
+  private handleNonAppError(exception: unknown, request: FastifyRequest, response: FastifyReply) {
     const status = this.getStatus(exception);
     const message = this.getMessage(exception);
 
@@ -149,9 +139,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       const exceptionResponse = exception.getResponse();
       return typeof exceptionResponse === 'string'
         ? exceptionResponse
-        : ((exceptionResponse as Record<string, unknown>).message as
-            | string
-            | undefined) || 'Error';
+        : ((exceptionResponse as Record<string, unknown>).message as string | undefined) || 'Error';
     }
     if (exception instanceof Error) {
       return exception.message || 'Internal server error';

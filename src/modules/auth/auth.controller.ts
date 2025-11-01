@@ -1,11 +1,4 @@
-import {
-  Body,
-  Controller,
-  Inject,
-  Injectable,
-  Post,
-  Version,
-} from '@nestjs/common';
+import { Body, Controller, Inject, Injectable, Post, Version } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -16,30 +9,25 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
-import {
-  AuthLoginSessionControllerParams,
-  AuthLoginSessionControllerResponse,
+import { AuthLoginSessionControllerRequestDto } from '@modules/auth/application/dtos/LoginSessionRequest.dto';
+import { AuthLoginSessionControllerResponseDto } from '@modules/auth/application/dtos/LoginSessionResponse.dto';
+import type {
+  AuthLoginSessionControllerInterface,
+  AuthLoginSessionServiceInterface,
 } from '@modules/auth/auth.interface';
 import {
-  AuthLoginSessionResponseDto,
+  AuthBadRequestErrorValidationRequestDto,
   AuthLoginSessionServiceErrorInvalidCredentialsDto,
   AuthLoginSessionServiceErrorNotFoundDto,
-} from '@modules/auth/services/login-session/auth.login-session.dto';
-import type { AuthLoginSessionServiceInterface } from '@modules/auth/services/login-session/auth.login-session.interface';
-import { AUTH_LOGIN_SESSION_SERVICE_PROVIDE } from '@modules/auth/services/login-session/auth.login-session.interface';
-import type { LogProviderInterface } from '@modules/shared/infrastructure/providers/log/log.interface';
-import { LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/log.interface';
-
-import {
-  AuthBadRequestErrorValidationRequestDto,
   AuthLoginSessionServiceInternalServerErrorDto,
-} from './auth.dtos';
+} from '@modules/auth/domain/exceptions';
+
+import { AUTH_LOGIN_SESSION_SERVICE_PROVIDE } from './infrastructure/auth.provider';
 
 @Injectable()
 @Controller('/auth')
-export class AuthController {
+export class AuthController implements AuthLoginSessionControllerInterface {
   constructor(
-    @Inject(LOG_PROVIDER) private readonly logProvider: LogProviderInterface,
     @Inject(AUTH_LOGIN_SESSION_SERVICE_PROVIDE)
     private readonly authLoginSessionServiceProvider: AuthLoginSessionServiceInterface,
   ) {}
@@ -52,7 +40,7 @@ export class AuthController {
       Esta rota realiza a autenticação do usuário e retorna os tokens de acesso e atualização.
     `,
   })
-  @ApiOkResponse({ type: AuthLoginSessionResponseDto })
+  @ApiOkResponse({ type: AuthLoginSessionControllerResponseDto })
   @ApiNotFoundResponse({
     type: AuthLoginSessionServiceErrorNotFoundDto,
   })
@@ -67,9 +55,8 @@ export class AuthController {
   })
   @ApiBearerAuth()
   async loginSession(
-    @Body() params: AuthLoginSessionControllerParams,
-  ): Promise<AuthLoginSessionControllerResponse> {
-    this.logProvider.info('AuthController');
+    @Body() params: AuthLoginSessionControllerRequestDto,
+  ): Promise<AuthLoginSessionControllerResponseDto> {
     return this.authLoginSessionServiceProvider.execute(params);
   }
 }

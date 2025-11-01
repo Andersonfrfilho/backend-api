@@ -1,46 +1,15 @@
-import { faker } from '@faker-js/faker';
 import { HttpStatus } from '@nestjs/common';
-import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsStrongPassword } from 'class-validator';
+import { ApiExtraModels, ApiProperty } from '@nestjs/swagger';
 
-export class AuthLoginSessionParamsDto {
-  @ApiProperty({
-    description: 'The email of the user',
-    example: faker.internet.email(),
-  })
-  @IsEmail()
-  email: string;
+import {
+  BadRequestErrorValidationRequestDto,
+  InternalServerErrorDto,
+} from '@modules/error/dtos/errors.dto';
 
-  @ApiProperty({
-    description: 'The password of the user',
-    example: faker.internet.password(),
-  })
-  @IsStrongPassword()
-  password: string;
-}
-
-export class AuthLoginTokenParamsDto {
-  @ApiProperty({
-    description: 'The refresh token of the user',
-    example: faker.internet.jwt(),
-  })
-  @IsStrongPassword()
-  refreshToken: string;
-}
-
-export class AuthLoginSessionResponseDto {
-  @ApiProperty({
-    description: 'The access token of the user',
-    example: faker.internet.jwt(),
-  })
-  accessToken: string;
-
-  @ApiProperty({
-    description: 'The refresh token of the user',
-    example: faker.internet.jwt(),
-  })
-  refreshToken: string;
-}
+@ApiExtraModels(BadRequestErrorValidationRequestDto)
+export class AuthBadRequestErrorValidationRequestDto extends BadRequestErrorValidationRequestDto {}
+@ApiExtraModels(InternalServerErrorDto)
+export class AuthLoginSessionServiceInternalServerErrorDto extends InternalServerErrorDto {}
 
 export class AuthLoginSessionServiceErrorNotFoundDto {
   @ApiProperty({
@@ -93,7 +62,7 @@ export const ERRORS_CODE_AUTH_LOGIN = {
 
 export const ERRORS_AUTH_LOGIN_SESSION = {
   MISSING_CREDENTIALS: {
-    statusCode: 400,
+    statusCode: HttpStatus.BAD_REQUEST,
     message: 'Missing credentials',
     errorCode: ERRORS_CODE_AUTH_LOGIN.MISSING_CREDENTIALS,
   },

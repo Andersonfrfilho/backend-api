@@ -1,11 +1,14 @@
-import { ApiExtraModels } from '@nestjs/swagger';
+import { AuthLoginSessionControllerRequestDto } from '@modules/auth/application/dtos/LoginSessionRequest.dto';
+import { AuthLoginSessionControllerResponseDto } from '@modules/auth/application/dtos/LoginSessionResponse.dto';
 
-import {
-  AuthLoginSessionParamsDto,
-  AuthLoginSessionResponseDto,
-} from '@modules/auth/services/login-session/auth.login-session.dto';
+export interface AuthLoginSessionControllerInterface {
+  loginSession(
+    params: AuthLoginSessionControllerRequestDto,
+  ): Promise<AuthLoginSessionControllerResponseDto>;
+}
 
-@ApiExtraModels(AuthLoginSessionParamsDto)
-export class AuthLoginSessionControllerParams extends AuthLoginSessionParamsDto {}
-@ApiExtraModels(AuthLoginSessionResponseDto)
-export class AuthLoginSessionControllerResponse extends AuthLoginSessionResponseDto {}
+export interface AuthLoginSessionServiceInterface {
+  execute(
+    params: AuthLoginSessionControllerRequestDto,
+  ): Promise<AuthLoginSessionControllerResponseDto>;
+}

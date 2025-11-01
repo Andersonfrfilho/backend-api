@@ -1,10 +1,7 @@
 import { AppError, ErrorType } from '@modules/error/domain/AppError';
 
 export class AppErrorFactory {
-  static validation(
-    message: string,
-    details?: Record<string, unknown>,
-  ): AppError {
+  static validation(message: string, details?: Record<string, unknown>): AppError {
     return new AppError({
       type: ErrorType.VALIDATION,
       message,
@@ -29,10 +26,7 @@ export class AppErrorFactory {
     });
   }
 
-  static notFound(
-    message: string,
-    details?: Record<string, unknown>,
-  ): AppError {
+  static notFound(message: string, details?: Record<string, unknown>): AppError {
     return new AppError({
       type: ErrorType.NOT_FOUND,
       message,
@@ -41,10 +35,7 @@ export class AppErrorFactory {
     });
   }
 
-  static conflict(
-    message: string,
-    details?: Record<string, unknown>,
-  ): AppError {
+  static conflict(message: string, details?: Record<string, unknown>): AppError {
     return new AppError({
       type: ErrorType.CONFLICT,
       message,
@@ -53,10 +44,7 @@ export class AppErrorFactory {
     });
   }
 
-  static businessLogic(
-    message: string,
-    details?: Record<string, unknown>,
-  ): AppError {
+  static businessLogic(message: string, details?: Record<string, unknown>): AppError {
     return new AppError({
       type: ErrorType.BUSINESS_LOGIC,
       message,
@@ -78,10 +66,7 @@ export class AppErrorFactory {
       ? errors.map((error: any) => ({
           field: error.property,
           constraints: error.constraints,
-          children:
-            error.children && error.children.length > 0
-              ? error.children
-              : undefined,
+          children: error.children && error.children.length > 0 ? error.children : undefined,
         }))
       : [];
 
