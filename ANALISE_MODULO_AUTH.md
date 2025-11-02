@@ -44,6 +44,7 @@ src/modules/auth/
 ## ✅ PONTOS POSITIVOS
 
 ### 1. **Separação em 3 Camadas (Domain → Application → Infrastructure)**
+
 ```
 ✅ Domain: auth.login-session.interface.ts (puro)
 ✅ Application: use-cases/ e dtos/
@@ -51,33 +52,39 @@ src/modules/auth/
 ```
 
 ### 2. **Modularização Correta**
+
 - `auth.use-cases.module.ts` → Exporta use cases
 - `auth.service.module.ts` → Exporta service
 - `auth.module.ts` → Orquestra tudo
 
 ### 3. **Injeção de Dependência Correta**
+
 ```typescript
 // Providers bem definidos
-AUTH_LOGIN_SESSION_USE_CASE_PROVIDE
-AUTH_LOGIN_SESSION_SERVICE_PROVIDE
+AUTH_LOGIN_SESSION_USE_CASE_PROVIDE;
+AUTH_LOGIN_SESSION_SERVICE_PROVIDE;
 ```
 
 ### 4. **UseCase com Responsabilidade Única**
+
 - `LoginSessionUseCase.ts` → Só faz login
 - Retorna DTO puro sem logs
 
 ### 5. **Service Orquestrando UseCase**
+
 ```typescript
 // Service chama UseCase
 AuthLoginSessionService → AuthLoginSessionUseCase
 ```
 
 ### 6. **Controller Implementando Interface**
+
 ```typescript
 export class AuthController implements AuthLoginSessionControllerInterface
 ```
 
 ### 7. **DTOs com Validação no Local Correto**
+
 ```typescript
 // shared/dtos tem @IsEmail, @IsStrongPassword (validação)
 // application/dtos estendem os shared (Swagger)
@@ -92,6 +99,7 @@ export class AuthController implements AuthLoginSessionControllerInterface
 **Localização**: `application/dtos/LoginSessionRequest.dto.ts` e `application/dtos/LoginSessionResponse.dto.ts`
 
 **Situação Atual**:
+
 ```
 shared/dtos/
 ├── LoginSessionRequest.dto.ts      (DTO real com @IsEmail, @IsStrongPassword)
@@ -103,6 +111,7 @@ application/dtos/
 ```
 
 **Problema**:
+
 - 3 tipos diferentes criados desnecessariamente
 - `AuthLoginSessionServiceRequestDto` (interface)
 - `AuthLoginSessionUseCaseParamsDto` (interface)
@@ -117,13 +126,14 @@ application/dtos/
 **Localização**: `/shared/dtos/LoginSessionResponse.dto.ts`
 
 **Situação Atual**:
+
 ```typescript
 // shared/dtos/LoginSessionResponse.dto.ts
 export class AuthLoginSessionResponseDto { ... }
 
 // Também define aqui (desnecessário):
 @ApiExtraModels(AuthLoginSessionResponseDto)
-export class AuthLoginSessionControllerResponseDto 
+export class AuthLoginSessionControllerResponseDto
   extends AuthLoginSessionResponseDto {}
 ```
 
@@ -136,6 +146,7 @@ export class AuthLoginSessionControllerResponseDto
 **Localização**: `application/use-cases/`
 
 **Situação Atual**:
+
 ```
 use-cases/
 ├── LoginSessionUseCase.ts          ❌ PascalCase
@@ -157,13 +168,15 @@ Outros arquivos:
 **Localização**: Raiz do módulo
 
 **Situação Atual**:
+
 ```
 auth/
 ├── auth.controller.test.ts         ⚠️ Não vinculado a nada
 └── auth.service.test.ts            ⚠️ Não vinculado a nada
 ```
 
-**Problema**: 
+**Problema**:
+
 - Não são mais usados
 - Ficam na raiz confundindo estrutura
 - LoginSessionUseCase.spec.ts existe, esses não
@@ -177,6 +190,7 @@ auth/
 **Localização**: Raiz do `auth/`
 
 **Impacto**: Novos desenvolvedores não entendem:
+
 - Como usar o módulo
 - Fluxo de dados
 - Responsabilidades de cada camada
@@ -188,6 +202,7 @@ auth/
 **Localização**: `infrastructure/service/auth.login-session.service.ts`
 
 **Situação Atual**:
+
 ```typescript
 export class AuthLoginSessionService implements AuthLoginSessionServiceInterface {
   @Inject(LOG_PROVIDER) private readonly loggerProvider: LogProviderInterface;
@@ -195,11 +210,13 @@ export class AuthLoginSessionService implements AuthLoginSessionServiceInterface
   private readonly authLoginSessionUseCase: AuthLoginSessionUseCaseInterface;
 ```
 
-**Problema**: 
-- Service não tem `@Injectable()` 
+**Problema**:
+
+- Service não tem `@Injectable()`
 - Usa `@Inject` em properties (property injection - NÃO é considerado best practice)
 
-**Recomendação**: 
+**Recomendação**:
+
 ```typescript
 @Injectable()
 export class AuthLoginSessionService {
@@ -217,6 +234,7 @@ export class AuthLoginSessionService {
 **Localização**: `auth.login-session.service.ts`
 
 **Situação Atual**:
+
 ```typescript
 import { LOG_PROVIDER } from '@app/modules/shared/infrastructure/providers/log/log.interface';
 ```
@@ -232,6 +250,7 @@ import { LOG_PROVIDER } from '@app/modules/shared/infrastructure/providers/log/l
 **Localização**: `auth.interface.ts`
 
 **Situação Atual**:
+
 ```typescript
 export interface AuthLoginSessionControllerInterface {
   loginSession(...): Promise<...>;
@@ -242,7 +261,8 @@ export interface AuthLoginSessionServiceInterface {
 }
 ```
 
-**Problema**: 
+**Problema**:
+
 - Controller com interface é pouco comum em NestJS
 - Só service precisaria de interface
 
@@ -252,16 +272,16 @@ export interface AuthLoginSessionServiceInterface {
 
 ## 📋 RESUMO DE ALTERAÇÕES NECESSÁRIAS
 
-| # | Problema | Severidade | Tipo | Arquivo | Solução |
-|---|----------|-----------|------|---------|---------|
-| 1 | Duplicação de DTOs em `application/` | 🔴 Alta | Refator | `application/dtos/*.ts` | Deletar ou usar diretamente do `shared/` |
-| 2 | Classe Controller em `shared/dtos` | 🔴 Alta | Move | `shared/dtos/LoginSessionResponse.dto.ts` | Mover para `application/dtos/` |
-| 3 | Nome inconsistente de arquivo UseCase | 🟡 Média | Rename | `LoginSessionUseCase.ts` | Renomear para `auth-login-session.use-case.ts` |
-| 4 | Arquivos órfãos de testes | 🟡 Média | Delete | `auth.controller.test.ts`, `auth.service.test.ts` | Deletar |
-| 5 | Falta README | 🟡 Média | Add | `auth/README.md` | Criar documentação |
-| 6 | Service sem @Injectable | 🟡 Média | Add | `auth.login-session.service.ts` | Adicionar decorator e use constructor injection |
-| 7 | Importações inconsistentes | 🟡 Média | Fix | Vários arquivos | Padronizar para `@modules` |
-| 8 | Interface Controller desnecessária | 🟡 Baixa | Refator | `auth.interface.ts` | Remover ou mover para domain |
+| #   | Problema                              | Severidade | Tipo    | Arquivo                                           | Solução                                         |
+| --- | ------------------------------------- | ---------- | ------- | ------------------------------------------------- | ----------------------------------------------- |
+| 1   | Duplicação de DTOs em `application/`  | 🔴 Alta    | Refator | `application/dtos/*.ts`                           | Deletar ou usar diretamente do `shared/`        |
+| 2   | Classe Controller em `shared/dtos`    | 🔴 Alta    | Move    | `shared/dtos/LoginSessionResponse.dto.ts`         | Mover para `application/dtos/`                  |
+| 3   | Nome inconsistente de arquivo UseCase | 🟡 Média   | Rename  | `LoginSessionUseCase.ts`                          | Renomear para `auth-login-session.use-case.ts`  |
+| 4   | Arquivos órfãos de testes             | 🟡 Média   | Delete  | `auth.controller.test.ts`, `auth.service.test.ts` | Deletar                                         |
+| 5   | Falta README                          | 🟡 Média   | Add     | `auth/README.md`                                  | Criar documentação                              |
+| 6   | Service sem @Injectable               | 🟡 Média   | Add     | `auth.login-session.service.ts`                   | Adicionar decorator e use constructor injection |
+| 7   | Importações inconsistentes            | 🟡 Média   | Fix     | Vários arquivos                                   | Padronizar para `@modules`                      |
+| 8   | Interface Controller desnecessária    | 🟡 Baixa   | Refator | `auth.interface.ts`                               | Remover ou mover para domain                    |
 
 ---
 
@@ -310,35 +330,41 @@ src/modules/auth/
 # 🔐 Auth Module
 
 ## Overview
+
 Módulo de autenticação responsável por gerenciar login de usuários.
 
 ## Arquitetura
 
 ### Domain Layer
+
 - `auth.login-session.interface.ts` - Contrato puro (sem dependências)
 - `exceptions.ts` - Exceções de domínio
 
 ### Application Layer
+
 - `use-cases/auth-login-session.use-case.ts` - Lógica de login pura
 - `dtos/` - DTOs para Controller (estendem shared)
 
 ### Infrastructure Layer
+
 - `service/auth-login-session.service.ts` - Orquestração + Logs
 - `repositories/` - Acesso a dados
 
 ### Shared Layer
+
 - `shared/dtos/` - DTOs base com validação
 
 ## Fluxo
+```
 
-```
 Controller
-    ↓ (LoginSessionRequest DTO)
+↓ (LoginSessionRequest DTO)
 Service (Logs + Orquestração)
-    ↓ (LoginSessionParams)
+↓ (LoginSessionParams)
 UseCase (Lógica Pura)
-    ↓ (LoginSessionResponse)
-```
+↓ (LoginSessionResponse)
+
+````
 
 ## Como Usar
 
@@ -351,7 +377,8 @@ constructor(
 
 // Chamar
 const result = await this.authService.execute(params);
-```
+````
+
 ```
 
 ---
@@ -394,3 +421,4 @@ const result = await this.authService.execute(params);
 ---
 
 **Conclusão**: Módulo está **bem estruturado no geral** (80%). Precisa apenas de limpeza e refinamento em alguns pontos.
+```

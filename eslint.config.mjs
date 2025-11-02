@@ -86,6 +86,7 @@ export default tseslint.config(
     rules: {
       'import/order': 'off',
       'import/newline-after-import': 'off',
+      '@typescript-eslint/unbound-method': 'off',
     },
   },
 );

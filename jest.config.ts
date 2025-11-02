@@ -4,24 +4,18 @@ const config: Config.InitialOptions = {
   moduleFileExtensions: ['js', 'json', 'ts'],
   rootDir: '.',
   testEnvironment: 'node',
-  testRegex: '.*\\.(spec|test)\\.ts$',
+  testRegex: String.raw`.*\.(spec|test)\.ts$`,
   transform: {
     '^.+\\.(t|j)s$': 'ts-jest',
   },
   transformIgnorePatterns: [
-    '<rootDir>/node_modules/',
+    '<rootDir>/node_modules/(?!(@faker-js))',
     '<rootDir>/dist/',
     '<rootDir>/.history/',
     '<rootDir>/logs/',
     '<rootDir>/coverage/',
   ],
-  testPathIgnorePatterns: [
-    '/node_modules/',
-    '/dist/',
-    '/.history/',
-    '/logs/',
-    '/coverage/',
-  ],
+  testPathIgnorePatterns: ['/node_modules/', '/dist/', '/.history/', '/logs/', '/coverage/'],
   collectCoverageFrom: [
     'src/**/*.(t|j)s',
     '!**/*.d.ts',
@@ -36,14 +30,9 @@ const config: Config.InitialOptions = {
     '!**/*.interface.(ts|js)',
     '!**/*.module.(ts|js)',
     '!**/*.dto.(ts|js)',
+    '!**/*.test.ts', // <-- ⛔️ Exclui arquivos .test.ts antigos
   ],
-  coveragePathIgnorePatterns: [
-    '/node_modules/',
-    '/dist/',
-    '/.history/',
-    '/coverage/',
-    '/logs/',
-  ],
+  coveragePathIgnorePatterns: ['/node_modules/', '/dist/', '/.history/', '/coverage/', '/logs/'],
   coverageDirectory: './coverage',
   collectCoverage: true,
   moduleNameMapper: {
