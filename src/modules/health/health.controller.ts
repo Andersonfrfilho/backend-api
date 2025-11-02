@@ -1,4 +1,4 @@
-import { Controller, Get, Inject, Injectable, Version } from '@nestjs/common';
+import { Controller, Get, Inject, Injectable } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 
 import type { HealthCheckServiceInterface } from './domain/health.get.interface';
@@ -13,7 +13,6 @@ export class HealthController {
     private readonly healthCheckService: HealthCheckServiceInterface,
   ) {}
 
-  @Version('1')
   @Get()
   @ApiOperation({
     summary: 'Verifica a saúde do serviço',

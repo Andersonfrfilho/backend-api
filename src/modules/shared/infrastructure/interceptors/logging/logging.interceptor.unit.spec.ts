@@ -2,10 +2,8 @@ import { CallHandler, ExecutionContext } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { of, throwError } from 'rxjs';
 
-import {
-  LOG_PROVIDER,
-  LogProviderInterface,
-} from '@modules/shared/infrastructure/providers/log/log.interface';
+import type { LogProviderInterface } from '@modules/shared/domain';
+import { LOG_PROVIDER } from '@modules/shared/infrastructure/log.provider';
 import { LoggingInterceptor } from './logging.interceptor';
 
 function createMockRequest(
@@ -232,6 +230,196 @@ describe('LoggingInterceptor - Unit Tests', () => {
           expect(data).toEqual(responseData);
         },
         complete: () => {
+          done();
+        },
+      });
+    });
+  });
+
+  describe('ignore routes functionality', () => {
+    it('should skip logging for ignored health route', (done) => {
+      // Arrange
+      const mockLogProvider = {
+        info: jest.fn(),
+        error: jest.fn(),
+        warn: jest.fn(),
+        debug: jest.fn(),
+      } as unknown as LogProviderInterface;
+
+      const ignoreConfig = {
+        enabled: true,
+        ignoredRoutes: ['/health'],
+      };
+
+      const localInterceptor = new LoggingInterceptor(mockLogProvider, ignoreConfig);
+      const mockRequest = createMockRequest('/health', 'GET');
+      const mockContext = createMockContext(mockRequest);
+      const mockCallHandler = {
+        handle: () => of({ status: 'ok' }),
+      } as unknown as CallHandler;
+
+      // Act
+      localInterceptor.intercept(mockContext, mockCallHandler).subscribe({
+        next: (data) => {
+          // Assert
+          expect(mockLogProvider.info).not.toHaveBeenCalled();
+          expect(data).toEqual({ status: 'ok' });
+          done();
+        },
+      });
+    });
+
+    it('should skip logging for nested ignored routes', (done) => {
+      // Arrange
+      const mockLogProvider = {
+        info: jest.fn(),
+        error: jest.fn(),
+        warn: jest.fn(),
+        debug: jest.fn(),
+      } as unknown as LogProviderInterface;
+
+      const ignoreConfig = {
+        enabled: true,
+        ignoredRoutes: ['/health'],
+      };
+
+      const localInterceptor = new LoggingInterceptor(mockLogProvider, ignoreConfig);
+      const mockRequest = createMockRequest('/health/live', 'GET');
+      const mockContext = createMockContext(mockRequest);
+      const mockCallHandler = {
+        handle: () => of({ status: 'alive' }),
+      } as unknown as CallHandler;
+
+      // Act
+      localInterceptor.intercept(mockContext, mockCallHandler).subscribe({
+        next: (data) => {
+          // Assert
+          expect(mockLogProvider.info).not.toHaveBeenCalled();
+          expect(data).toEqual({ status: 'alive' });
+          done();
+        },
+      });
+    });
+
+    it('should skip logging when config is disabled', (done) => {
+      // Arrange
+      const mockLogProvider = {
+        info: jest.fn(),
+        error: jest.fn(),
+        warn: jest.fn(),
+        debug: jest.fn(),
+      } as unknown as LogProviderInterface;
+
+      const ignoreConfig = {
+        enabled: false,
+        ignoredRoutes: [],
+      };
+
+      const localInterceptor = new LoggingInterceptor(mockLogProvider, ignoreConfig);
+      const mockRequest = createMockRequest('/users', 'GET');
+      const mockContext = createMockContext(mockRequest);
+      const mockCallHandler = {
+        handle: () => of([]),
+      } as unknown as CallHandler;
+
+      // Act
+      localInterceptor.intercept(mockContext, mockCallHandler).subscribe({
+        complete: () => {
+          // Assert
+          expect(mockLogProvider.info).not.toHaveBeenCalled();
+          done();
+        },
+      });
+    });
+
+    it('should log non-ignored routes even with ignore config', (done) => {
+      // Arrange
+      const mockLogProvider = {
+        info: jest.fn(),
+        error: jest.fn(),
+        warn: jest.fn(),
+        debug: jest.fn(),
+      } as unknown as LogProviderInterface;
+
+      const ignoreConfig = {
+        enabled: true,
+        ignoredRoutes: ['/health'],
+      };
+
+      const localInterceptor = new LoggingInterceptor(mockLogProvider, ignoreConfig);
+      const mockRequest = createMockRequest('/api/users', 'GET');
+      const mockContext = createMockContext(mockRequest);
+      const mockCallHandler = {
+        handle: () => of([]),
+      } as unknown as CallHandler;
+
+      // Act
+      localInterceptor.intercept(mockContext, mockCallHandler).subscribe({
+        complete: () => {
+          // Assert
+          expect(mockLogProvider.info).toHaveBeenCalled();
+          done();
+        },
+      });
+    });
+
+    it('should support regex patterns in ignored routes', (done) => {
+      // Arrange
+      const mockLogProvider = {
+        info: jest.fn(),
+        error: jest.fn(),
+        warn: jest.fn(),
+        debug: jest.fn(),
+      } as unknown as LogProviderInterface;
+
+      const ignoreConfig = {
+        enabled: true,
+        ignoredRoutes: [/^\/api\/health/],
+      };
+
+      const localInterceptor = new LoggingInterceptor(mockLogProvider, ignoreConfig);
+      const mockRequest = createMockRequest('/api/health/status', 'GET');
+      const mockContext = createMockContext(mockRequest);
+      const mockCallHandler = {
+        handle: () => of({ status: 'up' }),
+      } as unknown as CallHandler;
+
+      // Act
+      localInterceptor.intercept(mockContext, mockCallHandler).subscribe({
+        next: () => {
+          // Assert
+          expect(mockLogProvider.info).not.toHaveBeenCalled();
+          done();
+        },
+      });
+    });
+
+    it('should support multiple ignore routes', (done) => {
+      // Arrange
+      const mockLogProvider = {
+        info: jest.fn(),
+        error: jest.fn(),
+        warn: jest.fn(),
+        debug: jest.fn(),
+      } as unknown as LogProviderInterface;
+
+      const ignoreConfig = {
+        enabled: true,
+        ignoredRoutes: ['/health', '/metrics', '/docs'],
+      };
+
+      const localInterceptor = new LoggingInterceptor(mockLogProvider, ignoreConfig);
+      const mockRequest1 = createMockRequest('/metrics', 'GET');
+      const mockContext1 = createMockContext(mockRequest1);
+      const mockCallHandler = {
+        handle: () => of({}),
+      } as unknown as CallHandler;
+
+      // Act
+      localInterceptor.intercept(mockContext1, mockCallHandler).subscribe({
+        complete: () => {
+          // Assert
+          expect(mockLogProvider.info).not.toHaveBeenCalled();
           done();
         },
       });

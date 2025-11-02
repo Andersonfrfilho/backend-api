@@ -1,15 +1,44 @@
-import { CallHandler, ExecutionContext, Inject, Injectable, NestInterceptor } from '@nestjs/common';
+import {
+  CallHandler,
+  ExecutionContext,
+  Inject,
+  Injectable,
+  NestInterceptor,
+  Optional,
+} from '@nestjs/common';
 import { Observable } from 'rxjs';
 
 import type { LogProviderInterface } from '@modules/shared/domain';
-import { LOG_PROVIDER } from '@modules/shared/infrastructure/log.provider';
+import { LOG_PROVIDER, LOGGING_IGNORE_CONFIG } from '@modules/shared/infrastructure/log.provider';
+
+import type { LoggingIgnoreConfig } from './logging.config';
+import { DEFAULT_LOGGING_IGNORE_CONFIG, shouldIgnoreRoute } from './logging.config';
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
-  constructor(@Inject(LOG_PROVIDER) private readonly logProvider: LogProviderInterface) {}
+  private readonly loggingConfig: LoggingIgnoreConfig;
+
+  constructor(
+    @Inject(LOG_PROVIDER) private readonly logProvider: LogProviderInterface,
+    @Optional() @Inject(LOGGING_IGNORE_CONFIG) loggingConfig?: LoggingIgnoreConfig,
+  ) {
+    this.loggingConfig = loggingConfig || DEFAULT_LOGGING_IGNORE_CONFIG;
+  }
+
+  private shouldSkipLogging(path: string): boolean {
+    if (!this.loggingConfig.enabled) {
+      return false;
+    }
+
+    return shouldIgnoreRoute(path, this.loggingConfig.ignoredRoutes);
+  }
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const request = context.switchToHttp().getRequest<Request>();
+
+    if (this.shouldSkipLogging(request.url)) {
+      return next.handle();
+    }
 
     return new Observable((subscriber) => {
       const header = {
