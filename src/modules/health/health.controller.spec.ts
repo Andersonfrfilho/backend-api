@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from '@jest/globals';
 import { Test, TestingModule } from '@nestjs/testing';
 import { HealthController } from './health.controller';
 import { HEALTH_CHECK_SERVICE_PROVIDER } from './infrastructure/health.provider';
-import { HealthCheckServiceInterface } from './domain/health.get.interface';
+import type { HealthCheckServiceInterface } from './domain/health.get.interface';
 
 describe('HealthController', () => {
   let controller: HealthController;
@@ -17,7 +17,7 @@ describe('HealthController', () => {
       }),
     } as unknown as HealthCheckServiceInterface;
 
-    const module: TestingModule = await Test.createTestingModule({
+    const moduleRef: TestingModule = await Test.createTestingModule({
       controllers: [HealthController],
       providers: [
         {
@@ -27,8 +27,8 @@ describe('HealthController', () => {
       ],
     }).compile();
 
-    controller = module.get<HealthController>(HealthController);
-    service = module.get(HEALTH_CHECK_SERVICE_PROVIDER);
+    controller = moduleRef.get<HealthController>(HealthController);
+    service = moduleRef.get<HealthCheckServiceInterface>(HEALTH_CHECK_SERVICE_PROVIDER);
   });
 
   describe('check', () => {

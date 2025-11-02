@@ -1,22 +1,35 @@
 import { describe, it, expect, beforeEach } from '@jest/globals';
+import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
+import { AUTH_LOGIN_SESSION_SERVICE_PROVIDE } from '@modules/auth/infrastructure/auth.provider';
 import { AuthLoginSessionRequestDto } from '@modules/auth/shared/dtos';
 import type { AuthLoginSessionServiceInterface } from '@modules/auth/domain/auth.login-session.interface';
 
 describe('AuthController', () => {
   let controller: AuthController;
-  let mockService: AuthLoginSessionServiceInterface;
+  let service: AuthLoginSessionServiceInterface;
 
-  beforeEach(() => {
-    // Mock do Service sem usar TestingModule
-    mockService = {
+  beforeEach(async () => {
+    // Mock do Service
+    const mockService = {
       execute: jest.fn().mockResolvedValue({
         accessToken: 'mocked-access-token',
         refreshToken: 'mocked-refresh-token',
       }),
-    } as any;
+    } as unknown as AuthLoginSessionServiceInterface;
 
-    controller = new AuthController(mockService);
+    const moduleRef: TestingModule = await Test.createTestingModule({
+      controllers: [AuthController],
+      providers: [
+        {
+          provide: AUTH_LOGIN_SESSION_SERVICE_PROVIDE,
+          useValue: mockService,
+        },
+      ],
+    }).compile();
+
+    controller = moduleRef.get<AuthController>(AuthController);
+    service = moduleRef.get<AuthLoginSessionServiceInterface>(AUTH_LOGIN_SESSION_SERVICE_PROVIDE);
   });
 
   describe('loginSession', () => {
@@ -35,7 +48,8 @@ describe('AuthController', () => {
       await controller.loginSession(input);
 
       // Assert
-      expect(mockService.execute).toHaveBeenCalledWith(input);
+      const mockExecute = service.execute as jest.Mock;
+      expect(mockExecute).toHaveBeenCalledWith(input);
     });
 
     it('should return login session response', async () => {
@@ -76,7 +90,8 @@ describe('AuthController', () => {
         password: 'Test@1234',
       };
       const error = new Error('Service Error');
-      (mockService.execute as jest.Mock).mockRejectedValueOnce(error);
+      const mockExecute = service.execute as jest.Mock;
+      mockExecute.mockRejectedValueOnce(error);
 
       // Act & Assert
       await expect(controller.loginSession(input)).rejects.toThrow(error);
@@ -100,7 +115,8 @@ describe('AuthController', () => {
       // Assert
       expect(result1).toBeDefined();
       expect(result2).toBeDefined();
-      expect(mockService.execute).toHaveBeenCalledTimes(2);
+      const mockExecute = service.execute as jest.Mock;
+      expect(mockExecute).toHaveBeenCalledTimes(2);
     });
 
     it('should return tokens with correct structure', async () => {
