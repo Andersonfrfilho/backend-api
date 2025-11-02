@@ -45,9 +45,10 @@ export const obfuscatorInfo = ({
           } else if (typeof value === 'number') {
             result[key] = pattern(value);
           } else {
-            result[key] = pattern(String(value));
+            const stringValue = typeof value === 'string' ? value : JSON.stringify(value);
+            result[key] = pattern(stringValue);
           }
-        } catch (err) {
+        } catch {
           result[key] = '***';
         }
       } else {

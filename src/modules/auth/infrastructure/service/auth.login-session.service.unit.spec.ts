@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it } from '@jest/globals';
 import type { AuthLoginSessionUseCaseInterface } from '@modules/auth/domain/auth.login-session.interface';
 import { AUTH_LOGIN_SESSION_USE_CASE_PROVIDE } from '@modules/auth/infrastructure/auth.provider';
 import { AuthLoginSessionRequestDto } from '@modules/auth/shared/dtos';
-import { LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/log.interface';
+import { LOG_PROVIDER } from '@modules/shared/infrastructure/log.provider';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthLoginSessionService } from './auth.login-session.service';
 
@@ -42,8 +42,8 @@ describe('AuthLoginSessionService - Unit Tests', () => {
     }).compile();
 
     service = module.get<AuthLoginSessionService>(AuthLoginSessionService);
-    useCase = module.get(AUTH_LOGIN_SESSION_USE_CASE_PROVIDE);
-    logProvider = module.get(LOG_PROVIDER);
+    useCase = module.get(AUTH_LOGIN_SESSION_USE_CASE_PROVIDE as never);
+    logProvider = module.get(LOG_PROVIDER as never);
   });
 
   afterEach(() => {

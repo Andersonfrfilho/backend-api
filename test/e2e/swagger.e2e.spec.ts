@@ -1,11 +1,11 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { SwaggerModule } from '@nestjs/swagger';
+import { Test, TestingModule } from '@nestjs/testing';
 
-import { AppModule } from '../../src/app.module';
-import { LOG_PROVIDER } from '@modules/shared/infrastructure/log.provider';
 import { swaggerConfig } from '@config/swagger.config';
 import { docsFactory } from '@modules/shared/infrastructure/interceptors/docs';
+import { LOG_PROVIDER } from '@modules/shared/infrastructure/log.provider';
+import { AppModule } from '../../src/app.module';
 
 describe('Swagger Documentation (e2e)', () => {
   let app: NestFastifyApplication;
@@ -25,9 +25,7 @@ describe('Swagger Documentation (e2e)', () => {
       .useValue(mockLogProvider)
       .compile();
 
-    app = moduleFixture.createNestApplication<NestFastifyApplication>(
-      new FastifyAdapter(),
-    );
+    app = moduleFixture.createNestApplication<NestFastifyApplication>(new FastifyAdapter());
     await app.init();
 
     // Initialize Swagger routes for testing

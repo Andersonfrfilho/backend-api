@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
+import type { LogProviderInterface } from '@modules/shared/domain';
 import { WinstonLogProvider } from './implementations/winston/winston.log.provider';
-import { WINSTON_LOG_PROVIDER } from './implementations/winston/winston.log.provider.interface';
-import { LOG_PROVIDER, LogProviderInterface } from './log.interface';
+import { LOG_PROVIDER, WINSTON_LOG_PROVIDER } from '@modules/shared/infrastructure/log.provider';
 import { LogProvider } from './log.provider';
 
 describe('LogProvider - Unit Tests', () => {
@@ -32,8 +32,8 @@ describe('LogProvider - Unit Tests', () => {
       ],
     }).compile();
 
-    provider = moduleRef.get<LogProviderInterface>(LOG_PROVIDER);
-    winstonLogProvider = moduleRef.get<WinstonLogProvider>(WINSTON_LOG_PROVIDER);
+    provider = moduleRef.get<LogProviderInterface>(LOG_PROVIDER as never);
+    winstonLogProvider = moduleRef.get<WinstonLogProvider>(WINSTON_LOG_PROVIDER as never);
   });
 
   afterEach(() => {

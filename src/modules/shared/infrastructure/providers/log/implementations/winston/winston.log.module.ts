@@ -18,7 +18,9 @@ import { WinstonLogProvider } from './winston.log.provider';
             winston.format.ms(),
             winston.format((info) => {
               if (info.requestId) {
-                info.message = `[${info.requestId}] ${info.message || ''}`;
+                const requestId = JSON.stringify(info.requestId);
+                const message = JSON.stringify(info.message || '');
+                info.message = `[${requestId}] ${message}`;
               }
               return info;
             })(),

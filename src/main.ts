@@ -3,10 +3,7 @@ import { join } from 'node:path';
 
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import {
-  FastifyAdapter,
-  NestFastifyApplication,
-} from '@nestjs/platform-fastify';
+import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { SwaggerModule } from '@nestjs/swagger';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import { register as tsConfigPathsRegister } from 'tsconfig-paths';
@@ -31,10 +28,7 @@ async function bootstrap() {
     bodyLimit: 1048576,
   });
 
-  const app = await NestFactory.create<NestFastifyApplication>(
-    AppModule,
-    instanceFastify,
-  );
+  const app = await NestFactory.create<NestFastifyApplication>(AppModule, instanceFastify);
 
   app.enableVersioning({
     type: VersioningType.URI,
@@ -49,8 +43,7 @@ async function bootstrap() {
       transformOptions: {
         enableImplicitConversion: true,
       },
-      exceptionFactory: (errors) =>
-        AppErrorFactory.fromValidationErrors(errors),
+      exceptionFactory: (errors) => AppErrorFactory.fromValidationErrors(errors),
     }),
   );
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));

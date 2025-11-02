@@ -21,9 +21,7 @@ export const DEFAULT_REDOC_THEME: ReDocThemeConfig = {
   logoAltText: 'Backend API Template Service Logo',
 };
 
-export function generateReDocTheme(
-  customTheme?: Partial<ReDocThemeConfig>,
-): string {
+export function generateReDocTheme(customTheme?: Partial<ReDocThemeConfig>): string {
   const theme = { ...DEFAULT_REDOC_THEME, ...customTheme };
 
   return JSON.stringify({
