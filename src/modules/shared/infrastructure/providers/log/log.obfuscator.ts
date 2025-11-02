@@ -1,7 +1,5 @@
-export type ObfuscatorInfoItemsParams = {
-  field: string;
-  pattern: (param: string | number) => string;
-};
+import { ObfuscatorInfoItemsParams } from './log.interface';
+
 export const OBFUSCATOR_FIELDS: Array<ObfuscatorInfoItemsParams> = [
   {
     field: 'password',

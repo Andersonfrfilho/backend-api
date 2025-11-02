@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 
-import { LoggingModule } from '@modules/shared/infrastructure/interceptors/logging/logging.module';
+import { SharedInfrastructureLoggingModule } from '@modules/shared/infrastructure/interceptors/logging/logging.module';
 
 @Module({
-  imports: [LoggingModule],
-  exports: [LoggingModule],
+  imports: [SharedInfrastructureLoggingModule],
+  exports: [SharedInfrastructureLoggingModule],
 })
 export class SharedInfrastructureInterceptorsModule {}

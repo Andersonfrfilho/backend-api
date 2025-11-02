@@ -11,9 +11,9 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 
 import { AppError } from '@modules/error';
 import { APP_ERROR_TYPE } from '@modules/error/infrastructure/filters/error-filter.constant';
+import type { LogProviderInterface } from '@modules/shared/domain';
 import { requestContext } from '@modules/shared/infrastructure/context/request-context';
-import type { LogProviderInterface } from '@modules/shared/infrastructure/providers/log/log.interface';
-import { LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/log.interface';
+import { LOG_PROVIDER } from '@modules/shared/infrastructure/log.provider';
 
 @Catch()
 @Injectable()

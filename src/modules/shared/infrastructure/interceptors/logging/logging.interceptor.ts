@@ -1,20 +1,12 @@
-import {
-  CallHandler,
-  ExecutionContext,
-  Inject,
-  Injectable,
-  NestInterceptor,
-} from '@nestjs/common';
+import { CallHandler, ExecutionContext, Inject, Injectable, NestInterceptor } from '@nestjs/common';
 import { Observable } from 'rxjs';
 
-import type { LogProviderInterface } from '@modules/shared/infrastructure/providers/log/log.interface';
-import { LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/log.interface';
+import type { LogProviderInterface } from '@modules/shared/domain';
+import { LOG_PROVIDER } from '@modules/shared/infrastructure/log.provider';
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
-  constructor(
-    @Inject(LOG_PROVIDER) private readonly logProvider: LogProviderInterface,
-  ) {}
+  constructor(@Inject(LOG_PROVIDER) private readonly logProvider: LogProviderInterface) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const request = context.switchToHttp().getRequest<Request>();

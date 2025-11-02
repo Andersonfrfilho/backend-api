@@ -1,11 +1,10 @@
 import { Inject } from '@nestjs/common';
 import { WINSTON_MODULE_NEST_PROVIDER, WinstonLogger } from 'nest-winston';
 
+import { LOG_LEVEL, LogBaseParams, LogProviderInterface } from '@app/modules/shared/domain';
 import { requestContext } from '@modules/shared/infrastructure/context/request-context';
 
-import type { LogsParams, WinstonLogProviderInterface } from './winston.log.provider.interface';
-
-export class WinstonLogProvider implements WinstonLogProviderInterface {
+export class WinstonLogProvider implements LogProviderInterface {
   constructor(
     @Inject(WINSTON_MODULE_NEST_PROVIDER)
     private readonly loggerWinston: WinstonLogger,
@@ -19,30 +18,30 @@ export class WinstonLogProvider implements WinstonLogProviderInterface {
     return '';
   }
 
-  debug(params?: LogsParams) {
+  debug(params?: LogBaseParams) {
     this.loggerWinston.log({
       ...params,
-      level: 'debug',
+      level: LOG_LEVEL.DEBUG,
       requestId: this.getRequestId(),
     });
   }
 
-  info(params?: LogsParams) {
+  info(params?: LogBaseParams) {
     this.loggerWinston.log({
       ...params,
-      level: 'info',
+      level: LOG_LEVEL.INFO,
       requestId: this.getRequestId(),
     });
   }
 
-  error(params?: LogsParams) {
+  error(params?: LogBaseParams) {
     this.loggerWinston.error({
       ...params,
       requestId: this.getRequestId(),
     });
   }
 
-  warn(params?: LogsParams) {
+  warn(params?: LogBaseParams) {
     this.loggerWinston.warn({
       ...params,
       requestId: this.getRequestId(),

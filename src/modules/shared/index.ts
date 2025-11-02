@@ -1,4 +1,4 @@
-export * from '@modules/shared/domain/constants/commons.constant';
-export * from '@modules/shared/domain/enums/commons.enum';
-export * from '@modules/shared/domain/interfaces/commons.interface';
+export * from '@modules/shared/domain/constants';
+export * from '@modules/shared/domain/enums';
+export * from '@modules/shared/domain/interfaces';
 export { SharedModule } from './shared.module';

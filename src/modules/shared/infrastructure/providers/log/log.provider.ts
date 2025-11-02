@@ -1,13 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 
+import { LOG_LEVEL, LogBaseParams, LogProviderInterface } from '@app/modules/shared/domain';
 import { WinstonLogProvider } from '@modules/shared/infrastructure/providers/log/implementations/winston/winston.log.provider';
-import { WINSTON_LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/implementations/winston/winston.log.provider.interface';
-import type {
-  LogBaseParams,
-  LogProviderInterface,
-  ObfuscatorInfoParams,
-} from '@modules/shared/infrastructure/providers/log/log.interface';
 import { obfuscatorInfo } from '@modules/shared/infrastructure/providers/log/log.utils';
+
+import { WINSTON_LOG_PROVIDER } from '../../log.provider';
+
+import { ObfuscatorInfoParams } from './log.interface';
 
 @Injectable()
 export class LogProvider implements LogProviderInterface {
@@ -20,7 +19,7 @@ export class LogProvider implements LogProviderInterface {
     const { message, context, ...rest } = params;
     const newRest: unknown = obfuscatorInfo(rest as unknown as ObfuscatorInfoParams);
     const logParams = {
-      level: 'info',
+      level: LOG_LEVEL.INFO,
       message,
       context,
       metadata: { ...(newRest as LogBaseParams) },
@@ -31,7 +30,7 @@ export class LogProvider implements LogProviderInterface {
     const { message, context, ...rest } = params;
     const newRest: unknown = obfuscatorInfo(rest as unknown as ObfuscatorInfoParams);
     const logParams = {
-      level: 'error',
+      level: LOG_LEVEL.ERROR,
       message,
       context,
       metadata: { ...(newRest as LogBaseParams) },
@@ -42,7 +41,7 @@ export class LogProvider implements LogProviderInterface {
     const { message, context, ...rest } = params;
     const newRest: unknown = obfuscatorInfo(rest as unknown as ObfuscatorInfoParams);
     const logParams = {
-      level: 'warn',
+      level: LOG_LEVEL.WARN,
       message,
       context,
       metadata: { ...(newRest as LogBaseParams) },
@@ -53,7 +52,7 @@ export class LogProvider implements LogProviderInterface {
     const { message, context, ...rest } = params;
     const newRest: unknown = obfuscatorInfo(rest as unknown as ObfuscatorInfoParams);
     const logParams = {
-      level: 'debug',
+      level: LOG_LEVEL.DEBUG,
       message,
       context,
       metadata: { ...(newRest as LogBaseParams) },

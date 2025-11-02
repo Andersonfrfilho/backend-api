@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 
 import { LoggingInterceptor } from '@modules/shared/infrastructure/interceptors/logging/logging.interceptor';
-import { LogModule } from '@modules/shared/infrastructure/providers/log/log.module';
+import { SharedInfrastructureProviderLogModule } from '@modules/shared/infrastructure/providers/log/log.module';
 
 @Module({
-  imports: [LogModule],
+  imports: [SharedInfrastructureProviderLogModule],
   providers: [
     {
       provide: APP_INTERCEPTOR,
@@ -13,4 +13,4 @@ import { LogModule } from '@modules/shared/infrastructure/providers/log/log.modu
     },
   ],
 })
-export class LoggingModule {}
+export class SharedInfrastructureLoggingModule {}

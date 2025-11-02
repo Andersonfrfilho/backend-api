@@ -1,6 +1,6 @@
 import { OBFUSCATOR_FIELDS } from '@modules/shared/infrastructure/providers/log/log.obfuscator';
 
-import type { ObfuscatorInfoParams } from './log.interface';
+import { ObfuscatorInfoParams } from './log.interface';
 
 export const isPrimitive = (v: unknown) =>
   v === null ||
@@ -27,10 +27,7 @@ export const obfuscatorInfo = ({
   if (typeof params === 'object' && params !== null) {
     const obj = params as Record<string, unknown>;
     const result: Record<string, unknown> = {};
-    const lowerToPattern = new Map<
-      string,
-      (p: string | number | undefined) => string
-    >();
+    const lowerToPattern = new Map<string, (p: string | number | undefined) => string>();
 
     for (const f of fields) {
       lowerToPattern.set(f.field.toLowerCase(), f.pattern);

@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 
-import { LogModule } from '@modules/shared/infrastructure/providers/log/log.module';
+import { SharedInfrastructureProviderLogModule } from './log/log.module';
 
 @Module({
-  imports: [LogModule],
-  exports: [LogModule],
+  imports: [SharedInfrastructureProviderLogModule],
+  exports: [SharedInfrastructureProviderLogModule],
 })
-export class ProviderModule {}
+export class SharedInfrastructureProviderModule {}

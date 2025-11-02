@@ -9,10 +9,8 @@ import {
   AuthLoginSessionRequestDto as AuthLoginSessionRequestServiceParams,
   AuthLoginSessionResponseDto as AuthLoginSessionResponseServiceParams,
 } from '@modules/auth/shared/dtos';
-import {
-  LOG_PROVIDER,
-  type LogProviderInterface,
-} from '@modules/shared/infrastructure/providers/log/log.interface';
+import type { LogProviderInterface } from '@modules/shared/domain';
+import { LOG_PROVIDER } from '@modules/shared/infrastructure/log.provider';
 
 @Injectable()
 export class AuthLoginSessionService implements AuthLoginSessionServiceInterface {
