@@ -1,11 +1,16 @@
-import { describe, it, expect } from '@jest/globals';
+import { describe, expect, it } from '@jest/globals';
 import { HealthCheckUseCase } from './health.get.use-case';
 
-describe('HealthCheckUseCase', () => {
+describe('HealthCheckUseCase - Unit Tests', () => {
   let useCase: HealthCheckUseCase;
 
   beforeEach(() => {
+    // Arrange: Setup use case instance
     useCase = new HealthCheckUseCase();
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   describe('execute', () => {

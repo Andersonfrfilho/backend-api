@@ -3,10 +3,7 @@ import { WINSTON_MODULE_NEST_PROVIDER, WinstonLogger } from 'nest-winston';
 
 import { requestContext } from '@modules/shared/infrastructure/context/request-context';
 
-import type {
-  WinstonLogProviderInterface,
-  LogsParams,
-} from './winston.log.provider.interface';
+import type { LogsParams, WinstonLogProviderInterface } from './winston.log.provider.interface';
 
 export class WinstonLogProvider implements WinstonLogProviderInterface {
   constructor(
@@ -22,7 +19,7 @@ export class WinstonLogProvider implements WinstonLogProviderInterface {
     return '';
   }
 
-  debug(params: LogsParams) {
+  debug(params?: LogsParams) {
     this.loggerWinston.log({
       ...params,
       level: 'debug',
@@ -30,7 +27,7 @@ export class WinstonLogProvider implements WinstonLogProviderInterface {
     });
   }
 
-  info(params: LogsParams) {
+  info(params?: LogsParams) {
     this.loggerWinston.log({
       ...params,
       level: 'info',
@@ -38,14 +35,14 @@ export class WinstonLogProvider implements WinstonLogProviderInterface {
     });
   }
 
-  error(params: LogsParams) {
+  error(params?: LogsParams) {
     this.loggerWinston.error({
       ...params,
       requestId: this.getRequestId(),
     });
   }
 
-  warn(params: LogsParams) {
+  warn(params?: LogsParams) {
     this.loggerWinston.warn({
       ...params,
       requestId: this.getRequestId(),

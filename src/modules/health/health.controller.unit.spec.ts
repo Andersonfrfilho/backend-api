@@ -1,15 +1,15 @@
-import { describe, it, expect, beforeEach } from '@jest/globals';
+import { beforeEach, describe, expect, it } from '@jest/globals';
 import { Test, TestingModule } from '@nestjs/testing';
+import type { HealthCheckServiceInterface } from './domain/health.get.interface';
 import { HealthController } from './health.controller';
 import { HEALTH_CHECK_SERVICE_PROVIDER } from './infrastructure/health.provider';
-import type { HealthCheckServiceInterface } from './domain/health.get.interface';
 
-describe('HealthController', () => {
+describe('HealthController - Unit Tests', () => {
   let controller: HealthController;
   let service: HealthCheckServiceInterface;
 
   beforeEach(async () => {
-    // Mock do Service
+    // Arrange: Setup mocks and test module
     const mockService = {
       execute: jest.fn().mockReturnValue({
         status: true,
@@ -31,8 +31,16 @@ describe('HealthController', () => {
     service = moduleRef.get<HealthCheckServiceInterface>(HEALTH_CHECK_SERVICE_PROVIDER);
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe('check', () => {
     it('should be defined', () => {
+      // Arrange
+      // Nothing to arrange - testing controller existence
+
+      // Act & Assert
       expect(controller).toBeDefined();
     });
 

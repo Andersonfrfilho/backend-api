@@ -1,12 +1,17 @@
-import { describe, it, expect, beforeEach } from '@jest/globals';
-import { AuthLoginSessionUseCase } from './auth-login-session.use-case';
+import { beforeEach, describe, expect, it } from '@jest/globals';
 import { AuthLoginSessionRequestDto } from '@modules/auth/shared/dtos';
+import { AuthLoginSessionUseCase } from './auth-login-session.use-case';
 
-describe('AuthLoginSessionUseCase', () => {
+describe('AuthLoginSessionUseCase - Unit Tests', () => {
   let useCase: AuthLoginSessionUseCase;
 
   beforeEach(() => {
+    // Arrange: Setup use case instance
     useCase = new AuthLoginSessionUseCase();
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   describe('execute', () => {

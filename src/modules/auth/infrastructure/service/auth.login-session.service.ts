@@ -24,6 +24,7 @@ export class AuthLoginSessionService implements AuthLoginSessionServiceInterface
     params: AuthLoginSessionRequestServiceParams,
   ): Promise<AuthLoginSessionResponseServiceParams> {
     this.loggerProvider.info({
+      message: 'Executing login session service',
       context: 'AuthLoginSessionService - execute',
       params,
     });

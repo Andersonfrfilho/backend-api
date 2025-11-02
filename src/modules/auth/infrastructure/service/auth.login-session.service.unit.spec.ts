@@ -1,18 +1,18 @@
-import { describe, it, expect, beforeEach } from '@jest/globals';
+import { beforeEach, describe, expect, it } from '@jest/globals';
+import type { AuthLoginSessionUseCaseInterface } from '@modules/auth/domain/auth.login-session.interface';
+import { AUTH_LOGIN_SESSION_USE_CASE_PROVIDE } from '@modules/auth/infrastructure/auth.provider';
+import { AuthLoginSessionRequestDto } from '@modules/auth/shared/dtos';
+import { LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/log.interface';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthLoginSessionService } from './auth.login-session.service';
-import { AUTH_LOGIN_SESSION_USE_CASE_PROVIDE } from '@modules/auth/infrastructure/auth.provider';
-import { LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/log.interface';
-import { AuthLoginSessionRequestDto } from '@modules/auth/shared/dtos';
-import type { AuthLoginSessionUseCaseInterface } from '@modules/auth/domain/auth.login-session.interface';
 
-describe('AuthLoginSessionService', () => {
+describe('AuthLoginSessionService - Unit Tests', () => {
   let service: AuthLoginSessionService;
   let useCase: AuthLoginSessionUseCaseInterface;
   let logProvider: any;
 
   beforeEach(async () => {
-    // Mock do UseCase
+    // Arrange: Setup mocks and test module
     const mockUseCase = {
       execute: jest.fn().mockResolvedValue({
         accessToken: 'mocked-token',
@@ -20,7 +20,6 @@ describe('AuthLoginSessionService', () => {
       }),
     } as unknown as AuthLoginSessionUseCaseInterface;
 
-    // Mock do LogProvider
     const mockLogProvider = {
       info: jest.fn(),
       debug: jest.fn(),
@@ -47,8 +46,16 @@ describe('AuthLoginSessionService', () => {
     logProvider = module.get(LOG_PROVIDER);
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe('execute', () => {
     it('should be defined', () => {
+      // Arrange
+      // Nothing to arrange - testing service existence
+
+      // Act & Assert
       expect(service).toBeDefined();
     });
 

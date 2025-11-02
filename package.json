@@ -20,7 +20,14 @@
     "test:watch": "jest --watch --config jest.config.ts",
     "test:cov": "jest --coverage --config jest.config.ts",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand --config jest.config.ts",
+    "test:unit": "jest --config jest.config.unit.ts",
+    "test:unit:watch": "jest --watch --config jest.config.unit.ts",
+    "test:unit:cov": "jest --coverage --config jest.config.unit.ts",
+    "test:integration": "jest --config jest.config.integration.ts",
+    "test:integration:watch": "jest --watch --config jest.config.integration.ts",
     "test:e2e": "jest --config ./test/jest-e2e.json",
+    "test:e2e:watch": "jest --watch --config ./test/jest-e2e.json",
+    "test:all": "npm run test:unit && npm run test:integration && npm run test:e2e",
     "sonar": "sonar-scanner"
   },
   "dependencies": {

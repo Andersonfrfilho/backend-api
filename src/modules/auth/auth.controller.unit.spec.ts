@@ -1,16 +1,16 @@
-import { describe, it, expect, beforeEach } from '@jest/globals';
-import { Test, TestingModule } from '@nestjs/testing';
-import { AuthController } from './auth.controller';
+import { beforeEach, describe, expect, it } from '@jest/globals';
+import type { AuthLoginSessionServiceInterface } from '@modules/auth/domain/auth.login-session.interface';
 import { AUTH_LOGIN_SESSION_SERVICE_PROVIDE } from '@modules/auth/infrastructure/auth.provider';
 import { AuthLoginSessionRequestDto } from '@modules/auth/shared/dtos';
-import type { AuthLoginSessionServiceInterface } from '@modules/auth/domain/auth.login-session.interface';
+import { Test, TestingModule } from '@nestjs/testing';
+import { AuthController } from './auth.controller';
 
-describe('AuthController', () => {
+describe('AuthController - Unit Tests', () => {
   let controller: AuthController;
   let service: AuthLoginSessionServiceInterface;
 
   beforeEach(async () => {
-    // Mock do Service
+    // Arrange: Setup mocks and test module
     const mockService = {
       execute: jest.fn().mockResolvedValue({
         accessToken: 'mocked-access-token',
@@ -32,8 +32,16 @@ describe('AuthController', () => {
     service = moduleRef.get<AuthLoginSessionServiceInterface>(AUTH_LOGIN_SESSION_SERVICE_PROVIDE);
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe('loginSession', () => {
     it('should be defined', () => {
+      // Arrange
+      // Nothing to arrange - testing controller existence
+
+      // Act & Assert
       expect(controller).toBeDefined();
     });
 

@@ -2,12 +2,9 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { WinstonLogProvider } from '@modules/shared/infrastructure/providers/log/implementations/winston/winston.log.provider';
 import { WINSTON_LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/implementations/winston/winston.log.provider.interface';
-import {
+import type {
+  LogBaseParams,
   LogProviderInterface,
-  LogsDebugParams,
-  LogsErrorParams,
-  LogsInfoParams,
-  LogsWarnParams,
   ObfuscatorInfoParams,
 } from '@modules/shared/infrastructure/providers/log/log.interface';
 import { obfuscatorInfo } from '@modules/shared/infrastructure/providers/log/log.utils';
@@ -19,56 +16,48 @@ export class LogProvider implements LogProviderInterface {
     private readonly winstonLogProvider: WinstonLogProvider,
   ) {}
 
-  info(params: LogsInfoParams) {
+  info(params: LogBaseParams) {
     const { message, context, ...rest } = params;
-    const newRest: unknown = obfuscatorInfo(
-      rest as unknown as ObfuscatorInfoParams,
-    );
+    const newRest: unknown = obfuscatorInfo(rest as unknown as ObfuscatorInfoParams);
     const logParams = {
       level: 'info',
       message,
       context,
-      metadata: { ...(newRest as LogsInfoParams) },
-    } as unknown as LogsInfoParams;
+      metadata: { ...(newRest as LogBaseParams) },
+    } as unknown as LogBaseParams;
     this.winstonLogProvider.info(logParams);
   }
-  error(params: LogsErrorParams) {
+  error(params: LogBaseParams) {
     const { message, context, ...rest } = params;
-    const newRest: unknown = obfuscatorInfo(
-      rest as unknown as ObfuscatorInfoParams,
-    );
+    const newRest: unknown = obfuscatorInfo(rest as unknown as ObfuscatorInfoParams);
     const logParams = {
       level: 'error',
       message,
       context,
-      metadata: { ...(newRest as LogsErrorParams) },
-    } as unknown as LogsErrorParams;
+      metadata: { ...(newRest as LogBaseParams) },
+    } as unknown as LogBaseParams;
     this.winstonLogProvider.error(logParams);
   }
-  warn(params: LogsWarnParams) {
+  warn(params: LogBaseParams) {
     const { message, context, ...rest } = params;
-    const newRest: unknown = obfuscatorInfo(
-      rest as unknown as ObfuscatorInfoParams,
-    );
+    const newRest: unknown = obfuscatorInfo(rest as unknown as ObfuscatorInfoParams);
     const logParams = {
       level: 'warn',
       message,
       context,
-      metadata: { ...(newRest as LogsWarnParams) },
-    } as unknown as LogsWarnParams;
+      metadata: { ...(newRest as LogBaseParams) },
+    } as unknown as LogBaseParams;
     this.winstonLogProvider.warn(logParams);
   }
-  debug(params: LogsDebugParams) {
+  debug(params: LogBaseParams) {
     const { message, context, ...rest } = params;
-    const newRest: unknown = obfuscatorInfo(
-      rest as unknown as ObfuscatorInfoParams,
-    );
+    const newRest: unknown = obfuscatorInfo(rest as unknown as ObfuscatorInfoParams);
     const logParams = {
       level: 'debug',
       message,
       context,
-      metadata: { ...(newRest as LogsDebugParams) },
-    } as unknown as LogsDebugParams;
+      metadata: { ...(newRest as LogBaseParams) },
+    } as unknown as LogBaseParams;
     this.winstonLogProvider.debug(logParams);
   }
 }

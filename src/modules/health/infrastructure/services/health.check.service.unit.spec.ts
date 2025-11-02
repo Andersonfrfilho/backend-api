@@ -1,15 +1,15 @@
-import { describe, it, expect, beforeEach } from '@jest/globals';
+import { beforeEach, describe, expect, it } from '@jest/globals';
 import { Test, TestingModule } from '@nestjs/testing';
-import { HealthCheckService } from './health.check.service';
-import { HEALTH_CHECK_USE_CASE_PROVIDER } from '../../infrastructure/health.provider';
 import { HealthCheckUseCaseInterface } from '../../domain/health.get.interface';
+import { HEALTH_CHECK_USE_CASE_PROVIDER } from '../../infrastructure/health.provider';
+import { HealthCheckService } from './health.check.service';
 
-describe('HealthCheckService', () => {
+describe('HealthCheckService - Unit Tests', () => {
   let service: HealthCheckService;
   let useCase: HealthCheckUseCaseInterface;
 
   beforeEach(async () => {
-    // Mock do UseCase
+    // Arrange: Setup mocks and test module
     const mockUseCase = {
       execute: jest.fn().mockReturnValue({
         status: true,
@@ -31,8 +31,16 @@ describe('HealthCheckService', () => {
     useCase = module.get(HEALTH_CHECK_USE_CASE_PROVIDER);
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe('execute', () => {
     it('should be defined', () => {
+      // Arrange
+      // Nothing to arrange - testing service existence
+
+      // Act & Assert
       expect(service).toBeDefined();
     });
 
