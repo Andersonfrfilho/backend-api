@@ -1,20 +1,10 @@
 import type { Config } from '@jest/types';
 
-/**
- * Jest Configuration for Integration Tests
- *
- * Runs all tests with .integration.spec.ts extension
- * These tests run with multiple layers and real dependencies
- *
- * Usage: npm run test:integration
- * Usage (watch): npm run test:integration:watch
- */
 const config: Config.InitialOptions = {
   moduleFileExtensions: ['js', 'json', 'ts'],
   rootDir: '.',
   testEnvironment: 'node',
-  // Only run .integration.spec.ts files
-  testRegex: String.raw`.*\.integration\.spec\.ts$`,
+  testRegex: String.raw`.*\.e2e\.spec\.ts$`,
   transform: {
     '^.+\\.(t|j)s$': 'ts-jest',
   },
@@ -43,8 +33,8 @@ const config: Config.InitialOptions = {
     '!**/*.test.ts',
   ],
   coveragePathIgnorePatterns: ['/node_modules/', '/dist/', '/.history/', '/coverage/', '/logs/'],
-  coverageDirectory: './coverage/integration',
-  collectCoverage: false, // Usually disabled for integration tests - too slow
+  coverageDirectory: './coverage/e2e',
+  collectCoverage: false, // Usually disabled for E2E tests - too slow
   moduleNameMapper: {
     '^@app/(.*)$': '<rootDir>/src/$1',
     '^@common/(.*)$': '<rootDir>/src/common/$1',
@@ -53,8 +43,7 @@ const config: Config.InitialOptions = {
     '^@modules/(.*)$': '<rootDir>/src/modules/$1',
   },
   coverageProvider: 'v8',
-  displayName: '🔗 Integration Tests',
-  // Increase timeout for integration tests
+  displayName: '🌐 E2E Tests',
   testTimeout: 30000,
 };
 

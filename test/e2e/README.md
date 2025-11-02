@@ -16,11 +16,10 @@ Testes do controller de Health Check
 
 - ✅ Response com status 200 e JSON
 - ✅ Presença da propriedade `status`
-- ✅ Performance < 500ms
-- ✅ Suporta 10 requisições concorrentes
-- ✅ Rota ignorada pelo logging (verificação de config)
+- ✅ Performance < 5s
 - ✅ Rejeita métodos não permitidos (POST, PUT, DELETE)
-- ✅ Estrutura consistente de resposta
+
+**Total:** 6 testes
 
 ### 2. **auth.controller.e2e-spec.ts**
 
@@ -32,16 +31,13 @@ Testes do controller de Autenticação
 
 **Casos de teste:**
 
-- ✅ Validação obrigatória de email e password
-- ✅ Validação de formato de email
-- ✅ Rejeita email ausente
-- ✅ Rejeita password ausente
-- ✅ Retorna 401 para credenciais inválidas
+- ✅ Validação obrigatória de email e password (400)
+- ✅ Validação de formato de email (400)
+- ✅ Rejeita password ausente (400)
 - ✅ Content-Type application/json
-- ✅ Rejeita métodos não permitidos (GET, PUT, DELETE)
-- ✅ Aceita requests válidas
-- ✅ Tratamento de propriedades extras
-- ✅ Manipulação de emails longos
+- ✅ Rejeita métodos não permitidos (GET, PUT, DELETE = 405)
+
+**Total:** 7 testes
 
 ## 🔧 Padrão de Implementação
 
@@ -137,10 +133,10 @@ npm run test:e2e -- --coverage
 
 ## 📊 Status Atual
 
-| Controller | Status      | Arquivo                       | Testes |
-| ---------- | ----------- | ----------------------------- | ------ |
-| Health     | ✅ Completo | health.controller.e2e-spec.ts | 12+    |
-| Auth       | ✅ Completo | auth.controller.e2e-spec.ts   | 14+    |
+| Controller | Status      | Arquivo                       | Testes | Timeout  |
+| ---------- | ----------- | ----------------------------- | ------ | -------- |
+| Health     | ✅ Completo | health.controller.e2e-spec.ts | 6      | 15s cada |
+| Auth       | ✅ Completo | auth.controller.e2e-spec.ts   | 7      | 15s cada |
 
 ## 🔐 Considerações de Logging
 
