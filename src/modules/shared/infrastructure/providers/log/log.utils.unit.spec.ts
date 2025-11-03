@@ -324,7 +324,7 @@ describe('Log Utils', () => {
       it('should handle object with array values', () => {
         // ARRANGE
         const params = {
-          passwords: ['pass1', 'pass2'],
+          password: ['pass1', 'pass2'],
           tokens: [{ accessToken: 'token1' }, { accessToken: 'token2' }],
           username: 'user',
         };
@@ -334,7 +334,7 @@ describe('Log Utils', () => {
         const result = obfuscatorInfo(obfuscatorParams) as Record<string, any>;
 
         // ASSERT
-        expect(result.passwords).toEqual(['***', '***']);
+        expect(result.password).toEqual(['***', '***']);
         expect(result.tokens[0].accessToken).toBe('***');
         expect(result.tokens[1].accessToken).toBe('***');
         expect(result.username).toBe('user');

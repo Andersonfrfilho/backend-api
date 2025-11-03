@@ -1,9 +1,7 @@
 import { CallHandler, ExecutionContext } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
 import { of, throwError } from 'rxjs';
 
 import type { LogProviderInterface } from '@modules/shared/domain';
-import { LOG_PROVIDER } from '@modules/shared/infrastructure/log.provider';
 import { LoggingInterceptor } from './logging.interceptor';
 
 function createMockRequest(
@@ -42,27 +40,17 @@ describe('LoggingInterceptor - Unit Tests', () => {
   let interceptor: LoggingInterceptor;
   let logProvider: LogProviderInterface;
 
-  beforeEach(async () => {
-    // Arrange: Setup mocks and test module
-    const mockLogProvider = {
+  beforeEach(() => {
+    // Arrange: Setup mocks with direct instantiation
+    logProvider = {
       info: jest.fn(),
       error: jest.fn(),
       warn: jest.fn(),
       debug: jest.fn(),
     } as unknown as LogProviderInterface;
 
-    const moduleRef: TestingModule = await Test.createTestingModule({
-      providers: [
-        LoggingInterceptor,
-        {
-          provide: LOG_PROVIDER,
-          useValue: mockLogProvider,
-        },
-      ],
-    }).compile();
-
-    interceptor = moduleRef.get<LoggingInterceptor>(LoggingInterceptor);
-    logProvider = moduleRef.get(LOG_PROVIDER);
+    // Create interceptor directly without Test.createTestingModule
+    interceptor = new LoggingInterceptor(logProvider);
   });
 
   afterEach(() => {
@@ -324,9 +312,11 @@ describe('LoggingInterceptor - Unit Tests', () => {
 
       // Act
       localInterceptor.intercept(mockContext, mockCallHandler).subscribe({
-        complete: () => {
+        next: () => {
           // Assert
           expect(mockLogProvider.info).not.toHaveBeenCalled();
+        },
+        complete: () => {
           done();
         },
       });

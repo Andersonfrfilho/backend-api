@@ -104,7 +104,7 @@ describe('Log Obfuscator', () => {
 
         expect(result).toBeDefined();
         expect(typeof result).toBe('string');
-        expect(result).toMatch(/^\d\*+\d{2}$/);
+        expect(result).toMatch(/^\d{3}\*+\d{2}$/);
       });
 
       it('patterns should be consistent for same input', () => {
@@ -123,10 +123,11 @@ describe('Log Obfuscator', () => {
       });
 
       it('patterns should handle numbers', () => {
-        for (const field of OBFUSCATOR_FIELDS) {
-          const result = field.pattern(12345);
-          expect(typeof result).toBe('string');
-        }
+        // Only phoneNumber pattern accepts number parameter
+        const phoneField = getPhoneField();
+        const result = phoneField?.pattern(12345);
+        expect(typeof result).toBe('string');
+        expect(result).toBeTruthy();
       });
 
       it('all patterns should produce non-empty strings', () => {

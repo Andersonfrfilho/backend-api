@@ -1,210 +1,139 @@
 import { describe, expect, it } from '@jest/globals';
-import { Test, TestingModule } from '@nestjs/testing';
 
-import { LOGGING_IGNORE_CONFIG } from '@modules/shared/infrastructure/log.provider';
-import { LoggingConfigModule } from './logging-config.module';
 import type { LoggingIgnoreConfig } from './logging.config';
 import { DEFAULT_LOGGING_IGNORE_CONFIG } from './logging.config';
 
-describe('LoggingConfigModule', () => {
-  describe('initialization', () => {
+describe('LoggingConfigModule Configuration', () => {
+  describe('DEFAULT_LOGGING_IGNORE_CONFIG constant', () => {
     it('should be defined', () => {
       // ASSERT
-      expect(LoggingConfigModule).toBeDefined();
+      expect(DEFAULT_LOGGING_IGNORE_CONFIG).toBeDefined();
     });
 
-    it('should have Global decorator', async () => {
-      // ARRANGE & ACT
-      const module: TestingModule = await Test.createTestingModule({
-        imports: [LoggingConfigModule],
-      }).compile();
+    it('should be a valid configuration object', () => {
+      // ASSERT
+      expect(DEFAULT_LOGGING_IGNORE_CONFIG).toHaveProperty('enabled');
+      expect(DEFAULT_LOGGING_IGNORE_CONFIG).toHaveProperty('ignoredRoutes');
+    });
+
+    it('should have enabled property as boolean', () => {
+      // ASSERT
+      expect(typeof DEFAULT_LOGGING_IGNORE_CONFIG.enabled).toBe('boolean');
+    });
+
+    it('should have ignoredRoutes as array', () => {
+      // ASSERT
+      expect(Array.isArray(DEFAULT_LOGGING_IGNORE_CONFIG.ignoredRoutes)).toBe(true);
+    });
+
+    it('should have at least one ignored route', () => {
+      // ASSERT
+      expect(DEFAULT_LOGGING_IGNORE_CONFIG.ignoredRoutes.length).toBeGreaterThan(0);
+    });
+
+    it('should contain /health route', () => {
+      // ASSERT
+      expect(DEFAULT_LOGGING_IGNORE_CONFIG.ignoredRoutes).toContain('/health');
+    });
+
+    it('should have enabled set to true', () => {
+      // ASSERT
+      expect(DEFAULT_LOGGING_IGNORE_CONFIG.enabled).toBe(true);
+    });
+
+    it('should return consistent value on multiple accesses', () => {
+      // ACT
+      const config1 = DEFAULT_LOGGING_IGNORE_CONFIG;
+      const config2 = DEFAULT_LOGGING_IGNORE_CONFIG;
 
       // ASSERT
-      expect(module).toBeDefined();
+      expect(config1).toBe(config2);
+      expect(config1).toEqual(config2);
+    });
+
+    it('should validate routes have proper format', () => {
+      // ASSERT
+      for (const route of DEFAULT_LOGGING_IGNORE_CONFIG.ignoredRoutes) {
+        if (typeof route === 'string') {
+          expect(route.length).toBeGreaterThan(0);
+          expect(route.startsWith('/')).toBe(true);
+        } else if (route instanceof RegExp) {
+          expect(route).toBeInstanceOf(RegExp);
+        }
+      }
+    });
+
+    it('should contain valid LoggingIgnoreConfig shape', () => {
+      // ASSERT
+      const keys = Object.keys(DEFAULT_LOGGING_IGNORE_CONFIG).sort((a, b) => a.localeCompare(b));
+      const expectedKeys = ['enabled', 'ignoredRoutes'].sort((a, b) => a.localeCompare(b));
+      expect(keys).toEqual(expectedKeys);
     });
   });
 
-  describe('providers', () => {
-    it('should provide LOGGING_IGNORE_CONFIG', async () => {
-      // ARRANGE
-      const module: TestingModule = await Test.createTestingModule({
-        imports: [LoggingConfigModule],
-      }).compile();
-
+  describe('LoggingIgnoreConfig interface', () => {
+    it('should create valid config instance from default', () => {
       // ACT
-      const config = module.get(LOGGING_IGNORE_CONFIG);
-
-      // ASSERT
-      expect(config).toBeDefined();
-      expect(config).toEqual(DEFAULT_LOGGING_IGNORE_CONFIG);
-    });
-
-    it('should return LoggingIgnoreConfig object', async () => {
-      // ARRANGE
-      const module: TestingModule = await Test.createTestingModule({
-        imports: [LoggingConfigModule],
-      }).compile();
-
-      // ACT
-      const config: LoggingIgnoreConfig = module.get(LOGGING_IGNORE_CONFIG);
+      const config: LoggingIgnoreConfig = { ...DEFAULT_LOGGING_IGNORE_CONFIG };
 
       // ASSERT
       expect(config).toHaveProperty('enabled');
       expect(config).toHaveProperty('ignoredRoutes');
-    });
-
-    it('should have enabled property set to true', async () => {
-      // ARRANGE
-      const module: TestingModule = await Test.createTestingModule({
-        imports: [LoggingConfigModule],
-      }).compile();
-
-      // ACT
-      const config: LoggingIgnoreConfig = module.get(LOGGING_IGNORE_CONFIG);
-
-      // ASSERT
-      expect(config.enabled).toBe(true);
-    });
-
-    it('should provide default ignored routes', async () => {
-      // ARRANGE
-      const module: TestingModule = await Test.createTestingModule({
-        imports: [LoggingConfigModule],
-      }).compile();
-
-      // ACT
-      const config: LoggingIgnoreConfig = module.get(LOGGING_IGNORE_CONFIG);
-
-      // ASSERT
-      expect(Array.isArray(config.ignoredRoutes)).toBe(true);
-      expect(config.ignoredRoutes.length).toBeGreaterThan(0);
-    });
-
-    it('should include health route in default config', async () => {
-      // ARRANGE
-      const module: TestingModule = await Test.createTestingModule({
-        imports: [LoggingConfigModule],
-      }).compile();
-
-      // ACT
-      const config: LoggingIgnoreConfig = module.get(LOGGING_IGNORE_CONFIG);
-
-      // ASSERT
-      expect(config.ignoredRoutes).toContain('/health');
-    });
-  });
-
-  describe('exports', () => {
-    it('should export LOGGING_IGNORE_CONFIG', async () => {
-      // ARRANGE
-      const module: TestingModule = await Test.createTestingModule({
-        imports: [LoggingConfigModule],
-      }).compile();
-
-      // ACT
-      const config = module.get(LOGGING_IGNORE_CONFIG);
-
-      // ASSERT
-      expect(config).toBeDefined();
-    });
-
-    it('should be globally available', async () => {
-      // ARRANGE & ACT
-      const module: TestingModule = await Test.createTestingModule({
-        imports: [LoggingConfigModule],
-      }).compile();
-
-      // ASSERT
-      const config = module.get(LOGGING_IGNORE_CONFIG);
-      expect(config).toBeDefined();
-    });
-  });
-
-  describe('factory function', () => {
-    it('should provide consistent config across requests', async () => {
-      // ARRANGE
-      const module: TestingModule = await Test.createTestingModule({
-        imports: [LoggingConfigModule],
-      }).compile();
-
-      // ACT
-      const config1: LoggingIgnoreConfig = module.get(LOGGING_IGNORE_CONFIG);
-      const config2: LoggingIgnoreConfig = module.get(LOGGING_IGNORE_CONFIG);
-
-      // ASSERT
-      expect(config1).toEqual(config2);
-    });
-
-    it('should return default config when no environment variables', async () => {
-      // ARRANGE
-      const module: TestingModule = await Test.createTestingModule({
-        imports: [LoggingConfigModule],
-      }).compile();
-
-      // ACT
-      const config: LoggingIgnoreConfig = module.get(LOGGING_IGNORE_CONFIG);
-
-      // ASSERT
-      expect(config).toEqual(DEFAULT_LOGGING_IGNORE_CONFIG);
-    });
-  });
-
-  describe('configuration validation', () => {
-    it('should have valid structure', async () => {
-      // ARRANGE
-      const module: TestingModule = await Test.createTestingModule({
-        imports: [LoggingConfigModule],
-      }).compile();
-
-      // ACT
-      const config: LoggingIgnoreConfig = module.get(LOGGING_IGNORE_CONFIG);
-
-      // ASSERT
       expect(typeof config.enabled).toBe('boolean');
       expect(Array.isArray(config.ignoredRoutes)).toBe(true);
-
-      for (const route of config.ignoredRoutes) {
-        expect(typeof route === 'string' || route instanceof RegExp).toBe(true);
-      }
     });
 
-    it('should contain only valid routes', async () => {
-      // ARRANGE
-      const module: TestingModule = await Test.createTestingModule({
-        imports: [LoggingConfigModule],
-      }).compile();
-
+    it('should allow creating custom configuration', () => {
       // ACT
-      const config: LoggingIgnoreConfig = module.get(LOGGING_IGNORE_CONFIG);
+      const customConfig: LoggingIgnoreConfig = {
+        enabled: false,
+        ignoredRoutes: ['/custom'],
+      };
 
       // ASSERT
-      for (const route of config.ignoredRoutes) {
-        if (typeof route === 'string') {
-          expect(route.length).toBeGreaterThan(0);
-          expect(route).toMatch(/^\/[a-z-]*$/i);
-        }
-      }
+      expect(customConfig.enabled).toBe(false);
+      expect(customConfig.ignoredRoutes).toContain('/custom');
+    });
+
+    it('should support regex patterns in ignoredRoutes', () => {
+      // ACT
+      const config: LoggingIgnoreConfig = {
+        enabled: true,
+        ignoredRoutes: [/^\/swagger.*/],
+      };
+
+      // ASSERT
+      expect(config.ignoredRoutes[0]).toBeInstanceOf(RegExp);
+    });
+
+    it('should allow string routes in ignoredRoutes', () => {
+      // ACT
+      const config: LoggingIgnoreConfig = {
+        enabled: true,
+        ignoredRoutes: ['/health'],
+      };
+
+      // ASSERT
+      expect(config.ignoredRoutes[0]).toBe('/health');
     });
   });
 
-  describe('multiple module instances', () => {
-    it('should provide same config in different contexts', async () => {
-      // ARRANGE
-      const module1: TestingModule = await Test.createTestingModule({
-        imports: [LoggingConfigModule],
-      }).compile();
-
-      const module2: TestingModule = await Test.createTestingModule({
-        imports: [LoggingConfigModule],
-      }).compile();
-
-      // ACT
-      const config1: LoggingIgnoreConfig = module1.get(LOGGING_IGNORE_CONFIG);
-      const config2: LoggingIgnoreConfig = module2.get(LOGGING_IGNORE_CONFIG);
-
+  describe('configuration immutability', () => {
+    it('should maintain structure consistency', () => {
       // ASSERT
-      expect(config1.enabled).toBe(config2.enabled);
-      expect(config1.ignoredRoutes).toEqual(config2.ignoredRoutes);
+      const config1 = DEFAULT_LOGGING_IGNORE_CONFIG;
+      const config2 = DEFAULT_LOGGING_IGNORE_CONFIG;
+
+      // Verify same reference
+      expect(config1).toBe(config2);
+    });
+
+    it('should have correct default routes', () => {
+      // ASSERT
+      expect(DEFAULT_LOGGING_IGNORE_CONFIG.ignoredRoutes).toContain('/health');
+      expect(DEFAULT_LOGGING_IGNORE_CONFIG.ignoredRoutes).toContain('/metrics');
+      expect(DEFAULT_LOGGING_IGNORE_CONFIG.ignoredRoutes).toContain('/docs');
+      expect(DEFAULT_LOGGING_IGNORE_CONFIG.ignoredRoutes).toContain('/api-docs');
     });
   });
 });

@@ -12,6 +12,36 @@ export const isPrimitive = (v: unknown) =>
 
 export const isDate = (v: unknown) => v instanceof Date;
 
+type PatternFn = (p: string | number | undefined) => string;
+
+const applyPattern = (value: unknown, pattern: PatternFn): string => {
+  try {
+    if (value === null || value === undefined) {
+      return pattern(undefined);
+    }
+    if (typeof value === 'number') {
+      return pattern(value);
+    }
+    const stringValue = typeof value === 'string' ? value : JSON.stringify(value);
+    return pattern(stringValue);
+  } catch {
+    return '***';
+  }
+};
+
+const processValue = (
+  value: unknown,
+  pattern: PatternFn | undefined,
+  fields: typeof OBFUSCATOR_FIELDS,
+): unknown => {
+  if (pattern !== undefined) {
+    return Array.isArray(value)
+      ? value.map((item) => applyPattern(item, pattern))
+      : applyPattern(value, pattern);
+  }
+  return obfuscatorInfo({ params: value, fields });
+};
+
 export const obfuscatorInfo = ({
   params,
   fields = OBFUSCATOR_FIELDS,
@@ -27,33 +57,15 @@ export const obfuscatorInfo = ({
   if (typeof params === 'object' && params !== null) {
     const obj = params as Record<string, unknown>;
     const result: Record<string, unknown> = {};
-    const lowerToPattern = new Map<string, (p: string | number | undefined) => string>();
+    const patternMap = new Map<string, PatternFn>();
 
     for (const f of fields) {
-      lowerToPattern.set(f.field.toLowerCase(), f.pattern);
+      patternMap.set(f.field.toLowerCase(), f.pattern);
     }
 
     for (const key of Object.keys(obj)) {
-      const value = obj[key];
-      const lowerKey = key.toLowerCase();
-
-      if (lowerToPattern.has(lowerKey)) {
-        const pattern = lowerToPattern.get(lowerKey)!;
-        try {
-          if (value === null || value === undefined) {
-            result[key] = pattern(undefined);
-          } else if (typeof value === 'number') {
-            result[key] = pattern(value);
-          } else {
-            const stringValue = typeof value === 'string' ? value : JSON.stringify(value);
-            result[key] = pattern(stringValue);
-          }
-        } catch {
-          result[key] = '***';
-        }
-      } else {
-        result[key] = obfuscatorInfo({ params: value, fields });
-      }
+      const pattern = patternMap.get(key.toLowerCase());
+      result[key] = processValue(obj[key], pattern, fields);
     }
 
     return result;

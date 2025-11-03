@@ -13,11 +13,13 @@ export const shouldIgnoreRoute = (path: string, ignoredRoutes: (string | RegExp)
     return false;
   }
 
+  const pathWithoutQuery = path.split('?')[0];
+
   return ignoredRoutes.some((route) => {
     if (route instanceof RegExp) {
-      return route.test(path);
+      return route.test(pathWithoutQuery);
     }
 
-    return path === route || path.startsWith(`${route}/`);
+    return pathWithoutQuery === route || pathWithoutQuery.startsWith(`${route}/`);
   });
 };

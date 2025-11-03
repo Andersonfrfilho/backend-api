@@ -32,10 +32,14 @@ export const OBFUSCATOR_FIELDS: Array<ObfuscatorInfoItemsParams> = [
   },
   {
     field: 'phoneNumber',
-    pattern: (param: string) =>
-      param.substring(0, 3) +
-      param.substring(3, param.length - 2).replace(/./g, '*') +
-      param.substring(param.length - 2),
+    pattern: (param: string | number) => {
+      const str = String(param);
+      return (
+        str.substring(0, 3) +
+        str.substring(3, str.length - 2).replaceAll(/./g, '*') +
+        str.substring(str.length - 2)
+      );
+    },
   },
 ];
 
