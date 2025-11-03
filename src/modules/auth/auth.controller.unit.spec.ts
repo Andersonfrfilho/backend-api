@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, it } from '@jest/globals';
 import { faker } from '@faker-js/faker';
+import { beforeEach, describe, expect, it } from '@jest/globals';
 import type { AuthLoginSessionServiceInterface } from '@modules/auth/domain/auth.login-session.interface';
 import { AUTH_LOGIN_SESSION_SERVICE_PROVIDE } from '@modules/auth/infrastructure/auth.provider';
 import { AuthLoginSessionRequestDto } from '@modules/auth/shared/dtos';

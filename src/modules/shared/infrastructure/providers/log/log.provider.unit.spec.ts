@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import type { LogProviderInterface } from '@modules/shared/domain';
-import { WinstonLogProvider } from './implementations/winston/winston.log.provider';
 import { LOG_PROVIDER, WINSTON_LOG_PROVIDER } from '@modules/shared/infrastructure/log.provider';
+import { WinstonLogProvider } from './implementations/winston/winston.log.provider';
 import { LogProvider } from './log.provider';
 
 // NOSONAR - Test file with faker-generated credentials for testing purposes only

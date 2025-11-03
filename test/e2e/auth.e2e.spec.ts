@@ -1,6 +1,6 @@
+import { faker } from '@faker-js/faker';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { Test, TestingModule } from '@nestjs/testing';
-import { faker } from '@faker-js/faker';
 
 import { LOG_PROVIDER } from '@modules/shared/infrastructure/log.provider';
 import { AppModule } from '../../src/app.module';
