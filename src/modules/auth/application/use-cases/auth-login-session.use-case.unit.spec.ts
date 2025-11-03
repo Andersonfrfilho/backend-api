@@ -1,13 +1,17 @@
 import { beforeEach, describe, expect, it } from '@jest/globals';
+import { faker } from '@faker-js/faker';
 import { AuthLoginSessionRequestDto } from '@modules/auth/shared/dtos';
 import { AuthLoginSessionUseCase } from './auth-login-session.use-case';
 
+// NOSONAR - Test file with faker-generated credentials for testing purposes only
 describe('AuthLoginSessionUseCase - Unit Tests', () => {
   let useCase: AuthLoginSessionUseCase;
+  let testPassword: string;
 
   beforeEach(() => {
     // Arrange: Setup use case instance
     useCase = new AuthLoginSessionUseCase();
+    testPassword = faker.internet.password({ length: 12, memorable: false });
   });
 
   afterEach(() => {
@@ -23,7 +27,7 @@ describe('AuthLoginSessionUseCase - Unit Tests', () => {
       // Arrange
       const input: AuthLoginSessionRequestDto = {
         email: 'test@example.com',
-        password: 'Test@1234',
+        password: testPassword,
       };
 
       // Act
@@ -37,7 +41,7 @@ describe('AuthLoginSessionUseCase - Unit Tests', () => {
       // Arrange
       const input: AuthLoginSessionRequestDto = {
         email: 'test@example.com',
-        password: 'Test@1234',
+        password: testPassword,
       };
 
       // Act
@@ -54,7 +58,7 @@ describe('AuthLoginSessionUseCase - Unit Tests', () => {
       const email = 'user@test.com';
       const input: AuthLoginSessionRequestDto = {
         email,
-        password: 'Test@1234',
+        password: testPassword,
       };
 
       // Act
@@ -68,7 +72,7 @@ describe('AuthLoginSessionUseCase - Unit Tests', () => {
       // Arrange
       const input: AuthLoginSessionRequestDto = {
         email: 'test@example.com',
-        password: 'Test@1234',
+        password: testPassword,
       };
 
       // Act
@@ -87,7 +91,7 @@ describe('AuthLoginSessionUseCase - Unit Tests', () => {
       for (const email of emails) {
         const input: AuthLoginSessionRequestDto = {
           email,
-          password: 'Test@1234',
+          password: testPassword,
         };
 
         const result = await useCase.execute(input);
@@ -101,7 +105,7 @@ describe('AuthLoginSessionUseCase - Unit Tests', () => {
       // Arrange
       const input: AuthLoginSessionRequestDto = {
         email: 'test@example.com',
-        password: 'Test@1234',
+        password: testPassword,
       };
 
       // Act

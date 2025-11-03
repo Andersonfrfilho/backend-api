@@ -1,11 +1,13 @@
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { Test, TestingModule } from '@nestjs/testing';
+import { faker } from '@faker-js/faker';
 
 import { LOG_PROVIDER } from '@modules/shared/infrastructure/log.provider';
 import { AppModule } from '../../src/app.module';
 
 describe('Auth Controller (e2e)', () => {
   let app: NestFastifyApplication;
+  let testPassword: string;
 
   const mockLogProvider = {
     debug: jest.fn(),
@@ -15,6 +17,7 @@ describe('Auth Controller (e2e)', () => {
   };
 
   beforeAll(async () => {
+    testPassword = faker.internet.password({ length: 12, memorable: false });
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     })
@@ -36,7 +39,7 @@ describe('Auth Controller (e2e)', () => {
         method: 'POST',
         url: '/auth/login-session',
         payload: {
-          password: 'password123',
+          password: testPassword,
         },
       });
       // E2E tests don't run validation pipes by default
@@ -63,7 +66,7 @@ describe('Auth Controller (e2e)', () => {
         url: '/auth/login-session',
         payload: {
           email: 'nonexistent@example.com',
-          password: 'password123',
+          password: testPassword,
         },
       });
       // Should either return 201 (if service creates guest session) or 404/401

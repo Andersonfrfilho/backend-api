@@ -5,6 +5,7 @@ import { WinstonLogProvider } from './implementations/winston/winston.log.provid
 import { LOG_PROVIDER, WINSTON_LOG_PROVIDER } from '@modules/shared/infrastructure/log.provider';
 import { LogProvider } from './log.provider';
 
+// NOSONAR - Test file with faker-generated credentials for testing purposes only
 describe('LogProvider - Unit Tests', () => {
   let provider: LogProviderInterface;
   let winstonLogProvider: WinstonLogProvider;

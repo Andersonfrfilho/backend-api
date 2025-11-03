@@ -2,6 +2,7 @@ import { describe, expect, it } from '@jest/globals';
 import type { ObfuscatorInfoParams } from './log.interface';
 import { isDate, isPrimitive, obfuscatorInfo } from './log.utils';
 
+// NOSONAR - Test file with faker-generated credentials for testing purposes only
 describe('Log Utils', () => {
   describe('isPrimitive', () => {
     // ACT & ASSERT

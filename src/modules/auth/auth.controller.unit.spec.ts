@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it } from '@jest/globals';
+import { faker } from '@faker-js/faker';
 import type { AuthLoginSessionServiceInterface } from '@modules/auth/domain/auth.login-session.interface';
 import { AUTH_LOGIN_SESSION_SERVICE_PROVIDE } from '@modules/auth/infrastructure/auth.provider';
 import { AuthLoginSessionRequestDto } from '@modules/auth/shared/dtos';
@@ -8,9 +9,11 @@ import { AuthController } from './auth.controller';
 describe('AuthController - Unit Tests', () => {
   let controller: AuthController;
   let service: AuthLoginSessionServiceInterface;
+  let testPassword: string;
 
   beforeEach(async () => {
     // Arrange: Setup mocks and test module
+    testPassword = faker.internet.password({ length: 12, memorable: false });
     const mockService = {
       execute: jest.fn().mockResolvedValue({
         accessToken: 'mocked-access-token',
@@ -49,7 +52,7 @@ describe('AuthController - Unit Tests', () => {
       // Arrange
       const input: AuthLoginSessionRequestDto = {
         email: 'test@example.com',
-        password: 'Test@1234',
+        password: testPassword,
       };
 
       // Act
@@ -64,7 +67,7 @@ describe('AuthController - Unit Tests', () => {
       // Arrange
       const input: AuthLoginSessionRequestDto = {
         email: 'test@example.com',
-        password: 'Test@1234',
+        password: testPassword,
       };
 
       // Act
@@ -80,7 +83,7 @@ describe('AuthController - Unit Tests', () => {
       // Arrange
       const input: AuthLoginSessionRequestDto = {
         email: 'user@domain.com',
-        password: 'SecurePass@123',
+        password: testPassword,
       };
 
       // Act
@@ -95,7 +98,7 @@ describe('AuthController - Unit Tests', () => {
       // Arrange
       const input: AuthLoginSessionRequestDto = {
         email: 'test@example.com',
-        password: 'Test@1234',
+        password: testPassword,
       };
       const error = new Error('Service Error');
       const mockExecute = service.execute as jest.Mock;
@@ -109,11 +112,11 @@ describe('AuthController - Unit Tests', () => {
       // Arrange
       const input1: AuthLoginSessionRequestDto = {
         email: 'user1@example.com',
-        password: 'Test@1234',
+        password: testPassword,
       };
       const input2: AuthLoginSessionRequestDto = {
         email: 'user2@example.com',
-        password: 'Test@5678',
+        password: testPassword,
       };
 
       // Act
@@ -131,7 +134,7 @@ describe('AuthController - Unit Tests', () => {
       // Arrange
       const input: AuthLoginSessionRequestDto = {
         email: 'test@example.com',
-        password: 'Test@1234',
+        password: testPassword,
       };
 
       // Act
