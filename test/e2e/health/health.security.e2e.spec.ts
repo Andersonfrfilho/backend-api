@@ -2,7 +2,7 @@ import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { LOG_PROVIDER } from '@modules/shared/infrastructure/log.provider';
-import { AppModule } from '../../src/app.module';
+import { AppModule } from '../../../src/app.module';
 
 describe('Health Module - Security E2E Tests', () => {
   let app: NestFastifyApplication;

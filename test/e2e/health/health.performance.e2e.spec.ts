@@ -1,13 +1,11 @@
-import { faker } from '@faker-js/faker';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { LOG_PROVIDER } from '@modules/shared/infrastructure/log.provider';
-import { AppModule } from '../../src/app.module';
+import { AppModule } from '../../../src/app.module';
 
-describe('Auth Module - Performance E2E Tests', () => {
+describe('Health Module - Performance E2E Tests', () => {
   let app: NestFastifyApplication;
-  let testPassword: string;
 
   const mockLogProvider = {
     debug: jest.fn(),
@@ -17,7 +15,6 @@ describe('Auth Module - Performance E2E Tests', () => {
   };
 
   beforeAll(async () => {
-    testPassword = faker.internet.password({ length: 12, memorable: false });
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     })
@@ -35,52 +32,44 @@ describe('Auth Module - Performance E2E Tests', () => {
 
   describe('Response Time Metrics', () => {
     /**
-     * ⏱️ Mede o tempo de resposta dos endpoints de autenticação
+     * ⏱️ Mede o tempo de resposta dos endpoints
      * - Garante que o servidor responde em tempo aceitável
-     * - Ideal: < 200ms para operações de autenticação
+     * - Ideal: < 150ms para endpoint /health
      */
-    it('should respond to POST /auth/login-session within 200ms', async () => {
+    it('should respond to GET /health within 150ms', async () => {
       const startTime = Date.now();
 
       const response = await app.inject({
-        method: 'POST',
-        url: '/auth/login-session',
-        payload: {
-          email: faker.internet.email(),
-          password: testPassword,
-        },
+        method: 'GET',
+        url: '/health',
       });
 
       const responseTime = Date.now() - startTime;
-      expect([200, 201, 400, 401]).toContain(response.statusCode);
-      expect(responseTime).toBeLessThan(200);
+      expect(response.statusCode).toBe(200);
+      expect(responseTime).toBeLessThan(150);
     });
 
     /**
      * 📊 Testa múltiplas requisições sequenciais
      * - Garante que performance não degrada com chamadas repetidas
      */
-    it('should maintain consistent response times across multiple auth calls', async () => {
+    it('should maintain consistent response times across multiple calls', async () => {
       const responseTimes: number[] = [];
       const calls = 5;
 
       for (let i = 0; i < calls; i++) {
         const startTime = Date.now();
         const response = await app.inject({
-          method: 'POST',
-          url: '/auth/login-session',
-          payload: {
-            email: faker.internet.email(),
-            password: testPassword,
-          },
+          method: 'GET',
+          url: '/health',
         });
-        expect([200, 201, 400, 401]).toContain(response.statusCode);
+        expect(response.statusCode).toBe(200);
         responseTimes.push(Date.now() - startTime);
       }
 
       // Verifica que todas as respostas estão dentro do limite
       for (const time of responseTimes) {
-        expect(time).toBeLessThan(300);
+        expect(time).toBeLessThan(200);
       }
 
       // Calcula média
@@ -90,7 +79,7 @@ describe('Auth Module - Performance E2E Tests', () => {
       const maxTime = Math.max(...responseTimes);
       const minTime = Math.min(...responseTimes);
       const variation = maxTime - minTime;
-      expect(variation).toBeLessThan(150); // Variação máxima de 150ms
+      expect(variation).toBeLessThan(100); // Variação máxima de 100ms
     });
   });
 
@@ -98,19 +87,17 @@ describe('Auth Module - Performance E2E Tests', () => {
     /**
      * 📦 Mede o tamanho da resposta
      * - Garante que a resposta não está muito grande
+     * - Ideal: < 2KB para resposta simples de saúde
      */
-    it('should return reasonable payload for POST /auth/login-session', async () => {
+    it('should return small payload for GET /health', async () => {
       const response = await app.inject({
-        method: 'POST',
-        url: '/auth/login-session',
-        payload: {
-          email: faker.internet.email(),
-          password: testPassword,
-        },
+        method: 'GET',
+        url: '/health',
       });
 
+      expect(response.statusCode).toBe(200);
       const payloadSize = response.body.length;
-      expect(payloadSize).toBeLessThan(5120); // < 5KB
+      expect(payloadSize).toBeLessThan(2048); // < 2KB
     });
   });
 
@@ -118,53 +105,46 @@ describe('Auth Module - Performance E2E Tests', () => {
     /**
      * 🔍 Verifica headers de segurança e performance
      */
-    it('should include security headers in auth responses', async () => {
+    it('should include performance-related headers', async () => {
       const response = await app.inject({
-        method: 'POST',
-        url: '/auth/login-session',
-        payload: {
-          email: faker.internet.email(),
-          password: testPassword,
-        },
+        method: 'GET',
+        url: '/health',
       });
 
-      expect(response.statusCode).toBeGreaterThanOrEqual(200);
+      expect(response.statusCode).toBe(200);
       // Verifica headers básicos
       expect(response.headers['content-type']).toBeDefined();
+
+      // Verifica se há headers de cache-control quando disponível
+      if (response.headers['cache-control']) {
+      }
     });
 
-    it('should have Content-Type header in auth responses', async () => {
+    it('should have Content-Type header', async () => {
       const response = await app.inject({
-        method: 'POST',
-        url: '/auth/login-session',
-        payload: {
-          email: faker.internet.email(),
-          password: testPassword,
-        },
+        method: 'GET',
+        url: '/health',
       });
 
-      expect(response.statusCode).toBeGreaterThanOrEqual(200);
+      expect(response.statusCode).toBe(200);
       expect(response.headers['content-type']).toMatch(/json/);
     });
   });
 
   describe('Concurrent Request Metrics', () => {
     /**
-     * 🔄 Testa como o servidor se comporta com requisições paralelas de autenticação
+     * 🔄 Testa como o servidor se comporta com requisições paralelas
+     * - Garante que o servidor pode lidar com múltiplas requisições simultâneas
      */
-    it('should handle concurrent auth requests efficiently', async () => {
-      const concurrentRequests = 5;
+    it('should handle concurrent requests efficiently', async () => {
+      const concurrentRequests = 10;
       const startTime = Date.now();
 
-      // Executa 5 requisições de autenticação em paralelo
+      // Executa 10 requisições em paralelo
       const promises = new Array(concurrentRequests).fill(null).map(() =>
         app.inject({
-          method: 'POST',
-          url: '/auth/login-session',
-          payload: {
-            email: faker.internet.email(),
-            password: testPassword,
-          },
+          method: 'GET',
+          url: '/health',
         }),
       );
 
@@ -172,27 +152,23 @@ describe('Auth Module - Performance E2E Tests', () => {
       const totalTime = Date.now() - startTime;
 
       for (const response of responses) {
-        expect([200, 201, 400, 401]).toContain(response.statusCode);
+        expect(response.statusCode).toBe(200);
       }
 
       expect(totalTime).toBeLessThan(2000); // Todas em menos de 2 segundos
     });
 
-    it('should calculate average response time for concurrent auth requests', async () => {
-      const concurrentRequests = 3;
+    it('should calculate average response time for concurrent requests', async () => {
+      const concurrentRequests = 5;
       const responseTimes: number[] = [];
 
       const createConcurrentRequest = async (): Promise<number> => {
         const startTime = Date.now();
         const response = await app.inject({
-          method: 'POST',
-          url: '/auth/login-session',
-          payload: {
-            email: faker.internet.email(),
-            password: testPassword,
-          },
+          method: 'GET',
+          url: '/health',
         });
-        expect([200, 201, 400, 401]).toContain(response.statusCode);
+        expect(response.statusCode).toBe(200);
         return Date.now() - startTime;
       };
 
@@ -207,30 +183,25 @@ describe('Auth Module - Performance E2E Tests', () => {
       const maxTime = Math.max(...responseTimes);
       const minTime = Math.min(...responseTimes);
 
-
-      expect(avgTime).toBeLessThan(250);
+      expect(avgTime).toBeLessThan(200);
     });
   });
 
   describe('Memory Metrics', () => {
     /**
-     * 💾 Monitora uso de memória durante requisições de autenticação
+     * 💾 Monitora uso de memória durante testes
      */
-    it('should not have memory leaks during auth requests', async () => {
+    it('should not have memory leaks during requests', async () => {
       const initialMemory = process.memoryUsage().heapUsed;
-      const requests = 10;
+      const requests = 20;
 
-      // Executa múltiplas requisições de autenticação
+      // Executa múltiplas requisições
       for (let i = 0; i < requests; i++) {
         const response = await app.inject({
-          method: 'POST',
-          url: '/auth/login-session',
-          payload: {
-            email: faker.internet.email(),
-            password: testPassword,
-          },
+          method: 'GET',
+          url: '/health',
         });
-        expect([200, 201, 400, 401]).toContain(response.statusCode);
+        expect(response.statusCode).toBe(200);
       }
 
       const finalMemory = process.memoryUsage().heapUsed;
@@ -244,22 +215,17 @@ describe('Auth Module - Performance E2E Tests', () => {
     /**
      * ⚡ Verifica que erros são tratados rapidamente
      */
-    it('should handle invalid credentials quickly', async () => {
+    it('should handle 404 errors quickly', async () => {
       const startTime = Date.now();
 
       const response = await app.inject({
-        method: 'POST',
-        url: '/auth/login-session',
-        payload: {
-          email: faker.internet.email(),
-          password: faker.internet.password({ length: 16 }),
-        },
+        method: 'GET',
+        url: '/nonexistent',
       });
 
       const responseTime = Date.now() - startTime;
-      // Accept any response (201, 400, 401) as long as it responds quickly
-      expect([201, 400, 401]).toContain(response.statusCode);
-      expect(responseTime).toBeLessThan(150);
+      expect(response.statusCode).toBe(404);
+      expect(responseTime).toBeLessThan(100);
     });
   });
 });
