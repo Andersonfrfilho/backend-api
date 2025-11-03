@@ -14,13 +14,12 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
-    "resolveJsonModule": true,  // Para importar JSON (útil para tsconfig-paths mais abaixo)
+    "resolveJsonModule": true,
     "paths": {
-      "@app/*": ["src/*"],          // Ex: @app/main.ts -> src/main.ts
-      "@common/*": ["src/common/*"], // Ex: @common/filters/error-filter.ts -> src/common/filters/error-filter.ts
-      "@config/*": ["src/config/*"], // Ex: @config/env.validation.ts -> src/config/env.validation.ts
-      "@core/*": ["src/core/*"],    // Ex: @core/interceptors/log.interceptor.ts -> src/core/interceptors/log.interceptor.ts
-      "@modules/*": ["src/modules/*"] // Ex: @modules/health/health.module.ts -> src/modules/health/health.module.ts
+      "@app/*": ["src/*"],
+      "@common/*": ["src/common/*"],
+      "@config/*": ["src/config/*"],
+      "@modules/*": ["src/modules/*"]
     },
     "incremental": true,
     "skipLibCheck": true,
@@ -28,6 +27,6 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
-    "noFallthroughCasesInSwitch": false,
+    "noFallthroughCasesInSwitch": false
   }
 }

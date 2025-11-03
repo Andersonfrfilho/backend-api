@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "ms-vscode.vscode-typescript-next",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "path-intellisense.path-intellisense",
+    "projectletxyz.typescript-path-intellisense",
+    "ms-azuretools.vscode-docker",
+    "eamodio.gitlens",
+    "github.copilot",
+    "sonarsource.sonarlint-vscode"
+  ]
+}

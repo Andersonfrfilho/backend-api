@@ -1,42 +1,32 @@
+import { Body, Controller, Inject, Injectable, Post, Version } from '@nestjs/common';
 import {
-  Body,
-  Controller,
-  Inject,
-  Injectable,
-  Post,
-  Version,
-} from '@nestjs/common';
-import { LOG_PROVIDER } from '@core/providers/log/log.interface';
-import type { LogProviderInterface } from '@core/providers/log/log.interface';
-import type {
-  AuthLoginSessionControllerParams,
-  AuthLoginSessionControllerResponse,
-} from '@modules/auth/auth.interface';
-import { AUTH_LOGIN_SESSION_SERVICE_PROVIDE } from '@modules/auth/services/login-session/auth.login-session.interface';
-import type { AuthLoginSessionServiceInterface } from '@modules/auth/services/login-session/auth.login-session.interface';
-import {
-  AuthLoginSessionParamsDto,
-  AuthLoginSessionResponseDto,
-  AuthLoginSessionServiceErrorInvalidCredentialsDto,
-  AuthLoginSessionServiceErrorNotFoundDto,
-  ERRORS_AUTH_LOGIN_SESSION,
-} from '@modules/auth/services/login-session/auth.login-session.dto';
-import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
-  ApiBody,
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { AuthLoginSessionServiceInternalServerErrorDto } from '@app/common/dtos/error/errors.dto';
+
+import type { AuthLoginSessionServiceInterface } from '@modules/auth/domain/auth.login-session.interface';
+import {
+  AuthBadRequestErrorValidationRequestDto,
+  AuthLoginSessionServiceErrorInvalidCredentialsDto,
+  AuthLoginSessionServiceErrorNotFoundDto,
+  AuthLoginSessionServiceInternalServerErrorDto,
+} from '@modules/auth/domain/exceptions';
+import { AUTH_LOGIN_SESSION_SERVICE_PROVIDE } from '@modules/auth/infrastructure/auth.provider';
+
+import {
+  AuthLoginSessionRequestDto as AuthLoginSessionRequestParamsDto,
+  AuthLoginSessionResponseDto as AuthLoginSessionResponseController,
+} from './shared/dtos';
 
 @Injectable()
 @Controller('/auth')
 export class AuthController {
   constructor(
-    @Inject(LOG_PROVIDER) private readonly logProvider: LogProviderInterface,
     @Inject(AUTH_LOGIN_SESSION_SERVICE_PROVIDE)
     private readonly authLoginSessionServiceProvider: AuthLoginSessionServiceInterface,
   ) {}
@@ -49,36 +39,23 @@ export class AuthController {
       Esta rota realiza a autenticação do usuário e retorna os tokens de acesso e atualização.
     `,
   })
-  @ApiOkResponse({ type: AuthLoginSessionResponseDto })
+  @ApiOkResponse({ type: AuthLoginSessionRequestParamsDto })
   @ApiNotFoundResponse({
     type: AuthLoginSessionServiceErrorNotFoundDto,
-    examples: {
-      missingField: {
-        summary: 'User not found error',
-        value: ERRORS_AUTH_LOGIN_SESSION.MISSING_CREDENTIALS,
-      },
-      notFound: {
-        summary: 'Any way',
-        value: {
-          statusCode: 404,
-          message: 'User not found',
-          code: 404,
-        },
-      },
-    },
   })
   @ApiUnauthorizedResponse({
     type: AuthLoginSessionServiceErrorInvalidCredentialsDto,
+  })
+  @ApiBadRequestResponse({
+    type: AuthBadRequestErrorValidationRequestDto,
   })
   @ApiInternalServerErrorResponse({
     type: AuthLoginSessionServiceInternalServerErrorDto,
   })
   @ApiBearerAuth()
-  @ApiBody({ type: AuthLoginSessionParamsDto })
   async loginSession(
-    @Body() params: AuthLoginSessionControllerParams,
-  ): Promise<AuthLoginSessionControllerResponse> {
-    this.logProvider.info('AuthController');
+    @Body() params: AuthLoginSessionRequestParamsDto,
+  ): Promise<AuthLoginSessionResponseController> {
     return this.authLoginSessionServiceProvider.execute(params);
   }
 }

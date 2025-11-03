@@ -1,0 +1,17 @@
+import { Module } from '@nestjs/common';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+
+import { LoggingConfigModule } from '@modules/shared/infrastructure/interceptors/logging/logging-config.module';
+import { LoggingInterceptor } from '@modules/shared/infrastructure/interceptors/logging/logging.interceptor';
+import { SharedInfrastructureProviderLogModule } from '@modules/shared/infrastructure/providers/log/log.module';
+
+@Module({
+  imports: [SharedInfrastructureProviderLogModule, LoggingConfigModule],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
+    },
+  ],
+})
+export class SharedInfrastructureLoggingModule {}

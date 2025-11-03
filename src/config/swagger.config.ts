@@ -6,12 +6,6 @@ export const swaggerConfig = new DocumentBuilder()
   .setVersion('1.0')
   .addBearerAuth()
   .addServer(process.env.BASE_URL_DEV || 'http://localhost:3333', 'Development')
-  .addServer(
-    process.env.BASE_URL_HML || 'https://api-hml.example.com',
-    'Staging (STG)',
-  )
-  .addServer(
-    process.env.BASE_URL_PROD || 'https://api-prod.example.com',
-    'Production',
-  )
+  .addServer(process.env.BASE_URL_HML || 'https://api-hml.example.com', 'Staging (STG)')
+  .addServer(process.env.BASE_URL_PROD || 'https://api-prod.example.com', 'Production')
   .build();

@@ -1,20 +1,21 @@
-import { register as tsConfigPathsRegister } from 'tsconfig-paths';
-import * as tsConfig from '../tsconfig.json';
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { ValidationPipe, VersioningType } from '@nestjs/common';
-import {
-  FastifyAdapter,
-  NestFastifyApplication,
-} from '@nestjs/platform-fastify';
-import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
-import { SwaggerModule } from '@nestjs/swagger';
-import { join } from 'node:path';
 import { writeFileSync } from 'node:fs';
-import { swaggerConfig } from '@config/swagger.config';
+import { join } from 'node:path';
+
+import { ValidationPipe, VersioningType } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
+import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
+import { SwaggerModule } from '@nestjs/swagger';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import { register as tsConfigPathsRegister } from 'tsconfig-paths';
+
 import { swaggerCustomOptions } from '@config/swagger-custom.config';
-import { docsFactory } from '@core/interceptors/docs';
-import { AppErrorFactory } from '@common/errors';
+import { swaggerConfig } from '@config/swagger.config';
+import { AppErrorFactory } from '@modules/error';
+import { docsFactory } from '@modules/shared/infrastructure/interceptors/docs';
+
+import * as tsConfig from '../tsconfig.json';
+
+import { AppModule } from './app.module';
 
 const compilerOptions = tsConfig.compilerOptions;
 tsConfigPathsRegister({
@@ -27,23 +28,22 @@ async function bootstrap() {
     bodyLimit: 1048576,
   });
 
-  const app = await NestFactory.create<NestFastifyApplication>(
-    AppModule,
-    instanceFastify,
-  );
+  const app = await NestFactory.create<NestFastifyApplication>(AppModule, instanceFastify);
 
   app.enableVersioning({
     type: VersioningType.URI,
   });
   app.useGlobalPipes(
     new ValidationPipe({
-      forbidUnknownValues: true,
+      forbidUnknownValues: false,
       forbidNonWhitelisted: true,
       transform: true,
       whitelist: true,
-      exceptionFactory: (errors) => {
-        return AppErrorFactory.fromValidationErrors(errors);
+      skipMissingProperties: false,
+      transformOptions: {
+        enableImplicitConversion: true,
       },
+      exceptionFactory: (errors) => AppErrorFactory.fromValidationErrors(errors),
     }),
   );
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));

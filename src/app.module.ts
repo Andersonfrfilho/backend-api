@@ -1,12 +1,15 @@
 import { Module } from '@nestjs/common';
-import { register as tsConfigPathsRegister } from 'tsconfig-paths';
-import * as tsConfig from '../tsconfig.json';
-import envValidation from '@config/env.validation';
 import { ConfigModule } from '@nestjs/config';
-import { HealthModule } from '@modules/health/health.module';
+import { register as tsConfigPathsRegister } from 'tsconfig-paths';
+
+import envValidation from '@config/env.validation';
 import { AuthModule } from '@modules/auth/auth.module';
-import { CoreModule } from '@core/core.module';
-import { CommonModule } from '@common/common.module';
+import { ErrorModule } from '@modules/error/error.module';
+import { HealthModule } from '@modules/health/health.module';
+
+import * as tsConfig from '../tsconfig.json';
+
+import { SharedModule } from './modules/shared/shared.module';
 
 const compilerOptions = tsConfig.compilerOptions;
 tsConfigPathsRegister({
@@ -21,8 +24,8 @@ tsConfigPathsRegister({
       validationSchema: envValidation,
       envFilePath: '.env',
     }),
-    CommonModule,
-    CoreModule,
+    SharedModule,
+    ErrorModule,
     HealthModule,
     AuthModule,
   ],
