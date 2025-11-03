@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 
+import type { LogProviderInterface } from '@modules/shared/domain';
 import { HttpExceptionFilter } from './error-filter';
 
 describe('HttpExceptionFilter - Unit Tests', () => {
@@ -7,7 +8,7 @@ describe('HttpExceptionFilter - Unit Tests', () => {
   let logMock: jest.Mock;
   let errorMock: jest.Mock;
   let warnMock: jest.Mock;
-  let mockLogProvider: any;
+  let mockLogProvider: LogProviderInterface;
 
   beforeEach(() => {
     // Arrange: Setup all mocks fresh for each test
@@ -16,10 +17,11 @@ describe('HttpExceptionFilter - Unit Tests', () => {
     warnMock = jest.fn();
 
     mockLogProvider = {
-      log: logMock,
+      info: logMock,
       error: errorMock,
       warn: warnMock,
-    } as any;
+      debug: jest.fn(),
+    } as unknown as LogProviderInterface;
 
     // Instantiate filter directly without Test.createTestingModule
     filter = new HttpExceptionFilter(mockLogProvider);
@@ -89,9 +91,9 @@ describe('HttpExceptionFilter - Unit Tests', () => {
       expect(filter['logProvider']).toBe(mockLogProvider);
     });
 
-    it('should have log, error, and warn methods available', () => {
+    it('should have info, error, and warn methods available', () => {
       // Assert
-      expect(mockLogProvider.log).toBeDefined();
+      expect(mockLogProvider.info).toBeDefined();
       expect(mockLogProvider.error).toBeDefined();
       expect(mockLogProvider.warn).toBeDefined();
     });
