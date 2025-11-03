@@ -47,7 +47,6 @@ describe('Health Module - Performance E2E Tests', () => {
       const responseTime = Date.now() - startTime;
       expect(response.statusCode).toBe(200);
       expect(responseTime).toBeLessThan(150);
-      console.log(`GET /health response time: ${responseTime}ms`);
     });
 
     /**
@@ -75,14 +74,12 @@ describe('Health Module - Performance E2E Tests', () => {
 
       // Calcula média
       const avgTime = responseTimes.reduce((a, b) => a + b, 0) / calls;
-      console.log(`Average response time (${calls} calls): ${avgTime.toFixed(2)}ms`);
 
       // Verifica variação (não deve variar muito)
       const maxTime = Math.max(...responseTimes);
       const minTime = Math.min(...responseTimes);
       const variation = maxTime - minTime;
       expect(variation).toBeLessThan(100); // Variação máxima de 100ms
-      console.log(`Response time variation: ${minTime}ms - ${maxTime}ms (${variation}ms)`);
     });
   });
 
@@ -101,7 +98,6 @@ describe('Health Module - Performance E2E Tests', () => {
       expect(response.statusCode).toBe(200);
       const payloadSize = response.body.length;
       expect(payloadSize).toBeLessThan(2048); // < 2KB
-      console.log(`GET /health payload size: ${payloadSize} bytes`);
     });
   });
 
@@ -118,13 +114,10 @@ describe('Health Module - Performance E2E Tests', () => {
       expect(response.statusCode).toBe(200);
       // Verifica headers básicos
       expect(response.headers['content-type']).toBeDefined();
-      console.log(`Content-Type: ${response.headers['content-type']}`);
 
       // Verifica se há headers de cache-control quando disponível
       if (response.headers['cache-control']) {
-        console.log(`Cache-Control: ${response.headers['cache-control']}`);
       }
-      console.log('Response headers verified: ✓');
     });
 
     it('should have Content-Type header', async () => {
@@ -162,7 +155,6 @@ describe('Health Module - Performance E2E Tests', () => {
         expect(response.statusCode).toBe(200);
       }
 
-      console.log(`${concurrentRequests} concurrent requests completed in ${totalTime}ms`);
       expect(totalTime).toBeLessThan(2000); // Todas em menos de 2 segundos
     });
 
@@ -191,10 +183,6 @@ describe('Health Module - Performance E2E Tests', () => {
       const maxTime = Math.max(...responseTimes);
       const minTime = Math.min(...responseTimes);
 
-      console.log('Concurrent requests stats:');
-      console.log(`  - Average: ${avgTime.toFixed(2)}ms`);
-      console.log(`  - Min: ${minTime}ms`);
-      console.log(`  - Max: ${maxTime}ms`);
 
       expect(avgTime).toBeLessThan(200);
     });
@@ -220,7 +208,6 @@ describe('Health Module - Performance E2E Tests', () => {
       const finalMemory = process.memoryUsage().heapUsed;
       const memoryIncrease = (finalMemory - initialMemory) / 1024 / 1024; // Convert to MB
 
-      console.log(`Memory used after ${requests} requests: ${memoryIncrease.toFixed(2)}MB`);
       expect(memoryIncrease).toBeLessThan(50); // Menos de 50MB de aumento
     });
   });
@@ -240,7 +227,6 @@ describe('Health Module - Performance E2E Tests', () => {
       const responseTime = Date.now() - startTime;
       expect(response.statusCode).toBe(404);
       expect(responseTime).toBeLessThan(100);
-      console.log(`404 error response time: ${responseTime}ms`);
     });
   });
 });

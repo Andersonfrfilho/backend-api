@@ -54,7 +54,6 @@ describe('Auth Module - Performance E2E Tests', () => {
       const responseTime = Date.now() - startTime;
       expect([200, 201, 400, 401]).toContain(response.statusCode);
       expect(responseTime).toBeLessThan(200);
-      console.log(`POST /auth/login-session response time: ${responseTime}ms`);
     });
 
     /**
@@ -86,14 +85,12 @@ describe('Auth Module - Performance E2E Tests', () => {
 
       // Calcula média
       const avgTime = responseTimes.reduce((a, b) => a + b, 0) / calls;
-      console.log(`Average auth response time (${calls} calls): ${avgTime.toFixed(2)}ms`);
 
       // Verifica variação (não deve variar muito)
       const maxTime = Math.max(...responseTimes);
       const minTime = Math.min(...responseTimes);
       const variation = maxTime - minTime;
       expect(variation).toBeLessThan(150); // Variação máxima de 150ms
-      console.log(`Response time variation: ${minTime}ms - ${maxTime}ms (${variation}ms)`);
     });
   });
 
@@ -114,7 +111,6 @@ describe('Auth Module - Performance E2E Tests', () => {
 
       const payloadSize = response.body.length;
       expect(payloadSize).toBeLessThan(5120); // < 5KB
-      console.log(`POST /auth/login-session payload size: ${payloadSize} bytes`);
     });
   });
 
@@ -135,8 +131,6 @@ describe('Auth Module - Performance E2E Tests', () => {
       expect(response.statusCode).toBeGreaterThanOrEqual(200);
       // Verifica headers básicos
       expect(response.headers['content-type']).toBeDefined();
-      console.log(`Content-Type: ${response.headers['content-type']}`);
-      console.log('Security headers verified: ✓');
     });
 
     it('should have Content-Type header in auth responses', async () => {
@@ -181,7 +175,6 @@ describe('Auth Module - Performance E2E Tests', () => {
         expect([200, 201, 400, 401]).toContain(response.statusCode);
       }
 
-      console.log(`${concurrentRequests} concurrent auth requests completed in ${totalTime}ms`);
       expect(totalTime).toBeLessThan(2000); // Todas em menos de 2 segundos
     });
 
@@ -214,10 +207,6 @@ describe('Auth Module - Performance E2E Tests', () => {
       const maxTime = Math.max(...responseTimes);
       const minTime = Math.min(...responseTimes);
 
-      console.log('Concurrent auth requests stats:');
-      console.log(`  - Average: ${avgTime.toFixed(2)}ms`);
-      console.log(`  - Min: ${minTime}ms`);
-      console.log(`  - Max: ${maxTime}ms`);
 
       expect(avgTime).toBeLessThan(250);
     });
@@ -247,7 +236,6 @@ describe('Auth Module - Performance E2E Tests', () => {
       const finalMemory = process.memoryUsage().heapUsed;
       const memoryIncrease = (finalMemory - initialMemory) / 1024 / 1024; // Convert to MB
 
-      console.log(`Memory used after ${requests} auth requests: ${memoryIncrease.toFixed(2)}MB`);
       expect(memoryIncrease).toBeLessThan(50); // Menos de 50MB de aumento
     });
   });
@@ -272,7 +260,6 @@ describe('Auth Module - Performance E2E Tests', () => {
       // Accept any response (201, 400, 401) as long as it responds quickly
       expect([201, 400, 401]).toContain(response.statusCode);
       expect(responseTime).toBeLessThan(150);
-      console.log(`Auth error response time: ${responseTime}ms`);
     });
   });
 });

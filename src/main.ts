@@ -25,7 +25,7 @@ tsConfigPathsRegister({
 
 async function bootstrap() {
   const instanceFastify = new FastifyAdapter({
-    bodyLimit: 1048576,
+    bodyLimit: 102400, // 100KB - limite de payload
   });
 
   const app = await NestFactory.create<NestFastifyApplication>(AppModule, instanceFastify);
@@ -35,7 +35,7 @@ async function bootstrap() {
   });
   app.useGlobalPipes(
     new ValidationPipe({
-      forbidUnknownValues: false,
+      forbidUnknownValues: true,
       forbidNonWhitelisted: true,
       transform: true,
       whitelist: true,

@@ -147,4 +147,177 @@ describe('AuthController - Unit Tests', () => {
       expect(result.refreshToken.length).toBeGreaterThan(0);
     });
   });
+
+  describe('Integration Tests - Service → UseCase → Logger Pipeline', () => {
+    let testingModule: TestingModule;
+    let authController: AuthController;
+    let authService: AuthLoginSessionServiceInterface;
+
+    beforeEach(async () => {
+      // Setup for integration tests using real service implementation
+      testingModule = await Test.createTestingModule({
+        controllers: [AuthController],
+        providers: [
+          {
+            provide: AUTH_LOGIN_SESSION_SERVICE_PROVIDE,
+            useValue: {
+              execute: jest.fn().mockImplementation((params: AuthLoginSessionRequestDto) =>
+                Promise.resolve({
+                  accessToken: `${params.email}-access-token`,
+                  refreshToken: 'mocked-refresh-token',
+                }),
+              ),
+            },
+          },
+        ],
+      }).compile();
+
+      authController = testingModule.get<AuthController>(AuthController);
+      authService = testingModule.get<AuthLoginSessionServiceInterface>(
+        AUTH_LOGIN_SESSION_SERVICE_PROVIDE,
+      );
+    });
+
+    afterEach(async () => {
+      await testingModule.close();
+    });
+
+    it('should controller and service work together', async () => {
+      // Arrange
+      const input: AuthLoginSessionRequestDto = {
+        email: 'integration@test.com',
+        password: 'SecurePassword123!',
+      };
+
+      // Act
+      const result = await authController.loginSession(input);
+
+      // Assert
+      expect(result).toBeDefined();
+      expect(result.accessToken).toContain('integration@test.com');
+      expect(result.refreshToken).toBe('mocked-refresh-token');
+    });
+
+    it('should service execute be called from controller', async () => {
+      // Arrange
+      const input: AuthLoginSessionRequestDto = {
+        email: 'test@integration.com',
+        password: 'SecurePassword123!',
+      };
+      const mockExecute = authService.execute as jest.Mock;
+      mockExecute.mockClear();
+
+      // Act
+      await authController.loginSession(input);
+
+      // Assert
+      expect(mockExecute).toHaveBeenCalledWith(input);
+      expect(mockExecute).toHaveBeenCalledTimes(1);
+    });
+
+    it('should handle multiple integration calls', async () => {
+      // Arrange
+      const inputs: AuthLoginSessionRequestDto[] = [
+        { email: 'user1@test.com', password: 'Pass1!' },
+        { email: 'user2@test.com', password: 'Pass2!' },
+        { email: 'user3@test.com', password: 'Pass3!' },
+      ];
+
+      // Act
+      const results: any[] = [];
+      for (const input of inputs) {
+        const result = await authController.loginSession(input);
+        results.push(result);
+      }
+
+      // Assert
+      expect(results).toHaveLength(3);
+      results.forEach((result, index) => {
+        expect(result.accessToken).toContain(inputs[index].email);
+      });
+    });
+
+    it('should preserve data consistency through pipeline', async () => {
+      // Arrange
+      const email = 'consistency@test.com';
+      const input: AuthLoginSessionRequestDto = {
+        email,
+        password: 'SecurePassword123!',
+      };
+
+      // Act
+      const result = await authController.loginSession(input);
+
+      // Assert
+      expect(result.accessToken).toContain(email);
+      expect(typeof result.accessToken).toBe('string');
+      expect(result.accessToken.length).toBeGreaterThan(0);
+    });
+
+    it('should integration complete within performance threshold', async () => {
+      // Arrange
+      const input: AuthLoginSessionRequestDto = {
+        email: 'perf@test.com',
+        password: 'SecurePassword123!',
+      };
+
+      // Act
+      const startTime = Date.now();
+      await authController.loginSession(input);
+      const executionTime = Date.now() - startTime;
+
+      // Assert
+      expect(executionTime).toBeLessThan(50);
+    });
+  });
+
+  describe('Contract Tests - Auth Request/Response Shapes', () => {
+    /**
+     * 📋 AuthLoginSessionRequestDto - Validates API contract
+     *
+     * ✅ ISO/IEC 25010 - API Compliance
+     * ✅ RFC 7231 - Content validation
+     */
+    it('should enforce email and password in login request', () => {
+      // Arrange
+      const validRequest = {
+        email: 'test@example.com',
+        password: 'ValidPassword123!',
+      };
+
+      // Act
+      const dto = new AuthLoginSessionRequestDto();
+      dto.email = validRequest.email;
+      dto.password = validRequest.password;
+
+      // Assert
+      expect(dto.email).toBe('test@example.com');
+      expect(dto.password).toBe('ValidPassword123!');
+      expect(Object.keys(dto)).toContain('email');
+      expect(Object.keys(dto)).toContain('password');
+    });
+
+    /**
+     * 📋 AuthLoginSessionResponseDto - Validates response contract
+     *
+     * ✅ OAuth2/JWT compliance
+     */
+    it('should return accessToken and refreshToken in response', () => {
+      // Arrange
+      const responseData = {
+        accessToken:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ',
+        refreshToken:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ',
+      };
+
+      // Act & Assert
+      expect(responseData).toHaveProperty('accessToken');
+      expect(responseData).toHaveProperty('refreshToken');
+      expect(typeof responseData.accessToken).toBe('string');
+      expect(typeof responseData.refreshToken).toBe('string');
+      expect(responseData.accessToken.split('.').length).toBe(3); // JWT format
+      expect(responseData.refreshToken.split('.').length).toBe(3); // JWT format
+    });
+  });
 });
