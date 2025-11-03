@@ -1,5 +1,5 @@
-import { describe, expect, it, beforeEach } from '@jest/globals';
 import { faker } from '@faker-js/faker';
+import { beforeEach, describe, expect, it } from '@jest/globals';
 import type { ObfuscatorInfoParams } from './log.interface';
 import { isDate, isPrimitive, obfuscatorInfo } from './log.utils';
 

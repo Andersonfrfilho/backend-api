@@ -1,5 +1,5 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { faker } from '@faker-js/faker';
+import { Test, TestingModule } from '@nestjs/testing';
 
 import type { LogProviderInterface } from '@modules/shared/domain';
 import { LOG_PROVIDER, WINSTON_LOG_PROVIDER } from '@modules/shared/infrastructure/log.provider';
