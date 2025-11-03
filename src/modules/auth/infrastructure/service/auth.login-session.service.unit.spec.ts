@@ -1,3 +1,4 @@
+import { faker } from '@faker-js/faker';
 import { beforeEach, describe, expect, it } from '@jest/globals';
 import type { AuthLoginSessionUseCaseInterface } from '@modules/auth/domain/auth.login-session.interface';
 import { AUTH_LOGIN_SESSION_USE_CASE_PROVIDE } from '@modules/auth/infrastructure/auth.provider';
@@ -10,9 +11,11 @@ describe('AuthLoginSessionService - Unit Tests', () => {
   let service: AuthLoginSessionService;
   let useCase: AuthLoginSessionUseCaseInterface;
   let logProvider: any;
+  let testPassword: string;
 
   beforeEach(async () => {
     // Arrange: Setup mocks and test module
+    testPassword = faker.internet.password({ length: 12, memorable: false });
     const mockUseCase = {
       execute: jest.fn().mockResolvedValue({
         accessToken: 'mocked-token',
@@ -63,7 +66,7 @@ describe('AuthLoginSessionService - Unit Tests', () => {
       // Arrange
       const input: AuthLoginSessionRequestDto = {
         email: 'test@example.com',
-        password: 'Test@1234',
+        password: testPassword,
       };
 
       // Act
@@ -77,7 +80,7 @@ describe('AuthLoginSessionService - Unit Tests', () => {
       // Arrange
       const input: AuthLoginSessionRequestDto = {
         email: 'test@example.com',
-        password: 'Test@1234',
+        password: testPassword,
       };
 
       // Act
@@ -92,7 +95,7 @@ describe('AuthLoginSessionService - Unit Tests', () => {
       // Arrange
       const input: AuthLoginSessionRequestDto = {
         email: 'test@example.com',
-        password: 'Test@1234',
+        password: testPassword,
       };
 
       // Act
@@ -108,7 +111,7 @@ describe('AuthLoginSessionService - Unit Tests', () => {
       // Arrange
       const input: AuthLoginSessionRequestDto = {
         email: 'test@example.com',
-        password: 'Test@1234',
+        password: testPassword,
       };
       const error = new Error('UseCase Error');
       const mockExecute = useCase.execute as jest.Mock;
@@ -122,7 +125,7 @@ describe('AuthLoginSessionService - Unit Tests', () => {
       // Arrange
       const input: AuthLoginSessionRequestDto = {
         email: 'test@example.com',
-        password: 'Test@1234',
+        password: testPassword,
       };
 
       // Act
@@ -140,11 +143,11 @@ describe('AuthLoginSessionService - Unit Tests', () => {
       // Arrange
       const input1: AuthLoginSessionRequestDto = {
         email: 'user1@example.com',
-        password: 'Test@1234',
+        password: testPassword,
       };
       const input2: AuthLoginSessionRequestDto = {
         email: 'user2@example.com',
-        password: 'Test@1234',
+        password: testPassword,
       };
 
       // Act

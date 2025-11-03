@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { faker } from '@faker-js/faker';
 
 import type { LogProviderInterface } from '@modules/shared/domain';
 import { LOG_PROVIDER, WINSTON_LOG_PROVIDER } from '@modules/shared/infrastructure/log.provider';
@@ -9,9 +10,11 @@ import { LogProvider } from './log.provider';
 describe('LogProvider - Unit Tests', () => {
   let provider: LogProviderInterface;
   let winstonLogProvider: WinstonLogProvider;
+  let testPassword: string;
 
   beforeEach(async () => {
     // Arrange: Setup mocks and test module
+    testPassword = faker.internet.password({ length: 12, memorable: false });
     const mockWinstonLogProvider = {
       info: jest.fn(),
       error: jest.fn(),
@@ -203,7 +206,7 @@ describe('LogProvider - Unit Tests', () => {
         message: 'Login attempt',
         context: 'AuthService',
         params: {
-          password: 'secret123',
+          password: testPassword,
           username: 'user@example.com',
         },
       };

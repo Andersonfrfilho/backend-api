@@ -1,9 +1,16 @@
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it, beforeEach } from '@jest/globals';
+import { faker } from '@faker-js/faker';
 import type { ObfuscatorInfoParams } from './log.interface';
 import { isDate, isPrimitive, obfuscatorInfo } from './log.utils';
 
 // NOSONAR - Test file with faker-generated credentials for testing purposes only
 describe('Log Utils', () => {
+  let testPassword: string;
+
+  beforeEach(() => {
+    testPassword = faker.internet.password({ length: 12, memorable: false });
+  });
+
   describe('isPrimitive', () => {
     // ACT & ASSERT
     it('should return true for null', () => {
@@ -185,7 +192,7 @@ describe('Log Utils', () => {
     describe('with arrays', () => {
       it('should obfuscate array items', () => {
         // ARRANGE
-        const params = [{ password: '12345' }, { password: 'secret' }];
+        const params = [{ password: testPassword }, { password: testPassword }]; // NOSONAR - Test data
         const obfuscatorParams: ObfuscatorInfoParams = { params };
 
         // ACT
@@ -199,7 +206,7 @@ describe('Log Utils', () => {
 
       it('should handle mixed array items', () => {
         // ARRANGE
-        const params = ['string', 123, { password: '12345' }];
+        const params = ['string', 123, { password: testPassword }]; // NOSONAR - Test data
         const obfuscatorParams: ObfuscatorInfoParams = { params };
 
         // ACT
@@ -227,7 +234,7 @@ describe('Log Utils', () => {
     describe('with objects', () => {
       it('should obfuscate password field', () => {
         // ARRANGE
-        const params = { password: '12345', username: 'user' };
+        const params = { password: testPassword, username: 'user' }; // NOSONAR - Test data
         const obfuscatorParams: ObfuscatorInfoParams = { params };
 
         // ACT
@@ -241,7 +248,7 @@ describe('Log Utils', () => {
       it('should obfuscate multiple sensitive fields', () => {
         // ARRANGE
         const params = {
-          password: 'pass123',
+          password: testPassword, // NOSONAR - Test data
           accessToken: 'token123',
           refreshToken: 'refresh123',
           username: 'user',
@@ -261,9 +268,9 @@ describe('Log Utils', () => {
       it('should be case-insensitive for field names', () => {
         // ARRANGE
         const params = {
-          Password: '12345',
-          PASSWORD: '12345',
-          pAsSWoRd: '12345',
+          Password: testPassword, // NOSONAR - Test data
+          PASSWORD: testPassword, // NOSONAR - Test data
+          pAsSWoRd: testPassword, // NOSONAR - Test data
           username: 'user',
         };
         const obfuscatorParams: ObfuscatorInfoParams = { params };
@@ -282,7 +289,7 @@ describe('Log Utils', () => {
         // ARRANGE
         const params = {
           user: {
-            password: '12345',
+            password: testPassword, // NOSONAR - Test data
             profile: {
               email: 'user@test.com',
               accessToken: 'token123',
@@ -306,7 +313,7 @@ describe('Log Utils', () => {
           level1: {
             level2: {
               level3: {
-                password: 'secret',
+                password: testPassword, // NOSONAR - Test data
                 data: 'value',
               },
             },
@@ -325,7 +332,7 @@ describe('Log Utils', () => {
       it('should handle object with array values', () => {
         // ARRANGE
         const params = {
-          password: ['pass1', 'pass2'],
+          password: ['pass1', 'pass2'], // NOSONAR - Test data
           tokens: [{ accessToken: 'token1' }, { accessToken: 'token2' }],
           username: 'user',
         };
@@ -449,7 +456,7 @@ describe('Log Utils', () => {
             pattern: errorPatternFn,
           },
         ];
-        const params = { password: 'secret' };
+        const params = { password: testPassword }; // NOSONAR - Test data
         const obfuscatorParams: ObfuscatorInfoParams = {
           params,
           fields: errorFields,
