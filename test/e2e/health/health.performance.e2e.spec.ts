@@ -80,6 +80,9 @@ describe('Health Module - Performance E2E Tests', () => {
       const minTime = Math.min(...responseTimes);
       const variation = maxTime - minTime;
       expect(variation).toBeLessThan(100); // Variação máxima de 100ms
+      expect(avgTime).toBeLessThan(150); // Média deve ser menor que 150ms
+      expect(maxTime).toBeLessThan(200); // Tempo máximo deve ser menor que 200ms
+      expect(minTime).toBeGreaterThan(0); // Tempo mínimo deve ser positivo
     });
   });
 
@@ -117,6 +120,7 @@ describe('Health Module - Performance E2E Tests', () => {
 
       // Verifica se há headers de cache-control quando disponível
       if (response.headers['cache-control']) {
+        expect(response.headers['cache-control']).toMatch(/^(public|private|no-cache|no-store)/);
       }
     });
 
@@ -182,8 +186,12 @@ describe('Health Module - Performance E2E Tests', () => {
       const avgTime = responseTimes.reduce((a, b) => a + b, 0) / concurrentRequests;
       const maxTime = Math.max(...responseTimes);
       const minTime = Math.min(...responseTimes);
+      const variation = maxTime - minTime;
 
+      expect(variation).toBeLessThan(100);
       expect(avgTime).toBeLessThan(200);
+      expect(maxTime).toBeLessThan(250);
+      expect(minTime).toBeGreaterThan(0);
     });
   });
 

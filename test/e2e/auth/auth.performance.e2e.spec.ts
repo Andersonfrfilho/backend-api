@@ -91,6 +91,9 @@ describe('Auth Module - Performance E2E Tests', () => {
       const minTime = Math.min(...responseTimes);
       const variation = maxTime - minTime;
       expect(variation).toBeLessThan(150); // Variação máxima de 150ms
+      expect(avgTime).toBeLessThan(250); // Média deve ser menor que 250ms
+      expect(maxTime).toBeLessThan(300); // Tempo máximo deve ser menor que 300ms
+      expect(minTime).toBeGreaterThan(0); // Tempo mínimo deve ser positivo
     });
   });
 
@@ -208,6 +211,8 @@ describe('Auth Module - Performance E2E Tests', () => {
       const minTime = Math.min(...responseTimes);
 
       expect(avgTime).toBeLessThan(250);
+      expect(maxTime).toBeLessThan(300);
+      expect(minTime).toBeGreaterThan(0);
     });
   });
 
