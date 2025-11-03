@@ -7,7 +7,7 @@ export const isPrimitive = (v: unknown) =>
   typeof v === 'string' ||
   typeof v === 'number' ||
   typeof v === 'boolean' ||
-  typeof v === 'undefined' ||
+  v === undefined ||
   typeof v === 'function';
 
 export const isDate = (v: unknown) => v instanceof Date;
