@@ -186,7 +186,7 @@ describe('AuthController - Unit Tests', () => {
       // Arrange
       const input: AuthLoginSessionRequestDto = {
         email: 'integration@test.com',
-        password: 'SecurePassword123!',
+        password: testPassword,
       };
 
       // Act
@@ -202,7 +202,7 @@ describe('AuthController - Unit Tests', () => {
       // Arrange
       const input: AuthLoginSessionRequestDto = {
         email: 'test@integration.com',
-        password: 'SecurePassword123!',
+        password: testPassword,
       };
       const mockExecute = authService.execute as jest.Mock;
       mockExecute.mockClear();
@@ -218,9 +218,9 @@ describe('AuthController - Unit Tests', () => {
     it('should handle multiple integration calls', async () => {
       // Arrange
       const inputs: AuthLoginSessionRequestDto[] = [
-        { email: 'user1@test.com', password: 'Pass1!' },
-        { email: 'user2@test.com', password: 'Pass2!' },
-        { email: 'user3@test.com', password: 'Pass3!' },
+        { email: 'user1@test.com', password: testPassword },
+        { email: 'user2@test.com', password: testPassword },
+        { email: 'user3@test.com', password: testPassword },
       ];
 
       // Act
@@ -242,7 +242,7 @@ describe('AuthController - Unit Tests', () => {
       const email = 'consistency@test.com';
       const input: AuthLoginSessionRequestDto = {
         email,
-        password: 'SecurePassword123!',
+        password: testPassword,
       };
 
       // Act
@@ -258,7 +258,7 @@ describe('AuthController - Unit Tests', () => {
       // Arrange
       const input: AuthLoginSessionRequestDto = {
         email: 'perf@test.com',
-        password: 'SecurePassword123!',
+        password: testPassword,
       };
 
       // Act

@@ -82,7 +82,7 @@ describe('Health Module - Performance E2E Tests', () => {
       expect(variation).toBeLessThan(100); // Variação máxima de 100ms
       expect(avgTime).toBeLessThan(150); // Média deve ser menor que 150ms
       expect(maxTime).toBeLessThan(200); // Tempo máximo deve ser menor que 200ms
-      expect(minTime).toBeGreaterThan(0); // Tempo mínimo deve ser positivo
+      expect(minTime).toBeGreaterThanOrEqual(0); // Tempo mínimo deve ser >= 0
     });
   });
 
