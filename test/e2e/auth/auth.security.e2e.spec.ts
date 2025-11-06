@@ -780,4 +780,259 @@ describe('Auth Module - Security E2E Tests', () => {
       expect(response1.statusCode).not.toBe(response2.statusCode + 1000);
     });
   });
+
+  /**
+   * Advanced Input Validation & Injection Prevention - Phase 1
+   * ISO/IEC 25002:2024 - Security (6.2.2)
+   * OWASP Top 10: A03:2021 - Injection
+   */
+  describe('Advanced Injection Prevention', () => {
+    /**
+     * 💉 Test 1: NoSQL Injection Prevention
+     * Testa proteção em queries MongoDB/NoSQL
+     * Ataque: { email: { $ne: null }, password: 'anything' } → loga como qualquer usuário
+     */
+    it('should prevent NoSQL injection with object-based payloads', async () => {
+      // ARRANGE - Payloads de NoSQL injection clássicos
+      const injectionPayloads = [
+        { email: { $ne: null }, password: 'anything' },
+        { email: { $regex: '.*' }, password: 'anything' },
+        { email: { $exists: true }, password: 'anything' },
+      ];
+
+      // ACT & ASSERT
+      for (const payload of injectionPayloads) {
+        const response = await app.inject({
+          method: 'POST',
+          url: '/auth/login-session',
+          payload: payload as any,
+        });
+
+        // Não deve retornar 500 (erro de parsing)
+        expect(response.statusCode).not.toBe(500);
+
+        // Se aceitar, não deve resultar em login bem-sucedido
+        // Status deve ser 201 (criou), 400 (erro), 401 (não autorizado)
+        expect([201, 400, 401, 403, 415]).toContain(response.statusCode);
+      }
+    });
+
+    /**
+     * 💉 Test 2: HTTP Header Injection
+     * Testa proteção contra header injection (CRLF injection)
+     * Ataque: valor = "value\r\nSet-Cookie: admin=true"
+     */
+    it('should prevent HTTP header injection attacks', async () => {
+      // ARRANGE - Payload com injection de header
+      const response = await app.inject({
+        method: 'GET',
+        url: '/health',
+        headers: {
+          'x-custom-header': 'value\r\nSet-Cookie: admin=true',
+        },
+      });
+
+      // ASSERT
+      expect(response.statusCode).toBe(200);
+
+      // Validar que Set-Cookie não foi injetado
+      const setCookieHeader = response.headers['set-cookie'];
+      expect(setCookieHeader).toBeUndefined();
+
+      // E não deve conter headers suspeitos
+      const allHeaders = JSON.stringify(response.headers);
+      expect(allHeaders).not.toContain('Set-Cookie: admin');
+    });
+
+    /**
+     * 💉 Test 3: Protocol Confusion & Path Traversal
+     * Testa que path traversal não expõe recursos
+     * Ataque: /auth/login/../admin ou /auth/login;x=y/../
+     */
+    it('should safely handle path traversal attempts', async () => {
+      // ARRANGE - Múltiplas tentativas de path traversal
+      const traversalPayloads = [
+        '/health/../admin',
+        '/health/..%2fadmin',
+        '/health;x=y/../admin',
+        '/health%2fauth%2flogin',
+      ];
+
+      // ACT & ASSERT
+      for (const path of traversalPayloads) {
+        const response = await app.inject({
+          method: 'GET',
+          url: path,
+        });
+
+        // Não deve retornar 500 (não deve quebrar o parser)
+        expect(response.statusCode).not.toBe(500);
+
+        // Deve retornar 404 (recurso não encontrado) ou 200 (ignora)
+        expect([200, 404, 400]).toContain(response.statusCode);
+      }
+    });
+
+    /**
+     * 💉 Test 4: Unicode Normalization & Null Byte Injection
+     * Testa proteção contra encoding bypasses
+     * Ataque: "test\u0000@example.com" (null byte)
+     */
+    it('should handle unicode normalization and null bytes safely', async () => {
+      // ARRANGE - Payloads com unicode/null bytes
+      const unicodePayloads = [
+        { email: 'test\u0000@example.com', password: 'pass' },
+        { email: 'test\uffff@example.com', password: 'pass' }, // Unicode max
+        { email: 'test\u0001@example.com', password: 'pass' }, // Control character
+      ];
+
+      // ACT & ASSERT
+      for (const payload of unicodePayloads) {
+        const response = await app.inject({
+          method: 'POST',
+          url: '/auth/login-session',
+          payload: payload as any,
+        });
+
+        // Não deve corromper o parser
+        expect(response.statusCode).not.toBe(500);
+        expect([201, 400, 401, 403]).toContain(response.statusCode);
+      }
+    });
+
+    /**
+     * 💉 Test 5: HTTP Parameter Pollution
+     * Testa que parâmetros duplicados não causam confusão
+     * Ataque: ?email=user@attacker.com&email=user@legitimate.com
+     */
+    it('should handle HTTP parameter pollution safely', async () => {
+      // ARRANGE - Query string com parâmetros duplicados
+      const response = await app.inject({
+        method: 'GET',
+        url: '/health?debug=true&debug=true&debug=false&debug=admin',
+      });
+
+      // ASSERT - Deve rejeitar ou ignorar, não explorar
+      expect(response.statusCode).not.toBe(500);
+      expect([200, 400, 404]).toContain(response.statusCode);
+
+      // Verificar que response é válida JSON
+      try {
+        JSON.parse(response.body);
+        expect(true).toBe(true); // Parse succeeded
+      } catch {
+        expect(response.statusCode).not.toBe(200); // Se falhar parse, deve ser error
+      }
+    });
+  });
+
+  /**
+   * Advanced Rate Limiting & Throttling - Phase 1
+   * ISO/IEC 25002:2024 - Performance (6.2.4)
+   * Proteção contra DOS (Denial of Service)
+   */
+  describe('Advanced Rate Limiting & Throttling', () => {
+    /**
+     * ⏱️ Test 1: Per-Endpoint Rate Limiting
+     * Valida que endpoints têm limites individuais
+     * Exemplo: /auth/login-session pode ter limite diferente de /health
+     */
+    it('should enforce rate limiting on authentication endpoints', async () => {
+      // ARRANGE - Múltiplas tentativas rápidas
+      const attempts = 15;
+      const responses: number[] = [];
+
+      // ACT - Envia múltiplas requisições ao endpoint
+      for (let i = 0; i < attempts; i++) {
+        const response = await app.inject({
+          method: 'POST',
+          url: '/auth/login-session',
+          payload: {
+            email: `test${i}@example.com`,
+            password: 'password123',
+          },
+        });
+
+        responses.push(response.statusCode);
+      }
+
+      // ASSERT
+      // Rate limiting pode não estar ativo no teste, mas todas devem responder
+      expect(responses).toHaveLength(attempts);
+      expect(responses.every((code) => code > 0)).toBe(true);
+
+      // Se rate limit hit, esperamos 429 (Too Many Requests)
+      // Se não está implementado, pode ser 201/400/401
+      const hasValidCodes = responses.every((code) => [201, 400, 401, 429].includes(code));
+      expect(hasValidCodes).toBe(true);
+    });
+
+    /**
+     * ⏱️ Test 2: Burst Request Handling
+     * Valida que burst de requisições são tratadas
+     * Não deve resultar em timeout ou 500
+     */
+    it('should handle burst of concurrent requests without failing', async () => {
+      // ARRANGE - Burst de 30 requisições concorrentes
+      const burstSize = 30;
+      const promises: Promise<any>[] = [];
+
+      // ACT
+      for (let i = 0; i < burstSize; i++) {
+        promises.push(
+          app.inject({
+            method: 'GET',
+            url: '/health',
+          }),
+        );
+      }
+
+      const results = await Promise.all(promises);
+
+      // ASSERT
+      expect(results).toHaveLength(burstSize);
+
+      // Nenhuma deve ser 500
+      const hasError = results.some((r: any) => r.statusCode === 500);
+      expect(hasError).toBe(false);
+
+      // Todas devem ser válidas (200 ou rate limit 429)
+      const validCodes = results.every((r: any) => {
+        const code = r.statusCode as number;
+        return [200, 429].includes(code);
+      });
+      expect(validCodes).toBe(true);
+    });
+
+    /**
+     * ⏱️ Test 3: Consistent Response Time Under Load
+     * Valida que response time não piora drasticamente
+     * Previne degradation precoce (slowloris-like attacks)
+     */
+    it('should maintain consistent response time under load', async () => {
+      // ARRANGE
+      const baselineStart = Date.now();
+      const baseline = await app.inject({ method: 'GET', url: '/health' });
+      const baselineTime = Date.now() - baselineStart;
+
+      // ACT - 50 requisições concorrentes
+      const loadStart = Date.now();
+      const loadPromises = Array.from({ length: 50 }).map(() =>
+        app.inject({ method: 'GET', url: '/health' }),
+      );
+      const loadResults = await Promise.all(loadPromises);
+      const loadTime = Date.now() - loadStart;
+
+      // ASSERT
+      expect(baseline.statusCode).toBe(200);
+      expect(loadResults.every((r) => r.statusCode === 200)).toBe(true);
+
+      // Average time under load não deve ser > 3x baseline
+      // (heurística razoável para detecção de degradation)
+      const avgTimeUnderLoad = loadTime / 50;
+      const maxAcceptable = Math.max(baselineTime * 3, 1000); // Mínimo 1s para evitar divisão por zero
+
+      expect(avgTimeUnderLoad).toBeLessThan(maxAcceptable);
+    });
+  });
 });

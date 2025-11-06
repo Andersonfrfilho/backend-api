@@ -191,32 +191,34 @@ npm run test:e2e -- --coverage
 ### ✅ Integração Completa
 
 **Data-Integrity Tests (13 testes)**
+
 - ✅ Movido para: `test/e2e/shared/data-integrity.e2e.spec.ts`
 - Cobre: ACID properties, constraints validation, race conditions
 - Status: **PASSING**
 
 **CORS Security Tests (8 testes)**
+
 - ✅ Integrado em: `test/e2e/health/health.security.e2e.spec.ts`
 - Cobre: CORS headers, method restrictions, content-type validation, cache control
 - Status: **PASSING**
 
 ### 📈 Resumo de Testes E2E
 
-| Módulo       | Contexto         | Testes | Status |
-|--------------|------------------|--------|--------|
-| auth         | básico           | ~15    | ✅     |
-| auth         | security         | ~15    | ✅     |
-| auth         | performance      | ~10    | ✅     |
-| auth         | resilience       | ~10    | ✅     |
-| auth         | load-stress      | ~10    | ✅     |
-| health       | básico           | ~10    | ✅     |
-| health       | security + CORS  | ~24    | ✅     |
-| health       | performance      | ~10    | ✅     |
-| health       | resilience       | ~10    | ✅     |
-| health       | load-stress      | ~10    | ✅     |
-| shared       | data-integrity   | 13     | ✅     |
-| root         | swagger          | 4      | ✅     |
-| **TOTAL**    | **12 suites**    | **157** | **✅** |
+| Módulo    | Contexto        | Testes  | Status |
+| --------- | --------------- | ------- | ------ |
+| auth      | básico          | ~15     | ✅     |
+| auth      | security        | ~15     | ✅     |
+| auth      | performance     | ~10     | ✅     |
+| auth      | resilience      | ~10     | ✅     |
+| auth      | load-stress     | ~10     | ✅     |
+| health    | básico          | ~10     | ✅     |
+| health    | security + CORS | ~24     | ✅     |
+| health    | performance     | ~10     | ✅     |
+| health    | resilience      | ~10     | ✅     |
+| health    | load-stress     | ~10     | ✅     |
+| shared    | data-integrity  | 13      | ✅     |
+| root      | swagger         | 4       | ✅     |
+| **TOTAL** | **12 suites**   | **157** | **✅** |
 
 ### 🔐 Considerações de Logging
 

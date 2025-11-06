@@ -400,4 +400,186 @@ describe('Health Module - Resilience E2E Tests', () => {
       );
     });
   });
+
+  /**
+   * Error Handling & Recovery - Phase 1 Implementation
+   * ISO/IEC 25002:2024 - Reliability (6.2.1)
+   * Detecta memory leaks, state corruption, resource cleanup
+   */
+  describe('Error Handling & Recovery', () => {
+    /**
+     * 🔧 Test 1: Invalid Request Format Recovery
+     * Valida que erros de parsing não corrompem estado
+     * Simula malformed JSON em POST requests
+     */
+    it('should handle malformed JSON without corrupting state', async () => {
+      // ARRANGE - Envia JSON inválido
+      const response = await app.inject({
+        method: 'POST',
+        url: '/auth/login-session',
+        payload: 'invalid json not a valid payload',
+        headers: {
+          'content-type': 'application/json',
+        },
+      });
+
+      // ASSERT - Deve rejeitar mas não corromper
+      expect([400, 500]).toContain(response.statusCode);
+
+      // IMPORTANTE: Próxima requisição válida deve funcionar normalmente
+      // Isso prova que estado não foi corrompido
+      const healthResponse = await app.inject({
+        method: 'GET',
+        url: '/health',
+      });
+
+      expect(healthResponse.statusCode).toBe(200);
+      const body = JSON.parse(healthResponse.body);
+      expect(body.status).toBe(true);
+    });
+
+    /**
+     * 🔧 Test 2: Missing Required Headers Recovery
+     * Valida comportamento com headers incompletos
+     * Simula requisições sem headers esperados
+     */
+    it('should handle missing content-type header gracefully', async () => {
+      // ARRANGE - Faz requisição POST sem Content-Type
+      const response = await app.inject({
+        method: 'POST',
+        url: '/auth/login-session',
+        payload: { email: 'test@example.com', password: 'password' },
+        headers: {
+          // Content-Type intencionalmente removido
+          'content-type': undefined as any,
+        },
+      });
+
+      // ASSERT - Deve rejeitar com status apropriado (400, 415, ou aceitar com default)
+      expect([400, 415, 201, 400]).toContain(response.statusCode);
+      expect(response.statusCode).not.toBe(500);
+
+      // IMPORTANTE: App ainda funciona depois
+      const nextResponse = await app.inject({
+        method: 'GET',
+        url: '/health',
+      });
+
+      expect(nextResponse.statusCode).toBe(200);
+    });
+
+    /**
+     * 🔧 Test 3: Recovery After Multiple Errors
+     * Valida que app não acumula estado de erro
+     * Simula sequência: erro -> erro -> sucesso
+     */
+    it('should maintain functionality after multiple consecutive errors', async () => {
+      // ARRANGE - Múltiplas requisições inválidas
+      const invalidRequests = [
+        {
+          method: 'POST' as const,
+          url: '/auth/login-session',
+          payload: '{ invalid }' as any,
+        },
+        {
+          method: 'POST' as const,
+          url: '/auth/login-session',
+          payload: {} as any,
+        },
+      ];
+
+      // ACT - Faz requisições inválidas
+      for (const req of invalidRequests) {
+        const response = await app.inject({
+          method: req.method,
+          url: req.url,
+          payload: req.payload,
+        });
+
+        // Cada uma deve ser tratada sem 500
+        expect(response.statusCode).not.toBe(500);
+      }
+
+      // IMPORTANTE: Depois de múltiplos erros, requisição válida deve funcionar
+      const validResponse = await app.inject({
+        method: 'GET',
+        url: '/health',
+      });
+
+      expect(validResponse.statusCode).toBe(200);
+
+      // E deve retornar dados válidos
+      const body = JSON.parse(validResponse.body);
+      expect(body).toHaveProperty('status');
+      expect(typeof body.status).toBe('boolean');
+    });
+  });
+
+  /**
+   * Resource Cleanup & Timeout Handling
+   * ISO/IEC 25002:2024 - Reliability (6.2.1)
+   * Garante que requisições não deixam conexões abertas
+   */
+  describe('Resource Cleanup & Connection Management', () => {
+    /**
+     * 🔌 Test 1: Connection Cleanup After Request
+     * Valida que conexões são fechadas propriamente
+     * Simula múltiplas requisições rápidas
+     */
+    it('should cleanup resources after rapid consecutive requests', async () => {
+      // ARRANGE - Múltiplas requisições rápidas
+      const requestCount = 20;
+      const promises: Promise<any>[] = [];
+
+      // ACT - Faz requisições rápidas em paralelo
+      for (let i = 0; i < requestCount; i++) {
+        promises.push(
+          app.inject({
+            method: 'GET',
+            url: '/health',
+          }),
+        );
+      }
+
+      const results = await Promise.all(promises);
+
+      // ASSERT - Todas devem suceder (sem timeout/connection issues)
+      expect(results).toHaveLength(requestCount);
+      expect(results.every((r) => r.statusCode === 200)).toBe(true);
+
+      // IMPORTANTE: Depois do burst, app ainda responde normalmente
+      const finalCheck = await app.inject({
+        method: 'GET',
+        url: '/health',
+      });
+
+      expect(finalCheck.statusCode).toBe(200);
+    });
+
+    /**
+     * 🔌 Test 2: Graceful Timeout Handling
+     * Valida que requisições que excedem timeout são tratadas
+     * Nota: Em testes, isso é simulado com requisições normais
+     * Em produção, testes de timeout real requerem mocking de delays
+     */
+    it('should complete all requests within acceptable timeframe', async () => {
+      // ARRANGE
+      const startTime = Date.now();
+      const timeoutLimit = 30000; // 30 segundos (jest timeout)
+
+      // ACT - Múltiplas requisições
+      const responses = await Promise.all([
+        app.inject({ method: 'GET', url: '/health' }),
+        app.inject({ method: 'GET', url: '/health' }),
+        app.inject({ method: 'GET', url: '/health' }),
+      ]);
+
+      const duration = Date.now() - startTime;
+
+      // ASSERT
+      expect(responses.every((r) => r.statusCode === 200)).toBe(true);
+      expect(duration).toBeLessThan(timeoutLimit);
+      expect(duration).toBeGreaterThan(0); // Sanity check
+    });
+  });
 });
