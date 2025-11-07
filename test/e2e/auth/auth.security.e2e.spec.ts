@@ -1,8 +1,24 @@
+import { faker } from '@faker-js/faker';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { LOG_PROVIDER } from '@modules/shared/infrastructure/log.provider';
 import { AppModule } from '../../../src/app.module';
+
+// Helper function to generate fake JWT-like tokens for testing
+const generateFakeJWT = () => {
+  // Create valid JWT structure (header.payload.signature)
+  const header = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64');
+  const payload = Buffer.from(
+    JSON.stringify({
+      sub: faker.string.uuid(),
+      email: faker.internet.email(),
+      iat: Math.floor(Date.now() / 1000),
+    }),
+  ).toString('base64');
+  const signature = faker.string.alphanumeric(43); // Simulates a signature
+  return `${header}.${payload}.${signature}`;
+};
 
 describe('Auth Module - Security E2E Tests', () => {
   let app: NestFastifyApplication;
@@ -156,6 +172,7 @@ describe('Auth Module - Security E2E Tests', () => {
       const invalidTokens = [
         'invalid.token.here',
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.invalid.payload',
+        generateFakeJWT(), // Generate a fake token for randomness
         '',
         'null',
         'undefined',
@@ -184,8 +201,7 @@ describe('Auth Module - Security E2E Tests', () => {
      * 🚫 Testa que tokens não podem ser criados sem validação
      */
     it('should not accept tokens without proper signature', async () => {
-      const jwtPayload =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ';
+      const jwtPayload = generateFakeJWT(); // Generate a fake token without proper signature validation
 
       const response = await app.inject({
         method: 'POST',

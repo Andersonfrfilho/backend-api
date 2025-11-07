@@ -6,6 +6,21 @@ import { AuthLoginSessionRequestDto } from '@modules/auth/shared/dtos';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
 
+// Helper function to generate fake JWT-like tokens for testing
+const generateFakeJWT = () => {
+  // Create valid JWT structure (header.payload.signature)
+  const header = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64');
+  const payload = Buffer.from(
+    JSON.stringify({
+      sub: faker.string.uuid(),
+      email: faker.internet.email(),
+      iat: Math.floor(Date.now() / 1000),
+    }),
+  ).toString('base64');
+  const signature = faker.string.alphanumeric(43); // Simulates a signature
+  return `${header}.${payload}.${signature}`;
+};
+
 describe('AuthController - Unit Tests', () => {
   let controller: AuthController;
   let service: AuthLoginSessionServiceInterface;
@@ -304,11 +319,11 @@ describe('AuthController - Unit Tests', () => {
      */
     it('should return accessToken and refreshToken in response', () => {
       // Arrange
+      const accessToken = generateFakeJWT();
+      const refreshToken = generateFakeJWT();
       const responseData = {
-        accessToken:
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ',
-        refreshToken:
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ',
+        accessToken,
+        refreshToken,
       };
 
       // Act & Assert
