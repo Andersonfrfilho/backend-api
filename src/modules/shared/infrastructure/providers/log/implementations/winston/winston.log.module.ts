@@ -36,10 +36,10 @@ import { WinstonLogProvider } from './winston.log.provider';
           ),
         }),
         new winston.transports.File({
-          filename: path.join(__dirname, '../../../../../../logs/error.log'),
+          filename: path.join(process.cwd(), 'logs', 'error.log'),
         }),
         new winston.transports.File({
-          filename: path.join(__dirname, '../../../../../../logs/combined.log'),
+          filename: path.join(process.cwd(), 'logs', 'combined.log'),
         }),
       ],
     }),

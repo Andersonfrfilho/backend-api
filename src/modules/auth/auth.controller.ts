@@ -6,6 +6,7 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiTooManyRequestsResponse,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
@@ -37,6 +38,8 @@ export class AuthController {
     summary: 'Cria uma nova sessão de login',
     description: `
       Esta rota realiza a autenticação do usuário e retorna os tokens de acesso e atualização.
+      
+      **Proteção contra força bruta:** Máximo 5 tentativas a cada 15 minutos por IP.
     `,
   })
   @ApiOkResponse({ type: AuthLoginSessionRequestParamsDto })
@@ -48,6 +51,15 @@ export class AuthController {
   })
   @ApiBadRequestResponse({
     type: AuthBadRequestErrorValidationRequestDto,
+  })
+  @ApiTooManyRequestsResponse({
+    description: 'Muitas tentativas de login. Bloqueado por 15 minutos.',
+    schema: {
+      example: {
+        statusCode: 429,
+        message: 'Muitas tentativas de login. Tente novamente em 15 minutos.',
+      },
+    },
   })
   @ApiInternalServerErrorResponse({
     type: AuthLoginSessionServiceInternalServerErrorDto,

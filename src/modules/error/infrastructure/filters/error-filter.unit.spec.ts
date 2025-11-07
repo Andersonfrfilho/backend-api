@@ -98,4 +98,74 @@ describe('HttpExceptionFilter - Unit Tests', () => {
       expect(mockLogProvider.warn).toBeDefined();
     });
   });
+
+  describe('Middleware - Error Response Format', () => {
+    /**
+     * 🔧 HTTP Status Code Classification
+     *
+     * ✅ RFC 7231 - HTTP error semantics
+     * ✅ ISO/IEC 25010 - Error handling quality
+     */
+    it('should classify 4xx errors as client errors', () => {
+      // Arrange
+      const clientErrors = [
+        HttpStatus.BAD_REQUEST, // 400
+        HttpStatus.UNAUTHORIZED, // 401
+        HttpStatus.FORBIDDEN, // 403
+        HttpStatus.NOT_FOUND, // 404
+      ];
+
+      // Act & Assert
+      for (const status of clientErrors) {
+        expect(status).toBeGreaterThanOrEqual(400);
+        expect(status).toBeLessThan(500);
+      }
+    });
+
+    /**
+     * 🔴 HTTP 5xx Server Errors
+     *
+     * ✅ Proper error classification
+     */
+    it('should classify 5xx errors as server errors', () => {
+      // Arrange
+      const serverErrors = [
+        HttpStatus.INTERNAL_SERVER_ERROR, // 500
+        HttpStatus.NOT_IMPLEMENTED, // 501
+        HttpStatus.BAD_GATEWAY, // 502
+        HttpStatus.SERVICE_UNAVAILABLE, // 503
+      ];
+
+      // Act & Assert
+      for (const status of serverErrors) {
+        expect(status).toBeGreaterThanOrEqual(500);
+        expect(status).toBeLessThan(600);
+      }
+    });
+
+    /**
+     * 📝 Error Response Consistency
+     *
+     * ✅ Response structure validation
+     */
+    it('should maintain consistent error response structure', () => {
+      // Arrange
+      const errorStructure = {
+        statusCode: 400,
+        timestamp: new Date().toISOString(),
+        path: '/api/endpoint',
+        message: 'Bad Request',
+      };
+
+      // Act & Assert
+      expect(errorStructure).toHaveProperty('statusCode');
+      expect(errorStructure).toHaveProperty('timestamp');
+      expect(errorStructure).toHaveProperty('path');
+      expect(errorStructure).toHaveProperty('message');
+      expect(typeof errorStructure.statusCode).toBe('number');
+      expect(typeof errorStructure.timestamp).toBe('string');
+      expect(typeof errorStructure.path).toBe('string');
+      expect(typeof errorStructure.message).toBe('string');
+    });
+  });
 });

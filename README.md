@@ -165,3 +165,8 @@ Benefícios
 ✅ Compatibilidade - re-exports em @common/errors para código legado
 ✅ Type-Safe - factory garante status codes corretos
 ✅ Logs Estruturados - requestId, tipo de erro, detalhes de validação
+
+Google Cloud API Design Guide Define métricas de latência, consistência e versionamento.
+Microsoft REST API Guidelines Define práticas de documentação, consistência e desempenho.
+OWASP API Security Top 10 Define medidas de segurança aplicáveis à camada de API.
+Google SRE Book (Site Reliability Engineering) Define métricas como SLO, SLA, SLI (ex: latência p95, disponibilidade, erro por segundo).
