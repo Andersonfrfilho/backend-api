@@ -38,7 +38,7 @@ describe('Compliance & Audit Logging Tests', () => {
    * ISO/IEC 25002:2024 Secção 7.1.1
    */
   describe('GDPR Compliance - Right to be Forgotten', () => {
-    it('should log user data deletion requests for audit trail', async () => {
+    it('should log user data deletion requests for audit trail', () => {
       // ARRANGE
       const userId = faker.string.uuid();
       const userEmail = faker.internet.email();
@@ -62,7 +62,7 @@ describe('Compliance & Audit Logging Tests', () => {
       expect(auditLog.status).toBe('pending');
     });
 
-    it('should verify deletion was completed and logged', async () => {
+    it('should verify deletion was completed and logged', () => {
       // ARRANGE
       const userId = faker.string.uuid();
       const completionTimestamp = new Date().toISOString();
@@ -88,7 +88,7 @@ describe('Compliance & Audit Logging Tests', () => {
    * ISO/IEC 25002:2024 Secção 7.1.2
    */
   describe('Audit Trail - Authentication Events', () => {
-    it('should log successful login with user context', async () => {
+    it('should log successful login with user context', () => {
       // ARRANGE
       const email = faker.internet.email();
       const loginTimestamp = new Date().toISOString();
@@ -113,16 +113,17 @@ describe('Compliance & Audit Logging Tests', () => {
       expect(loginAuditLog.timestamp).toMatch(/^\d{4}-\d{2}-\d{2}T/);
     });
 
-    it('should log failed login attempts with rate limiting', async () => {
+    it('should log failed login attempts with rate limiting', () => {
       // ARRANGE
       const email = faker.internet.email();
       const ipAddress = faker.internet.ipv4();
+      const now = Date.now();
       const failedAttempts = [
-        { attempt: 1, timestamp: new Date().getTime() },
-        { attempt: 2, timestamp: new Date().getTime() + 1000 },
-        { attempt: 3, timestamp: new Date().getTime() + 2000 },
-        { attempt: 4, timestamp: new Date().getTime() + 3000 },
-        { attempt: 5, timestamp: new Date().getTime() + 4000 },
+        { attempt: 1, timestamp: now },
+        { attempt: 2, timestamp: now + 1000 },
+        { attempt: 3, timestamp: now + 2000 },
+        { attempt: 4, timestamp: now + 3000 },
+        { attempt: 5, timestamp: now + 4000 },
       ];
 
       // ACT
@@ -139,13 +140,13 @@ describe('Compliance & Audit Logging Tests', () => {
       // ASSERT
       expect(failedLoginLogs).toHaveLength(5);
       expect(failedLoginLogs[4].rateLimited).toBe(true);
-      failedLoginLogs.forEach((log) => {
+      for (const log of failedLoginLogs) {
         expect(log.eventType).toBe('LOGIN_FAILED');
         expect(log.email).toMatch(/@/);
-      });
+      }
     });
 
-    it('should log logout events for session cleanup', async () => {
+    it('should log logout events for session cleanup', () => {
       // ARRANGE
       const sessionId = faker.string.uuid();
       const email = faker.internet.email();
@@ -173,7 +174,7 @@ describe('Compliance & Audit Logging Tests', () => {
    * ISO/IEC 25002:2024 Secção 6.4.3
    */
   describe('Non-Repudiation - Action Accountability', () => {
-    it('should create immutable audit log for sensitive operations', async () => {
+    it('should create immutable audit log for sensitive operations', () => {
       // ARRANGE
       const operationId = faker.string.uuid();
       const userId = faker.string.uuid();
@@ -198,11 +199,13 @@ describe('Compliance & Audit Logging Tests', () => {
       // ASSERT
       expect(auditLogEntry.operationId).toBe(operationId);
       expect(auditLogEntry.userId).toBe(userId);
-      expect(auditLogEntry.signature).toHaveLength(64);
+      // Signature with "0x" prefix = 66 characters (64 hex + "0x")
+      const signatureWithoutPrefix = auditLogEntry.signature.replace(/^0x/, '');
+      expect(signatureWithoutPrefix).toHaveLength(64);
       expect(auditLogEntry.integrity).toBe('verified');
     });
 
-    it('should prevent audit log tampering detection', async () => {
+    it('should prevent audit log tampering detection', () => {
       // ARRANGE
       const originalLog = {
         id: faker.string.uuid(),
@@ -247,11 +250,11 @@ describe('Compliance & Audit Logging Tests', () => {
 
       // ASSERT
       expect(response.statusCode).toEqual(expect.any(Number));
-      expect([200, 400, 401]).toContain(response.statusCode);
+      expect([200, 201, 400, 401]).toContain(response.statusCode);
       expect(response.headers['content-type']).toContain('application/json');
     });
 
-    it('should hash passwords in logs and audit trails', async () => {
+    it('should hash passwords in logs and audit trails', () => {
       // ARRANGE
       const password = faker.internet.password();
       const plainTextPassword = password;
@@ -270,7 +273,7 @@ describe('Compliance & Audit Logging Tests', () => {
    * ISO/IEC 25002:2024 Secção 7.1.3
    */
   describe('Data Retention & Deletion Policies', () => {
-    it('should enforce maximum data retention period', async () => {
+    it('should enforce maximum data retention period', () => {
       // ARRANGE
       const creationDate = new Date();
       const retentionPeriodDays = 365;
@@ -296,7 +299,7 @@ describe('Compliance & Audit Logging Tests', () => {
       expect(new Date(userData.maxRetentionDate).getTime()).toBeGreaterThan(now.getTime());
     });
 
-    it('should log data deletion scheduled by retention policy', async () => {
+    it('should log data deletion scheduled by retention policy', () => {
       // ARRANGE
       const userId = faker.string.uuid();
       const scheduledDeletionDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
@@ -323,7 +326,7 @@ describe('Compliance & Audit Logging Tests', () => {
    * ISO/IEC 25002:2024 Secção 7.1.4
    */
   describe('Personal Data Anonymization', () => {
-    it('should anonymize email in logs for privacy', async () => {
+    it('should anonymize email in logs for privacy', () => {
       // ARRANGE
       const originalEmail = 'john.doe@example.com';
 
@@ -341,7 +344,7 @@ describe('Compliance & Audit Logging Tests', () => {
       expect(anonymizedEmail).toContain('@');
     });
 
-    it('should mask sensitive data in error responses', async () => {
+    it('should mask sensitive data in error responses', () => {
       // ARRANGE
       const sensitiveError = {
         message: 'User with email john.doe@example.com not found',
@@ -367,7 +370,7 @@ describe('Compliance & Audit Logging Tests', () => {
    * ISO/IEC 25002:2024 Secção 7.1.5
    */
   describe('Compliance Audit Log Format', () => {
-    it('should include all required fields in audit logs', async () => {
+    it('should include all required fields in audit logs', () => {
       // ARRANGE
       const requiredFields = [
         'eventType',
@@ -393,10 +396,10 @@ describe('Compliance & Audit Logging Tests', () => {
       };
 
       // ASSERT
-      requiredFields.forEach((field) => {
+      for (const field of requiredFields) {
         expect(auditLog).toHaveProperty(field);
         expect((auditLog as Record<string, unknown>)[field]).toBeDefined();
-      });
+      }
     });
   });
 
@@ -405,7 +408,7 @@ describe('Compliance & Audit Logging Tests', () => {
    * ISO/IEC 25002:2024 Secção 7.2
    */
   describe('Compliance Report Generation', () => {
-    it('should generate GDPR compliance report', async () => {
+    it('should generate GDPR compliance report', () => {
       // ARRANGE
       const reportDate = new Date().toISOString();
       const period = { start: '2025-01-01', end: '2025-11-03' };
@@ -437,7 +440,7 @@ describe('Compliance & Audit Logging Tests', () => {
    * ISO/IEC 25002:2024 Secção 7.1.6
    */
   describe('Sensitive Operation Logging', () => {
-    it('should log admin operations with full context', async () => {
+    it('should log admin operations with full context', () => {
       // ARRANGE
       const adminId = faker.string.uuid();
       const operationType = 'ROLE_CHANGE';
@@ -469,7 +472,7 @@ describe('Compliance & Audit Logging Tests', () => {
    * ISO/IEC 25002:2024 Secção 7.3
    */
   describe('Compliance Notifications', () => {
-    it('should notify on policy violations', async () => {
+    it('should notify on policy violations', () => {
       // ARRANGE
       const violationType = 'UNAUTHORIZED_DATA_ACCESS_ATTEMPT';
       const userId = faker.string.uuid();

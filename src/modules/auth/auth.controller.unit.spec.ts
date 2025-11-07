@@ -232,9 +232,9 @@ describe('AuthController - Unit Tests', () => {
 
       // Assert
       expect(results).toHaveLength(3);
-      results.forEach((result, index) => {
-        expect(result.accessToken).toContain(inputs[index].email);
-      });
+      for (let index = 0; index < results.length; index++) {
+        expect(results[index].accessToken).toContain(inputs[index].email);
+      }
     });
 
     it('should preserve data consistency through pipeline', async () => {
@@ -281,8 +281,8 @@ describe('AuthController - Unit Tests', () => {
     it('should enforce email and password in login request', () => {
       // Arrange
       const validRequest = {
-        email: 'test@example.com',
-        password: 'ValidPassword123!',
+        email: faker.internet.email(),
+        password: faker.internet.password(),
       };
 
       // Act
@@ -291,8 +291,8 @@ describe('AuthController - Unit Tests', () => {
       dto.password = validRequest.password;
 
       // Assert
-      expect(dto.email).toBe('test@example.com');
-      expect(dto.password).toBe('ValidPassword123!');
+      expect(dto.email).toBe(validRequest.email);
+      expect(dto.password).toBe(validRequest.password);
       expect(Object.keys(dto)).toContain('email');
       expect(Object.keys(dto)).toContain('password');
     });

@@ -1,3 +1,4 @@
+import { faker } from '@faker-js/faker';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { Test, TestingModule } from '@nestjs/testing';
 
@@ -54,8 +55,8 @@ describe('Auth E2E - Load & Stress Tests', () => {
     it('should handle 10 concurrent login requests', async () => {
       // Arrange
       const credentials = {
-        email: 'test@example.com',
-        password: 'Password123!',
+        email: faker.internet.email(),
+        password: faker.internet.password(),
       };
       const concurrentRequests = 10;
 
@@ -91,8 +92,8 @@ describe('Auth E2E - Load & Stress Tests', () => {
       const authRequests = 25;
       const totalRequests = healthRequests + authRequests;
       const authCredentials = {
-        email: 'test@example.com',
-        password: 'Password123!',
+        email: faker.internet.email(),
+        password: faker.internet.password(),
       };
 
       // Act
@@ -132,8 +133,8 @@ describe('Auth E2E - Load & Stress Tests', () => {
     it('should handle rapid sequential login attempts', async () => {
       // Arrange
       const credentials = {
-        email: 'test@example.com',
-        password: 'Password123!',
+        email: faker.internet.email(),
+        password: faker.internet.password(),
       };
       const rapidAttempts = 5;
       const validStatusCodes = [200, 201, 400, 401, 500];
@@ -194,8 +195,8 @@ describe('Auth E2E - Load & Stress Tests', () => {
       // Arrange
       const payloadSizeBytes = 10000;
       const largePayload = {
-        email: 'test@example.com',
-        password: 'Password123!',
+        email: faker.internet.email(),
+        password: faker.internet.password(),
         additionalData: 'x'.repeat(payloadSizeBytes),
       };
       const validStatusCodes = [200, 201, 400, 401, 500];
@@ -268,8 +269,8 @@ describe('Auth E2E - Load & Stress Tests', () => {
     it('should recover from failed requests', async () => {
       // Arrange
       const credentials = {
-        email: 'test@example.com',
-        password: 'Password123!',
+        email: faker.internet.email(),
+        password: faker.internet.password(),
       };
       const requestCount = 5;
       const validAuthStatusCodes = new Set([200, 201, 400, 401, 500]);

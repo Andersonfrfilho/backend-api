@@ -1,5 +1,4 @@
 import { faker } from '@faker-js/faker';
-import { LOG_PROVIDER } from '@modules/shared/infrastructure/log.provider';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '../../../src/app.module';
@@ -14,20 +13,10 @@ import { AppModule } from '../../../src/app.module';
 describe('Data Integrity E2E Tests', () => {
   let app: NestFastifyApplication;
 
-  const mockLogProvider = {
-    debug: jest.fn(),
-    info: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
-  };
-
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
-    })
-      .overrideProvider(LOG_PROVIDER)
-      .useValue(mockLogProvider)
-      .compile();
+    }).compile();
 
     app = moduleFixture.createNestApplication<NestFastifyApplication>(new FastifyAdapter());
     await app.init();
@@ -60,13 +49,14 @@ describe('Data Integrity E2E Tests', () => {
     it('should handle email validation without server error', async () => {
       // ARRANGE
       const invalidEmails = ['notanemail', 'user@', '@domain.com'];
+      const password = faker.internet.password();
 
       // ACT & ASSERT
       for (const email of invalidEmails) {
         const response = await app.inject({
           method: 'POST',
           url: '/auth/login-session',
-          payload: { email, password: 'Password123!' },
+          payload: { email, password },
         });
 
         // Should not crash with 500
@@ -177,13 +167,14 @@ describe('Data Integrity E2E Tests', () => {
     it('should handle SQL injection payloads without server error', async () => {
       // ARRANGE
       const sqlInjectionPayloads = ["'; DROP TABLE users; --", "1' OR '1'='1"];
+      const password = faker.internet.password();
 
       // ACT & ASSERT
       for (const payload of sqlInjectionPayloads) {
         const response = await app.inject({
           method: 'POST',
           url: '/auth/login-session',
-          payload: { email: payload, password: 'Password123!' },
+          payload: { email: payload, password },
         });
 
         // Should not crash
@@ -194,13 +185,14 @@ describe('Data Integrity E2E Tests', () => {
     it('should reject XSS payloads', async () => {
       // ARRANGE
       const xssPayloads = ['<script>alert("xss")</script>', 'javascript:alert("xss")'];
+      const password = faker.internet.password();
 
       // ACT & ASSERT
       for (const payload of xssPayloads) {
         const response = await app.inject({
           method: 'POST',
           url: '/auth/login-session',
-          payload: { email: payload, password: 'Password123!' },
+          payload: { email: payload, password },
         });
 
         expect(response.statusCode).not.toBe(500);
