@@ -17,7 +17,7 @@ import { parseTokenWithRoles } from '../strategies/mock-jwt.strategy';
 export class JwtAuthGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest();
-    const authHeader = request.headers['authorization'];
+    const authHeader = request.headers.authorization as string | undefined;
 
     if (!authHeader) {
       throw new UnauthorizedException('Missing authorization header');
@@ -36,7 +36,7 @@ export class JwtAuthGuard implements CanActivate {
       const user = parseTokenWithRoles(token);
       request.user = user;
       return true;
-    } catch (error) {
+    } catch {
       throw new UnauthorizedException('Invalid token');
     }
   }
