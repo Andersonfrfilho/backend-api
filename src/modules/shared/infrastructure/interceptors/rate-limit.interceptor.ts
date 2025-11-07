@@ -12,9 +12,10 @@
 import {
   CallHandler,
   ExecutionContext,
+  HttpException,
+  HttpStatus,
   Injectable,
   NestInterceptor,
-  TooManyRequestsException,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 
@@ -77,8 +78,13 @@ export class RateLimitInterceptor implements NestInterceptor {
     // Verificar limite
     if (record.count > this.config.maxAttempts) {
       const retryAfter = Math.ceil((record.resetTime - now) / 1000);
-      throw new TooManyRequestsException(
-        this.config.message || `Too many requests. Try again in ${retryAfter} seconds.`,
+      throw new HttpException(
+        {
+          statusCode: 429,
+          message: this.config.message || `Too many requests. Try again in ${retryAfter} seconds.`,
+          retryAfter,
+        },
+        HttpStatus.TOO_MANY_REQUESTS,
       );
     }
 
