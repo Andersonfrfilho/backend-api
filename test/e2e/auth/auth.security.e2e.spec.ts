@@ -2,7 +2,7 @@ import { faker } from '@faker-js/faker';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { LOG_PROVIDER } from '@modules/shared/infrastructure/log.provider';
+import { LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/log.token';
 import { AppModule } from '../../../src/app.module';
 
 // Helper function to generate fake JWT-like tokens for testing

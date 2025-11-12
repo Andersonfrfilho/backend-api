@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { LOG_PROVIDER } from '../../log.provider';
+import { LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/log.token';
 
 import { WinstonLogModule } from './implementations/winston/winston.log.module';
 import { LogProvider } from './log.provider';

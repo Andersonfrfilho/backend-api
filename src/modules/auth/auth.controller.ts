@@ -1,3 +1,4 @@
+import { AUTH_LOGIN_SESSION_SERVICE_PROVIDE } from '@modules/auth/infrastructure/auth.token';
 import { Body, Controller, Inject, Injectable, Post, Version } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -17,7 +18,6 @@ import {
   AuthLoginSessionServiceErrorNotFoundDto,
   AuthLoginSessionServiceInternalServerErrorDto,
 } from '@modules/auth/domain/exceptions';
-import { AUTH_LOGIN_SESSION_SERVICE_PROVIDE } from '@modules/auth/infrastructure/auth.provider';
 
 import {
   AuthLoginSessionRequestDto as AuthLoginSessionRequestParamsDto,

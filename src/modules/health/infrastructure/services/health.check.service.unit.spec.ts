@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it } from '@jest/globals';
+import { HealthCheckUseCaseInterface } from '@modules/health/domain/health.get.interface';
+import { HEALTH_CHECK_USE_CASE_PROVIDER } from '@modules/health/infrastructure/health.token';
+import { HealthCheckService } from '@modules/health/infrastructure/services/health.check.service';
 import { Test, TestingModule } from '@nestjs/testing';
-import { HealthCheckUseCaseInterface } from '../../domain/health.get.interface';
-import { HEALTH_CHECK_USE_CASE_PROVIDER } from '../../infrastructure/health.provider';
-import { HealthCheckService } from './health.check.service';
 
 describe('HealthCheckService - Unit Tests', () => {
   let service: HealthCheckService;

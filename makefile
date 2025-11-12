@@ -31,6 +31,15 @@ setup-env:
 app: setup-env
 	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) up -d app
 
+database: setup-env
+	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) up -d database
+
+database-down: setup-env
+	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) down database
+
+database-stop: setup-env
+	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) stop database
+
 sonar-up: setup-env
 	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) up -d sonarqube sonar-db
 

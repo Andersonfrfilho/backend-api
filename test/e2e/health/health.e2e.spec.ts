@@ -1,7 +1,7 @@
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { LOG_PROVIDER } from '@modules/shared/infrastructure/log.provider';
+import { LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/log.token';
 import { AppModule } from '../../../src/app.module';
 
 describe('Health Controller (e2e)', () => {

@@ -1,8 +1,9 @@
 import { Controller, Get, Inject, Injectable } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 
-import type { HealthCheckServiceInterface } from './domain/health.get.interface';
-import { HEALTH_CHECK_SERVICE_PROVIDER } from './infrastructure/health.provider';
+import type { HealthCheckServiceInterface } from '@modules/health/domain/health.get.interface';
+import { HEALTH_CHECK_SERVICE_PROVIDER } from '@modules/health/infrastructure/health.token';
+
 import { HealthCheckResponseDto as HealthCheckControllerResponseDto } from './shared/health.dto';
 
 @Injectable()

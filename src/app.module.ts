@@ -1,8 +1,7 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
 import { register as tsConfigPathsRegister } from 'tsconfig-paths';
 
-import envValidation from '@config/env.validation';
+import { ConfigModule } from '@config/config.module';
 import { AuthModule } from '@modules/auth/auth.module';
 import { ErrorModule } from '@modules/error/error.module';
 import { HealthModule } from '@modules/health/health.module';
@@ -19,17 +18,7 @@ tsConfigPathsRegister({
 });
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      validationSchema: envValidation,
-      envFilePath: '.env',
-    }),
-    SharedModule,
-    ErrorModule,
-    HealthModule,
-    AuthModule,
-  ],
+  imports: [ConfigModule, SharedModule, ErrorModule, HealthModule, AuthModule],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

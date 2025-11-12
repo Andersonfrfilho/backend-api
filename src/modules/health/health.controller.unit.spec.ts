@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it } from '@jest/globals';
+import { HEALTH_CHECK_SERVICE_PROVIDER } from '@modules/health/infrastructure/health.token';
 import { Test, TestingModule } from '@nestjs/testing';
 import type { HealthCheckServiceInterface } from './domain/health.get.interface';
 import { HealthController } from './health.controller';
-import { HEALTH_CHECK_SERVICE_PROVIDER } from './infrastructure/health.provider';
 
 describe('HealthController - Unit Tests', () => {
   let controller: HealthController;

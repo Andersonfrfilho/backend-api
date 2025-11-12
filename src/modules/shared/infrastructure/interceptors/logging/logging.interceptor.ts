@@ -9,7 +9,10 @@ import {
 import { Observable } from 'rxjs';
 
 import type { LogProviderInterface } from '@modules/shared/domain';
-import { LOG_PROVIDER, LOGGING_IGNORE_CONFIG } from '@modules/shared/infrastructure/log.provider';
+import {
+  LOG_PROVIDER,
+  LOGGING_IGNORE_CONFIG,
+} from '@modules/shared/infrastructure/providers/log/log.token';
 
 import type { LoggingIgnoreConfig } from './logging.config';
 import { DEFAULT_LOGGING_IGNORE_CONFIG, shouldIgnoreRoute } from './logging.config';

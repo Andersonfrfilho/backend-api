@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
 
-import { SharedInfrastructureProviderLogModule } from '@app/modules/shared/infrastructure/providers/log/log.module';
-import { AuthApplicationModule } from '@modules/auth/application/auth.application.module';
-import { AUTH_LOGIN_SESSION_SERVICE_PROVIDE } from '@modules/auth/infrastructure/auth.provider';
+import { AuthApplicationUseCaseModule } from '@modules/auth/application/use-cases/auth.use-cases.module';
 import { AuthLoginSessionService } from '@modules/auth/infrastructure/service/auth.login-session.service';
+import { SharedInfrastructureProviderLogModule } from '@modules/shared/infrastructure/providers/log/log.module';
+
+import { AUTH_LOGIN_SESSION_SERVICE_PROVIDE } from '../auth.token';
 
 @Module({
-  imports: [SharedInfrastructureProviderLogModule, AuthApplicationModule],
+  imports: [SharedInfrastructureProviderLogModule, AuthApplicationUseCaseModule],
   providers: [
     {
       provide: AUTH_LOGIN_SESSION_SERVICE_PROVIDE,

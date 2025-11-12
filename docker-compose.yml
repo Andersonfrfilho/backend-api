@@ -1,5 +1,7 @@
 services:
   app:
+    depends_on:
+      - database
     build:
       context: .
       dockerfile: Dockerfile
@@ -16,6 +18,19 @@ services:
     volumes:
       - ./src:/app/src
       - ./logs:/app/logs
+
+  ### DATABASE SERVICE
+  database:
+    image: postgres:18
+    container_name: ${PROJECT_NAME}_database
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    ports:
+      - '${DB_PORT}:5432'
+    volumes:
+      - db_data:/var/lib/postgresql
 
   ### SONAR_QUBE SERVICES
   sonarqube:
@@ -49,3 +64,4 @@ volumes:
   sonarqube_logs:
   sonar-db:
   sonar-db_data:
+  db_data:
