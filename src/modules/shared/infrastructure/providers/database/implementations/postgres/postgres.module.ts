@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+
+import { ConfigModule } from '@app/config/config.module';
+import { databaseProviders } from '@modules/shared/infrastructure/providers/database/implementations/postgres/postgres.provider';
 
 @Module({
   imports: [ConfigModule],
-  providers: [{}],
-  exports: [],
+  providers: [...databaseProviders],
+  exports: [...databaseProviders],
 })
 export class SharedInfrastructureProviderDatabaseImplementationsPostgresModule {}

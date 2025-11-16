@@ -8,6 +8,9 @@ export default Joi.object({
   PORT: Joi.number().default(3333),
   BASE_URL: Joi.string().optional(),
   API_APP_CONTAINER_NAME: Joi.string().default('backend-api-service'),
+  BASE_URL_DEVELOPMENT: Joi.string().default('http://localhost:3333'),
+  BASE_URL_STAGING: Joi.string().default('https://api-hml.example.com'),
+  BASE_URL_PRODUCTION: Joi.string().default('https://api-prod.example.com'),
 
   // ============================================
   // Database Configuration

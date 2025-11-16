@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-import { IEnvironment } from '../../domain/interfaces/environment.interface';
+import { EnvironmentProviderInterface } from '@config/domain/interfaces/environment.interface';
 
 @Injectable()
-export class EnvironmentProvider implements IEnvironment {
+export class EnvironmentProvider implements EnvironmentProviderInterface {
   constructor(private configService: ConfigService) {}
-
   // ============================================
   // API Configuration
   // ============================================
@@ -86,6 +85,21 @@ export class EnvironmentProvider implements IEnvironment {
 
   isTest(): boolean {
     return this.nodeEnv === 'test';
+  }
+
+  get baseUrlDevelopment(): string {
+    const baseUrl = this.configService.get<string>('BASE_URL_DEVELOPMENT');
+    return baseUrl ?? `http://localhost:${this.port}`;
+  }
+
+  get baseUrlStaging(): string {
+    const baseUrl = this.configService.get<string>('BASE_URL_STAGING');
+    return baseUrl ?? `http://localhost:${this.port}`;
+  }
+
+  get baseUrlProduction(): string {
+    const baseUrl = this.configService.get<string>('BASE_URL_PRODUCTION');
+    return baseUrl ?? `http://localhost:${this.port}`;
   }
 
   getAllConfig() {

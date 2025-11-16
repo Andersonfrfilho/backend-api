@@ -1,18 +1,13 @@
 services:
   app:
     depends_on:
-      - database
+      - database_postgres
     build:
       context: .
       dockerfile: Dockerfile
     container_name: ${API_APP_CONTAINER_NAME}
-    environment:
-      - PORT=${PORT}
-      - API_APP_CONTAINER_NAME=${API_APP_CONTAINER_NAME}
-      - PROJECT_NAME=${PROJECT_NAME}
-      - SONAR_HOST_URL=${SONAR_HOST_URL}
-      - SONAR_TOKEN=${SONAR_TOKEN}
-      - SONAR_PROJECT_KEY=${SONAR_PROJECT_KEY}
+    env_file:
+      - .env
     ports:
       - '${PORT}:${PORT}'
     volumes:
@@ -20,15 +15,15 @@ services:
       - ./logs:/app/logs
 
   ### DATABASE SERVICE
-  database:
+  database_postgres:
     image: postgres:18
     container_name: ${PROJECT_NAME}_database
     environment:
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DATABASE_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${DATABASE_POSTGRES_PASSWORD}
+      - POSTGRES_DB=${DATABASE_POSTGRES_NAME}
     ports:
-      - '${DB_PORT}:5432'
+      - '${DATABASE_POSTGRES_PORT}:5432'
     volumes:
       - db_data:/var/lib/postgresql
 

@@ -17,6 +17,8 @@ import { docsFactory } from '@modules/shared/infrastructure/interceptors/docs';
 import * as tsConfig from '../tsconfig.json';
 
 import { AppModule } from './app.module';
+import { EnvironmentProviderInterface } from './config';
+import { ENVIRONMENT_SERVICE_PROVIDER } from './config/config.token';
 
 const compilerOptions = tsConfig.compilerOptions;
 tsConfigPathsRegister({
@@ -61,8 +63,8 @@ async function bootstrap() {
     }),
   );
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
-
-  const document = SwaggerModule.createDocument(app, swaggerConfig);
+  const environment = app.get<EnvironmentProviderInterface>(ENVIRONMENT_SERVICE_PROVIDER);
+  const document = SwaggerModule.createDocument(app, swaggerConfig(environment));
   SwaggerModule.setup('docs', app, document, swaggerCustomOptions);
   const outputPath = join(process.cwd(), 'swagger-spec.json');
   writeFileSync(outputPath, JSON.stringify(document, null, 2));

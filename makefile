@@ -31,14 +31,14 @@ setup-env:
 app: setup-env
 	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) up -d app
 
-database: setup-env
-	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) up -d database
+database_postgres: setup-env
+	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) up -d database_postgres
 
-database-down: setup-env
-	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) down database
+database_postgres-down: setup-env
+	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) down database_postgres
 
-database-stop: setup-env
-	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) stop database
+database_postgres-stop: setup-env
+	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) stop database_postgres
 
 sonar-up: setup-env
 	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) up -d sonarqube sonar-db
@@ -94,4 +94,4 @@ rebuild-app: setup-env
 all: setup-env
 	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) up -d  # Inicia todos os serviços, incluindo app e sonar
 
-.PHONY: all rebuild-app setup-env clean-all clean-images force-remove down stop app sonar-up sonar-down sonar-scan clean-safe
+.PHONY: all rebuild-app setup-env clean-all clean-images force-remove down stop app sonar-up sonar-down sonar-scan clean-safe database_postgres

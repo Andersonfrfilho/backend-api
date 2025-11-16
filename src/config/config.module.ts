@@ -8,6 +8,7 @@ import envValidation from '@config/env.validation';
 import { EnvironmentProvider } from '@config/infrastructure/providers/environment.provider';
 
 const pathLocationEnvFile = join(process.cwd(), '.env');
+
 @Module({
   imports: [
     NestConfigModule.forRoot({

@@ -1,10 +1,14 @@
 import { NodeEnv } from '../types';
 
-export interface IEnvironment {
+export interface EnvironmentProviderInterface {
   readonly port: number;
   readonly nodeEnv: NodeEnv;
   readonly baseUrl: string;
   readonly apiContainerName: string;
+
+  readonly baseUrlDevelopment: string;
+  readonly baseUrlStaging: string;
+  readonly baseUrlProduction: string;
 
   readonly databasePostgresHost: string;
   readonly databasePostgresPort: number;

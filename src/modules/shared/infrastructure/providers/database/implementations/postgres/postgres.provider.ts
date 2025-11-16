@@ -1,24 +1,36 @@
 import { DataSource } from 'typeorm';
 
-import { ConfigModule } from '@app/config/config.module';
+import { ENVIRONMENT_SERVICE_PROVIDER } from '@app/config/config.token';
+import { EnvironmentProviderInterface } from '@config/domain/interfaces/environment.interface';
+
+import { DATABASE_CONNECTION_TYPES } from '../../database.constant';
+
+const pathEntitiesPattern = process.cwd() + 'src/**/*.entity{.ts,.js}';
+const pathMigrationsPattern = process.cwd() + 'src/modules/**/migrations/*{.ts,.js}';
 
 export const databaseProviders = [
   {
     provide: 'DATA_SOURCE',
-    useFactory: async (configModule: ConfigModuleIn) => {
+    useFactory: async (environmentProvider: EnvironmentProviderInterface) => {
       const dataSource = new DataSource({
-        type: configMModule,
-        host: 'localhost',
-        port: 5432,
-        username: 'root',
-        password: 'root',
-        database: 'test',
-        entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-        synchronize: true,
+        type: DATABASE_CONNECTION_TYPES.POSTGRES as 'postgres',
+        host: environmentProvider.databasePostgresHost || 'localhost',
+        port: environmentProvider.databasePostgresPort || 5432,
+        username: environmentProvider.databasePostgresUser || 'root',
+        password: environmentProvider.databasePostgresPassword || 'root',
+        database: environmentProvider.databasePostgresName || 'test',
+        entities: [pathEntitiesPattern],
+        migrations: [pathMigrationsPattern],
+        synchronize: environmentProvider.databasePostgresSynchronize || false,
       });
 
       return dataSource.initialize();
     },
-    imports: [ConfigModule],
+    inject: [
+      {
+        token: ENVIRONMENT_SERVICE_PROVIDER,
+        optional: false,
+      },
+    ],
   },
 ];

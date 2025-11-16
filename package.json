@@ -45,6 +45,7 @@
     "joi": "^17.13.3",
     "nest-winston": "^1.10.2",
     "nestjs-redox": "^2.3.0",
+    "pg": "^8.16.3",
     "redoc": "^2.5.2",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
