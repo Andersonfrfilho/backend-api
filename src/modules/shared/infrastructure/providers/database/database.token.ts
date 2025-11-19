@@ -1,0 +1,1 @@
+export const DATABASE_POSTGRES_SOURCE = 'DATA_SOURCE';

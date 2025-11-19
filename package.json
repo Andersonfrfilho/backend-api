@@ -24,7 +24,11 @@
     "test:e2e": "jest --config jest.config.e2e.ts",
     "test:e2e:watch": "jest --watch --config jest.config.e2e.ts",
     "test:all": "npm run test:unit && npm run test:e2e",
-    "sonar": "sonar-scanner"
+    "sonar": "sonar-scanner",
+    "migration:show": "node scripts/migration.js show",
+    "migration:run": "node scripts/migration.js run",
+    "migration:revert": "node scripts/migration.js revert",
+    "migration:generate": "node scripts/migration.js generate"
   },
   "dependencies": {
     "@faker-js/faker": "^10.1.0",

@@ -8,6 +8,14 @@ RUN npm install
 
 COPY . .
 
-RUN npm run build
+RUN npm run build && \
+  npx tsc src/modules/shared/infrastructure/providers/database/migrations/*.ts \
+  --outDir dist/modules/shared/infrastructure/providers/database/migrations \
+  --module commonjs \
+  --target es2020 \
+  --esModuleInterop \
+  --skipLibCheck \
+  --strict false
 
-CMD [ "npm", "run", "start:dev" ]
+# Executa migrations e inicia em desenvolvimento
+CMD ["sh", "-c", "npm run migration:run && npm run start:dev"]

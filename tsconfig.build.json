@@ -8,6 +8,7 @@
     "**/*.test.ts",
     "**/*.mock.ts",
     "**/*.d.ts",
-    "logs"
+    "logs",
+    "**/migrations/**"
   ]
 }

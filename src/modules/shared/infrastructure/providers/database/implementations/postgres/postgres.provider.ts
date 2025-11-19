@@ -4,13 +4,13 @@ import { ENVIRONMENT_SERVICE_PROVIDER } from '@app/config/config.token';
 import { EnvironmentProviderInterface } from '@config/domain/interfaces/environment.interface';
 
 import { DATABASE_CONNECTION_TYPES } from '../../database.constant';
+import { DATABASE_POSTGRES_SOURCE } from '../../database.token';
 
-const pathEntitiesPattern = process.cwd() + 'src/**/*.entity{.ts,.js}';
-const pathMigrationsPattern = process.cwd() + 'src/modules/**/migrations/*{.ts,.js}';
+import { PATH_ENTITIES_PATTERN } from './postgres.constant';
 
 export const databaseProviders = [
   {
-    provide: 'DATA_SOURCE',
+    provide: DATABASE_POSTGRES_SOURCE,
     useFactory: async (environmentProvider: EnvironmentProviderInterface) => {
       const dataSource = new DataSource({
         type: DATABASE_CONNECTION_TYPES.POSTGRES as 'postgres',
@@ -19,8 +19,7 @@ export const databaseProviders = [
         username: environmentProvider.databasePostgresUser || 'root',
         password: environmentProvider.databasePostgresPassword || 'root',
         database: environmentProvider.databasePostgresName || 'test',
-        entities: [pathEntitiesPattern],
-        migrations: [pathMigrationsPattern],
+        entities: PATH_ENTITIES_PATTERN,
         synchronize: environmentProvider.databasePostgresSynchronize || false,
       });
 
