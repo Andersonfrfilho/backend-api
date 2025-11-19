@@ -1,0 +1,47 @@
+# ===== STAGE 1: Build =====
+FROM node:25-alpine AS builder
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm ci
+
+COPY . .
+
+RUN npm run build && \
+  npx tsc src/modules/shared/infrastructure/providers/database/migrations/*.ts \
+  --outDir dist/modules/shared/infrastructure/providers/database/migrations \
+  --module commonjs \
+  --target es2020 \
+  --esModuleInterop \
+  --skipLibCheck \
+  --strict false
+
+# ===== STAGE 2: Runtime (Development) =====
+FROM node:25-alpine
+
+WORKDIR /app
+
+# Copia todas as dependências (incluindo dev)
+COPY --from=builder /app/node_modules ./node_modules
+
+# Copia apenas arquivos necessários
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/src ./src
+COPY --from=builder /app/scripts ./scripts
+COPY --from=builder /app/package*.json ./
+
+# Copia apenas os configs necessários para dev
+COPY --from=builder /app/tsconfig.json ./
+COPY --from=builder /app/nest-cli.json ./
+
+# Desabilita deleteOutDir em dev para não conflitar com migrations compiladas
+RUN sed -i 's/"deleteOutDir": true/"deleteOutDir": false/' nest-cli.json
+
+# Cria pasta de logs
+RUN mkdir -p logs
+
+# DESENVOLVIMENTO: Roda migrations automáticamente + inicia em modo watch
+# Nota: deleteOutDir é desabilitado em dev para evitar conflito com dist/ copiado
+CMD ["sh", "-c", "npm run migration:run && npm run start:dev"]

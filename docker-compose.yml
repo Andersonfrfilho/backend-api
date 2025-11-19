@@ -4,15 +4,20 @@ services:
       - database_postgres
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     container_name: ${API_APP_CONTAINER_NAME}
+    environment:
+      - NODE_ENV=development
     env_file:
       - .env
     ports:
       - '${PORT}:${PORT}'
     volumes:
       - ./src:/app/src
+      - ./dist:/app/dist
       - ./logs:/app/logs
+    stdin_open: true
+    tty: true
 
   ### DATABASE SERVICE
   database_postgres:
