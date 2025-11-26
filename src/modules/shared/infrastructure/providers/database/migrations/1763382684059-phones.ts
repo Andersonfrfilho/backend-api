@@ -13,6 +13,12 @@ export default class Phones1763382684059 implements MigrationInterface {
             generationStrategy: 'uuid',
           }),
           new TableColumn({
+            name: 'user_id',
+            type: 'uuid',
+            isPrimary: true,
+            generationStrategy: 'uuid',
+          }),
+          new TableColumn({
             name: 'ddi',
             type: 'varchar',
             isNullable: false,
