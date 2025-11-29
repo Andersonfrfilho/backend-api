@@ -1,6 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-
-import { UserType } from './userTypes.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Type {
@@ -16,8 +14,8 @@ export class Type {
   @Column({ type: 'text', nullable: true })
   description: string | null;
 
-  @ManyToOne(() => UserType, (userType) => userType.user)
-  userTypes: UserType[];
+  @OneToMany('UserType', 'type')
+  userTypes: any[];
 
   @Column({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

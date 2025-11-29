@@ -10,6 +10,7 @@ import { SecurityHeadersMiddleware } from '@modules/shared/infrastructure/middle
 import * as tsConfig from '../tsconfig.json';
 
 import { SharedModule } from './modules/shared/shared.module';
+import { UserModule } from './modules/user/user.module';
 
 const compilerOptions = tsConfig.compilerOptions;
 tsConfigPathsRegister({
@@ -18,13 +19,10 @@ tsConfigPathsRegister({
 });
 
 @Module({
-  imports: [ConfigModule, SharedModule, ErrorModule, HealthModule, AuthModule],
+  imports: [ConfigModule, SharedModule, ErrorModule, HealthModule, AuthModule, UserModule],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    // Aplica Security Headers Middleware globalmente
     consumer.apply(SecurityHeadersMiddleware).forRoutes('*');
-    // NOTA: CSRF middleware desativado por enquanto - causa timeout nos testes
-    // Pode ser ativado individualmente em rotas específicas quando necessário
   }
 }

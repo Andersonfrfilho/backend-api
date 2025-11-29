@@ -1,11 +1,5 @@
-export interface CreateUserParams {
-  email: string;
-  password: string;
-  name: string;
-}
+import { User } from '@app/modules/shared/domain/entities/user.entity';
 
-export interface UpdateUserParams {
-  email?: string;
-  password?: string;
-  name?: string;
-}
+export interface CreateUserParams extends Partial<User> {}
+
+export interface UpdateUserParams extends Partial<User> {}

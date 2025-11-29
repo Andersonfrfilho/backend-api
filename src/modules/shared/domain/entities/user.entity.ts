@@ -1,7 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-
-import { Phone } from './phone.entity';
-import { UserType } from './userTypes.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class User {
@@ -40,11 +37,11 @@ export class User {
   @Column({ name: 'birth_date', type: 'timestamp' })
   birthDate: Date;
 
-  @ManyToOne(() => Phone, (phone) => phone.user)
-  phones: Phone[];
+  @OneToMany('Phone', 'user')
+  phones: any[];
 
-  @ManyToOne(() => UserType, (userType) => userType.type)
-  userTypes: UserType[];
+  @OneToMany('UserType', 'user')
+  userTypes: any[];
 
   @Column({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

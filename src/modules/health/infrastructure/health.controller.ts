@@ -3,8 +3,7 @@ import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 
 import type { HealthCheckServiceInterface } from '@modules/health/domain/health.get.interface';
 import { HEALTH_CHECK_SERVICE_PROVIDER } from '@modules/health/infrastructure/health.token';
-
-import { HealthCheckResponseDto as HealthCheckControllerResponseDto } from './shared/health.dto';
+import { HealthCheckResponseDto } from '@modules/health/shared/health.dto';
 
 @Injectable()
 @Controller('/health')
@@ -21,8 +20,8 @@ export class HealthController {
       Esta rota realiza uma verificação de saúde do serviço.
     `,
   })
-  @ApiOkResponse({ type: HealthCheckControllerResponseDto })
-  check(): HealthCheckControllerResponseDto {
+  @ApiOkResponse({ type: HealthCheckResponseDto })
+  check(): HealthCheckResponseDto {
     return this.healthCheckService.execute();
   }
 }

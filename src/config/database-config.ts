@@ -13,7 +13,6 @@ export interface DatabaseConfigValues {
 }
 
 export function getDatabaseConfig(): DatabaseConfigValues {
-  // Valida as variáveis de ambiente com o mesmo schema do NestJS
   const { error, value } = envValidationSchema.validate(process.env, {
     abortEarly: false,
     allowUnknown: true,
@@ -24,7 +23,6 @@ export function getDatabaseConfig(): DatabaseConfigValues {
     throw new Error(`[Database Config] Validation failed: ${messages}`);
   }
 
-  // Extrai apenas as configurações do banco de dados
   const {
     DATABASE_POSTGRES_HOST,
     DATABASE_POSTGRES_PORT,

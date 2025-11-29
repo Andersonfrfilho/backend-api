@@ -4,7 +4,6 @@ import { SharedInfrastructureProviderDatabaseImplementationsPostgresModule } fro
 
 @Module({
   imports: [SharedInfrastructureProviderDatabaseImplementationsPostgresModule],
-  providers: [],
   exports: [SharedInfrastructureProviderDatabaseImplementationsPostgresModule],
 })
 export class SharedInfrastructureProviderDatabaseModule {}

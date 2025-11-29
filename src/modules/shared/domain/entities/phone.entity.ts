@@ -1,7 +1,5 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
-import { User } from './user.entity';
-
 @Entity()
 export class Phone {
   @PrimaryGeneratedColumn('uuid')
@@ -25,8 +23,8 @@ export class Phone {
   @Column({ default: true })
   active: boolean;
 
-  @ManyToOne(() => User, (user) => user.phones)
-  user: User;
+  @ManyToOne('User', 'phones')
+  user: any;
 
   @Column({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

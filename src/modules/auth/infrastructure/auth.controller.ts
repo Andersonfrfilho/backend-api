@@ -22,7 +22,7 @@ import { AUTH_LOGIN_SESSION_SERVICE_PROVIDE } from '@modules/auth/infrastructure
 import {
   AuthLoginSessionRequestDto as AuthLoginSessionRequestParamsDto,
   AuthLoginSessionResponseDto as AuthLoginSessionResponseController,
-} from './shared/dtos';
+} from '../shared/dtos';
 
 @Injectable()
 @Controller('/auth')

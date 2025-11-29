@@ -1,8 +1,5 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
-import { Type } from './type.entity';
-import { User } from './user.entity';
-
 @Entity()
 export class UserType {
   @PrimaryGeneratedColumn('increment')
@@ -17,11 +14,11 @@ export class UserType {
   @Column({ default: true })
   active: boolean;
 
-  @ManyToOne(() => User, (user) => user.userTypes)
-  user: User;
+  @ManyToOne('User', 'userTypes')
+  user: any;
 
-  @ManyToOne(() => Type, (type) => type.userTypes)
-  type: Type;
+  @ManyToOne('Type', 'userTypes')
+  type: any;
 
   @Column({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
