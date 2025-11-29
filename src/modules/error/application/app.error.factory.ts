@@ -1,4 +1,4 @@
-import { AppError, ErrorType } from '@modules/error/domain/AppError';
+import { AppError, ErrorType } from '@modules/error/domain/app.error';
 
 export class AppErrorFactory {
   static validation(message: string, details?: Record<string, unknown>): AppError {

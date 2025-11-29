@@ -17,12 +17,15 @@ UserController (infrastructure/)
 ## Estrutura por Camada
 
 ### 1. Controller (Infrastructure Layer)
+
 **Arquivo:** `infrastructure/user.controller.ts`
+
 - Recebe requisições HTTP
 - Valida request/response
 - Injeta UserInfrastructureService
 
 **Exemplo:**
+
 ```typescript
 POST /users
 ↓
@@ -30,25 +33,31 @@ UserController.create(CreateUserDto)
 ```
 
 ### 2. Infrastructure Service (Infrastructure Layer)
+
 **Arquivo:** `infrastructure/services/user.infrastructure.service.ts`
+
 - Orquestra múltiplos use cases
 - Coordena transações
 - Lida com logging e tratamento de erros
 - Detalhes técnicos
 
 **Responsabilidades:**
+
 - Chamar CreateUserUseCase
 - Coordenar SendWelcomeEmailUseCase
 - Coordenar CreateUserPhoneUseCase
 
 ### 3. Use Cases (Application Layer)
+
 **Arquivo:** `application/use-cases/user.create.use-case.ts`
+
 - Lógica de negócio pura
 - Independente de frameworks
 - Valida regras de negócio
 - Chama repositories
 
 **Exemplo:**
+
 ```typescript
 CreateUserUseCase
 ├── Valida email único
@@ -58,12 +67,15 @@ CreateUserUseCase
 ```
 
 ### 4. Repository (Infrastructure Layer)
+
 **Arquivo:** `infrastructure/repositories/user.repository.ts`
+
 - Acesso e persistência de dados
 - Implementa interface do domain
 - Usa TypeORM
 
 **Responsabilidades:**
+
 - `create(user)` - Cria novo usuário
 - `findById(id)` - Busca por ID
 - `findByEmail(email)` - Busca por email
@@ -71,7 +83,9 @@ CreateUserUseCase
 - `delete(id)` - Deleta usuário
 
 ### 5. Entity (Domain Layer)
+
 **Arquivo:** `shared/domain/entities/user.entity.ts`
+
 - Modelo de dados
 - Relacionamentos
 - Lógica de entidade
@@ -126,6 +140,7 @@ export class UserModule {}
 ## Princípios Aplicados
 
 ✅ **SOLID Principles:**
+
 - Single Responsibility: Cada classe tem uma responsabilidade
 - Open/Closed: Aberta para extensão, fechada para modificação
 - Liskov Substitution: Repository implementa interface
@@ -133,12 +148,14 @@ export class UserModule {}
 - Dependency Inversion: Depende de abstrações (interfaces)
 
 ✅ **Clean Architecture:**
+
 - Independência de frameworks
 - Testabilidade alta
 - Separação clara de responsabilidades
 - Regras de negócio isoladas
 
 ✅ **Domain-Driven Design:**
+
 - Entidades no domain
 - Use cases representam ações de negócio
 - Repository abstrai persistência

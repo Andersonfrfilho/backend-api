@@ -1,6 +1,5 @@
 import { User } from '@modules/shared/domain/entities/user.entity';
-
-import { CreateUserParams, UpdateUserParams } from '../../application/types';
+import { CreateUserParams, UpdateUserParams } from '@modules/user/application/types';
 
 export interface UserRepositoryInterface {
   create(user: CreateUserParams): Promise<User>;

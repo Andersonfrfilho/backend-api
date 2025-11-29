@@ -5,7 +5,7 @@ import type {
   UserServiceInterface,
   UserServiceParams,
   UserServiceResponse,
-} from '../application/interfaces/user.create.interface';
+} from '@modules/user/application/interfaces/create-user.interface';
 
 import { USER_CREATE_USE_CASE_PROVIDE } from './user.token';
 

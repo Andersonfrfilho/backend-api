@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { User } from '../shared/domain/entities/user.entity';
+import { User } from '@modules/shared/domain/entities/user.entity';
 
-import { UserApplicationCreateUseCase } from './application/use-cases/user.create.use-case';
+import { UserApplicationCreateUseCase } from './application/use-cases/create-user.use-case';
 import { UserController } from './infrastructure/user.controller';
 import { UserRepository } from './infrastructure/user.repository';
 import { UserService } from './infrastructure/user.service';

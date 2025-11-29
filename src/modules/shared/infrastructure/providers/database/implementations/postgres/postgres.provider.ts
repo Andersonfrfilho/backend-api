@@ -1,4 +1,4 @@
-import { DATABASE_POSTGRES_SOURCE } from '../../database.token';
+import { DATABASE_POSTGRES_SOURCE } from '@modules/shared/infrastructure/providers/database/database.token';
 
 import PostgresDataSource from './postgres.database-connection';
 

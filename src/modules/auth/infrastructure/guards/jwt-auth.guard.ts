@@ -1,6 +1,5 @@
+import { parseTokenWithRoles } from '@modules/auth/infrastructure/strategies/mock-jwt.strategy';
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
-
-import { parseTokenWithRoles } from '../strategies/mock-jwt.strategy';
 
 /**
  * JWT Authentication Guard

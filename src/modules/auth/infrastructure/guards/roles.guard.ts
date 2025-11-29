@@ -1,7 +1,6 @@
+import { ROLES_KEY } from '@modules/auth/infrastructure/decorators/roles.decorator';
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-
-import { ROLES_KEY } from '../decorators/roles.decorator';
 
 /**
  * Roles Guard - Valida se usuário possui roles necessários

@@ -1,4 +1,4 @@
-import { ContextType } from '../enums';
+import { ContextType } from '@modules/shared/domain/enums';
 
 export interface RequestContext {
   requestId: string;

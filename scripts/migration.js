@@ -5,7 +5,6 @@ const { execSync } = require('child_process');
 const command = process.argv[2];
 const isProd = process.env.NODE_ENV === 'production';
 
-// Detecta o caminho baseado em NODE_ENV
 const basePath = isProd ? 'dist' : 'src';
 const fileExt = isProd ? 'js' : 'ts';
 const executor = isProd ? 'node' : 'ts-node -r tsconfig-paths/register';

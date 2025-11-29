@@ -6,11 +6,10 @@ import {
   ApiOperation,
 } from '@nestjs/swagger';
 
-import type { UserServiceInterface } from '../application/interfaces/user.create.interface';
-import { CreateUserRequestDto } from '../shared/dtos/CreateUserRequest.dto';
-import { CreateUserResponseDto } from '../shared/dtos/CreateUserResponse.dto';
-
-import { USER_SERVICE_PROVIDE } from './user.token';
+import type { UserServiceInterface } from '@modules/user/application/interfaces/create-user.interface';
+import { USER_SERVICE_PROVIDE } from '@modules/user/infrastructure/user.token';
+import { CreateUserRequestDto } from '@modules/user/shared/dtos/create-user-request.dto';
+import { CreateUserResponseDto } from '@modules/user/shared/dtos/create-user-response.dto';
 
 @Injectable()
 @Controller('/user')

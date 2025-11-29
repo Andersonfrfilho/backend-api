@@ -4,7 +4,7 @@ import { AuthApplicationUseCaseModule } from '@modules/auth/application/use-case
 import { AuthLoginSessionService } from '@modules/auth/infrastructure/service/auth.login-session.service';
 import { SharedInfrastructureProviderLogModule } from '@modules/shared/infrastructure/providers/log/log.module';
 
-import { AUTH_LOGIN_SESSION_SERVICE_PROVIDE } from '../auth.token';
+import { AUTH_LOGIN_SESSION_SERVICE_PROVIDE } from '@modules/auth/infrastructure/auth.token';
 
 @Module({
   imports: [SharedInfrastructureProviderLogModule, AuthApplicationUseCaseModule],

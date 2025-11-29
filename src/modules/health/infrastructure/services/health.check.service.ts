@@ -6,7 +6,7 @@ import type {
   HealthCheckServiceInterface,
   HealthCheckServiceResponse,
   HealthCheckUseCaseInterface,
-} from '../../domain/health.get.interface';
+} from '@modules/health/domain/health.get.interface';
 
 @Injectable()
 export class HealthCheckService implements HealthCheckServiceInterface {

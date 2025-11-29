@@ -10,19 +10,19 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
-import type { AuthLoginSessionServiceInterface } from '@modules/auth/domain/auth.login-session.interface';
 import {
   AuthBadRequestErrorValidationRequestDto,
   AuthLoginSessionServiceErrorInvalidCredentialsDto,
   AuthLoginSessionServiceErrorNotFoundDto,
   AuthLoginSessionServiceInternalServerErrorDto,
-} from '@modules/auth/domain/exceptions';
+} from '@modules/auth/domain/auth.exceptions';
+import type { AuthLoginSessionServiceInterface } from '@modules/auth/domain/auth.login-session.interface';
 import { AUTH_LOGIN_SESSION_SERVICE_PROVIDE } from '@modules/auth/infrastructure/auth.token';
 
 import {
   AuthLoginSessionRequestDto as AuthLoginSessionRequestParamsDto,
   AuthLoginSessionResponseDto as AuthLoginSessionResponseController,
-} from '../shared/dtos';
+} from '@modules/auth/shared/dtos';
 
 @Injectable()
 @Controller('/auth')

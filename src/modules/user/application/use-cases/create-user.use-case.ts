@@ -1,12 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import type { UserRepositoryInterface } from '../../domain/repositories/user.repository.interface';
-import { USER_REPOSITORY_PROVIDE } from '../../infrastructure/user.token';
+import type { UserRepositoryInterface } from '@modules/user/domain/repositories/user.repository.interface';
+import { USER_REPOSITORY_PROVIDE } from '@modules/user/infrastructure/user.token';
+
 import type {
   UserCreateUseCaseInterface,
   UserCreateUseCaseParams,
   UserCreateUseCaseResponse,
-} from '../interfaces/user.create.interface';
+} from '../interfaces/create-user.interface';
 
 @Injectable()
 export class UserApplicationCreateUseCase implements UserCreateUseCaseInterface {
@@ -15,6 +16,7 @@ export class UserApplicationCreateUseCase implements UserCreateUseCaseInterface 
     private readonly userRepositoryProvide: UserRepositoryInterface,
   ) {}
   async execute(params: UserCreateUseCaseParams): Promise<UserCreateUseCaseResponse> {
+    console.log('###### params=>', params);
     return this.userRepositoryProvide.create(params);
   }
 }
