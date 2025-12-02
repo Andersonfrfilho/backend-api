@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Transform } from 'class-transformer';
-import { IsDate, IsEmail, IsString } from 'class-validator';
+import { IsDate, IsEmail, IsOptional, IsString } from 'class-validator';
 
 import { User } from '@modules/shared/domain/entities/user.entity';
 
@@ -67,4 +67,27 @@ export class CreateUserRequestDto implements Partial<User> {
   @Expose({ name: 'password_hash' })
   @IsString()
   passwordHash: string;
+
+  @ApiProperty({
+    description: 'Additional user details',
+    example: {},
+    required: false,
+  })
+  @IsOptional()
+  details?: Record<string, unknown>;
+
+  @ApiProperty({
+    description: 'Whether the user account is active',
+    example: true,
+    required: false,
+  })
+  @IsOptional()
+  isActive?: boolean;
+
+  @ApiProperty({
+    description: 'The phone number of the user in format +55DDNNNNNNNNN',
+    example: '+55993056772',
+  })
+  @IsString()
+  phone: string;
 }

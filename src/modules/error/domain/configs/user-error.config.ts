@@ -46,4 +46,10 @@ export const USER_ERROR_CONFIGS = {
     code: UserErrorCode.EMAIL_NOT_VERIFIED,
     details: { email },
   }),
+
+  invalidUserType: (type: string): BusinessLogicErrorConfig => ({
+    message: 'Invalid user type',
+    code: UserErrorCode.INVALID_USER_TYPE,
+    details: { type },
+  }),
 } as const;

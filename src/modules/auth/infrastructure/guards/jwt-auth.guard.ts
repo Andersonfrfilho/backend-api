@@ -1,6 +1,7 @@
-import { parseTokenWithRoles } from '@modules/auth/infrastructure/strategies/mock-jwt.strategy';
-import { AuthErrorFactory } from '@modules/error/application/factories';
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+
+import { AuthErrorFactory } from '@modules/auth/application/factories';
+import { parseTokenWithRoles } from '@modules/auth/infrastructure/strategies/mock-jwt.strategy';
 
 /**
  * JWT Authentication Guard

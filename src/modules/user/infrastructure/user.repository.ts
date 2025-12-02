@@ -2,11 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import {
-  MethodNotImplementedErrorFactory,
-  UserErrorFactory,
-} from '@modules/error/application/factories';
 import { User } from '@modules/shared/domain/entities/user.entity';
+import { UserErrorFactory } from '@modules/user/application/factories';
 import { CreateUserParams, UpdateUserParams } from '@modules/user/application/types';
 import { UserRepositoryInterface } from '@modules/user/domain/repositories/user.repository.interface';
 
@@ -26,8 +23,9 @@ export class UserRepository implements UserRepositoryInterface {
     }
     return updatedUser;
   }
+
   async delete(id: string): Promise<void> {
-    throw MethodNotImplementedErrorFactory.methodNotImplemented('UserRepository.delete');
+    await this.typeormRepo.delete(id);
   }
 
   async create(user: CreateUserParams): Promise<User> {
@@ -44,6 +42,18 @@ export class UserRepository implements UserRepositoryInterface {
   async findByEmail(email: string): Promise<User | null> {
     return this.typeormRepo.findOne({
       where: { email },
+    });
+  }
+
+  async findByCpf(cpf: string): Promise<User | null> {
+    return this.typeormRepo.findOne({
+      where: { details: { cpf } },
+    });
+  }
+
+  async findByRg(rg: string): Promise<User | null> {
+    return this.typeormRepo.findOne({
+      where: { details: { rg } },
     });
   }
 }

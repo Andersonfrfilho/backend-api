@@ -1,5 +1,8 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
+import { Phone } from './phone.entity';
+import { UserType } from './user-types.entity';
+
 @Entity()
 export class User {
   @PrimaryGeneratedColumn('uuid')
@@ -38,10 +41,10 @@ export class User {
   birthDate: Date;
 
   @OneToMany('Phone', 'user')
-  phones: any[];
+  phones: Phone[];
 
   @OneToMany('UserType', 'user')
-  userTypes: any[];
+  userTypes: UserType[];
 
   @Column({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

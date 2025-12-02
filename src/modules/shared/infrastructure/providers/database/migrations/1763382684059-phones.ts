@@ -4,45 +4,39 @@ export default class Phones1763382684059 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'phones',
+        name: 'phone',
         columns: [
           new TableColumn({
             name: 'id',
             type: 'uuid',
             isPrimary: true,
             generationStrategy: 'uuid',
+            default: 'uuid_generate_v4()',
           }),
           new TableColumn({
-            name: 'user_id',
-            type: 'uuid',
-            isPrimary: true,
-            generationStrategy: 'uuid',
-          }),
-          new TableColumn({
-            name: 'ddi',
+            name: 'country',
             type: 'varchar',
             isNullable: false,
           }),
           new TableColumn({
-            name: 'ddd',
+            name: 'area',
             type: 'varchar',
             isNullable: false,
           }),
           new TableColumn({
             name: 'number',
             type: 'varchar',
-            isUnique: true,
             isNullable: false,
           }),
           new TableColumn({
-            name: 'active',
-            type: 'boolean',
-            default: true,
+            name: 'user_id',
+            type: 'uuid',
+            isNullable: false,
           }),
           new TableColumn({
             name: 'created_at',
             type: 'timestamp',
-            default: 'now()',
+            default: 'CURRENT_TIMESTAMP',
           }),
           new TableColumn({
             name: 'updated_at',
@@ -55,12 +49,30 @@ export default class Phones1763382684059 implements MigrationInterface {
             isNullable: true,
           }),
         ],
-        indices: [{ columnNames: ['ddi', 'ddd', 'number'], isUnique: true }],
+        foreignKeys: [
+          {
+            columnNames: ['user_id'],
+            referencedTableName: 'user',
+            referencedColumnNames: ['id'],
+            onDelete: 'CASCADE',
+          },
+        ],
+        indices: [
+          {
+            columnNames: ['user_id'],
+            name: 'IDX_phone_user_id',
+          },
+          {
+            columnNames: ['country', 'area', 'number'],
+            isUnique: true,
+            name: 'UQ_phone_country_area_number',
+          },
+        ],
       }),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('phones');
+    await queryRunner.dropTable('phone', true, true, true);
   }
 }

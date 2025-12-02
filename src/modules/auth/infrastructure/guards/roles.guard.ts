@@ -1,8 +1,8 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
+import { AuthErrorFactory } from '@modules/auth/application/factories';
 import { ROLES_KEY } from '@modules/auth/infrastructure/decorators/roles.decorator';
-import { AuthErrorFactory } from '@modules/error/application/factories';
 
 /**
  * Roles Guard - Valida se usuário possui roles necessários

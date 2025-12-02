@@ -1,28 +1,25 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
-import { UserTypeEnum } from '../enums/user-type.enum';
+import { User } from '@modules/shared/domain/entities/user.entity';
 
-import { User } from './user.entity';
-
-@Entity('user_type')
-export class UserType {
+@Entity()
+export class Phone {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
+  country: string; // +55
+
+  @Column()
+  area: string; // DDD: 99
+
+  @Column()
+  number: string; // 993056772
+
+  @Column()
   userId: string;
 
-  @Column({
-    type: 'enum',
-    enum: UserTypeEnum,
-    default: UserTypeEnum.USER,
-  })
-  type: UserTypeEnum;
-
-  @Column({ default: true })
-  active: boolean;
-
-  @ManyToOne(() => User, (user) => user.userTypes, { onDelete: 'CASCADE' })
+  @ManyToOne('User', 'phones')
   user: User;
 
   @Column({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

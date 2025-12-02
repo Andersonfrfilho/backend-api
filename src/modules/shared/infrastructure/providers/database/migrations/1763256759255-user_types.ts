@@ -4,7 +4,7 @@ export default class UserTypes1763256759255 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'user_types',
+        name: 'user_type',
         columns: [
           new TableColumn({
             name: 'id',
@@ -18,9 +18,33 @@ export default class UserTypes1763256759255 implements MigrationInterface {
             isNullable: false,
           }),
           new TableColumn({
-            name: 'type_id',
-            type: 'uuid',
+            name: 'type',
+            type: 'enum',
+            enum: ['ADMIN', 'MODERATOR', 'USER', 'CUSTOMER', 'SUPPORT'],
+            default: "'USER'",
             isNullable: false,
+          }),
+          new TableColumn({
+            name: 'active',
+            type: 'boolean',
+            default: true,
+            isNullable: false,
+          }),
+          new TableColumn({
+            name: 'created_at',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+            isNullable: false,
+          }),
+          new TableColumn({
+            name: 'updated_at',
+            type: 'timestamp',
+            isNullable: true,
+          }),
+          new TableColumn({
+            name: 'deleted_at',
+            type: 'timestamp',
+            isNullable: true,
           }),
         ],
         foreignKeys: [
@@ -30,24 +54,28 @@ export default class UserTypes1763256759255 implements MigrationInterface {
             referencedColumnNames: ['id'],
             onDelete: 'CASCADE',
           },
-          {
-            columnNames: ['type_id'],
-            referencedTableName: 'types',
-            referencedColumnNames: ['id'],
-            onDelete: 'CASCADE',
-          },
         ],
         indices: [
           {
-            columnNames: ['user_id', 'type_id'],
-            isUnique: true,
+            columnNames: ['user_id'],
           },
         ],
       }),
     );
+
+    // Insert default user types
+    await queryRunner.query(`
+      INSERT INTO user_type (id, user_id, type, active, created_at) VALUES
+      ('00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000000', 'ADMIN', true, CURRENT_TIMESTAMP),
+      ('00000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000000', 'MODERATOR', true, CURRENT_TIMESTAMP),
+      ('00000000-0000-0000-0000-000000000003', '00000000-0000-0000-0000-000000000000', 'USER', true, CURRENT_TIMESTAMP),
+      ('00000000-0000-0000-0000-000000000004', '00000000-0000-0000-0000-000000000000', 'CUSTOMER', true, CURRENT_TIMESTAMP),
+      ('00000000-0000-0000-0000-000000000005', '00000000-0000-0000-0000-000000000000', 'SUPPORT', true, CURRENT_TIMESTAMP)
+      ON CONFLICT DO NOTHING;
+    `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('user_types');
+    await queryRunner.dropTable('user_type');
   }
 }
