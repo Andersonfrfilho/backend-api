@@ -1,6 +1,8 @@
-import { ROLES_KEY } from '@modules/auth/infrastructure/decorators/roles.decorator';
-import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+
+import { ROLES_KEY } from '@modules/auth/infrastructure/decorators/roles.decorator';
+import { AuthErrorFactory } from '@modules/error/application/factories';
 
 /**
  * Roles Guard - Valida se usuário possui roles necessários
@@ -36,7 +38,7 @@ export class RolesGuard implements CanActivate {
 
     // Se não há usuário, nega acesso
     if (!user) {
-      throw new ForbiddenException('User not found in request');
+      throw AuthErrorFactory.userNotFoundInRequest();
     }
 
     // Obtém roles do usuário
@@ -46,9 +48,7 @@ export class RolesGuard implements CanActivate {
     const hasRole = requiredRoles.some((role) => userRoles.includes(role));
 
     if (!hasRole) {
-      throw new ForbiddenException(
-        `Insufficient permissions. Required roles: ${requiredRoles.join(', ')}`,
-      );
+      throw AuthErrorFactory.insufficientPermissions(requiredRoles);
     }
 
     return true;

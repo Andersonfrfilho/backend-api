@@ -9,14 +9,8 @@
  * - Configurável por rota
  */
 
-import {
-  CallHandler,
-  ExecutionContext,
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NestInterceptor,
-} from '@nestjs/common';
+import { RateLimitErrorFactory } from '@modules/error/application/factories';
+import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { Observable } from 'rxjs';
 
 /**
@@ -78,14 +72,7 @@ export class RateLimitInterceptor implements NestInterceptor {
     // Verificar limite
     if (record.count > this.config.maxAttempts) {
       const retryAfter = Math.ceil((record.resetTime - now) / 1000);
-      throw new HttpException(
-        {
-          statusCode: 429,
-          message: this.config.message || `Too many requests. Try again in ${retryAfter} seconds.`,
-          retryAfter,
-        },
-        HttpStatus.TOO_MANY_REQUESTS,
-      );
+      throw RateLimitErrorFactory.tooManyRequests(retryAfter);
     }
 
     // Adicionar header com informações

@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
+import { UserErrorFactory } from '@modules/error/application/factories';
 import type { UserRepositoryInterface } from '@modules/user/domain/repositories/user.repository.interface';
 import { USER_REPOSITORY_PROVIDE } from '@modules/user/infrastructure/user.token';
 
@@ -16,7 +17,16 @@ export class UserApplicationCreateUseCase implements UserCreateUseCaseInterface 
     private readonly userRepositoryProvide: UserRepositoryInterface,
   ) {}
   async execute(params: UserCreateUseCaseParams): Promise<UserCreateUseCaseResponse> {
-    console.log('###### params=>', params);
-    return this.userRepositoryProvide.create(params);
+    if (!params.email) {
+      throw UserErrorFactory.invalidPassword();
+    }
+
+    const userAlreadyExists = await this.userRepositoryProvide.findByEmail(params.email);
+
+    if (userAlreadyExists) {
+      throw UserErrorFactory.duplicateEmail(params.email);
+    }
+
+    return this.userRepositoryProvide.create(params as any);
   }
 }

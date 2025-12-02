@@ -1,63 +1,94 @@
+import { HttpStatus } from '@nestjs/common';
+
 import { AppError, ErrorType } from '@modules/error/domain/app.error';
+import type {
+  AuthenticationErrorConfig,
+  AuthorizationErrorConfig,
+  BusinessLogicErrorConfig,
+  ConflictErrorConfig,
+  ErrorConfig,
+  NotFoundErrorConfig,
+  RateLimitErrorConfig,
+} from '@modules/error/domain/configs';
+import { DEFAULT_ERROR_MESSAGES } from '@modules/error/domain/constants';
 
 export class AppErrorFactory {
-  static validation(message: string, details?: Record<string, unknown>): AppError {
+  static validation(config: ErrorConfig): AppError {
     return new AppError({
       type: ErrorType.VALIDATION,
-      message,
-      statusCode: 400,
-      details,
+      message: config.message,
+      statusCode: HttpStatus.BAD_REQUEST,
+      details: config.details,
     });
   }
 
-  static authentication(message = 'Unauthorized'): AppError {
+  static authentication(config: AuthenticationErrorConfig): AppError {
     return new AppError({
       type: ErrorType.AUTHENTICATION,
-      message,
-      statusCode: 401,
+      message: config.message,
+      statusCode: HttpStatus.UNAUTHORIZED,
+      code: config.code,
     });
   }
 
-  static authorization(message = 'Forbidden'): AppError {
+  static authorization(config: AuthorizationErrorConfig): AppError {
     return new AppError({
       type: ErrorType.AUTHORIZATION,
-      message,
-      statusCode: 403,
+      message: config.message,
+      statusCode: HttpStatus.FORBIDDEN,
+      code: config.code,
     });
   }
 
-  static notFound(message: string, details?: Record<string, unknown>): AppError {
+  static notFound(config: NotFoundErrorConfig): AppError {
     return new AppError({
       type: ErrorType.NOT_FOUND,
-      message,
-      statusCode: 404,
-      details,
+      message: config.message,
+      statusCode: HttpStatus.NOT_FOUND,
+      details: {
+        code: config.code,
+        ...config.details,
+      },
     });
   }
 
-  static conflict(message: string, details?: Record<string, unknown>): AppError {
+  static conflict(config: ConflictErrorConfig): AppError {
     return new AppError({
       type: ErrorType.CONFLICT,
-      message,
-      statusCode: 409,
-      details,
+      message: config.message,
+      statusCode: HttpStatus.CONFLICT,
+      code: config.code,
+      details: config.details,
     });
   }
 
-  static businessLogic(message: string, details?: Record<string, unknown>): AppError {
+  static businessLogic(config: BusinessLogicErrorConfig): AppError {
     return new AppError({
       type: ErrorType.BUSINESS_LOGIC,
-      message,
-      statusCode: 422,
-      details,
+      message: config.message,
+      statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      details: {
+        code: config.code,
+        ...config.details,
+      },
     });
   }
 
-  static internalServer(message = 'Internal Server Error'): AppError {
+  static rateLimit(config: RateLimitErrorConfig): AppError {
+    return new AppError({
+      type: ErrorType.BUSINESS_LOGIC,
+      message: config.message,
+      statusCode: HttpStatus.TOO_MANY_REQUESTS,
+      code: config.code,
+      details: config.details,
+    });
+  }
+
+  static internalServer(config?: ErrorConfig): AppError {
     return new AppError({
       type: ErrorType.INTERNAL_SERVER,
-      message,
-      statusCode: 500,
+      message: config?.message || DEFAULT_ERROR_MESSAGES.INTERNAL_SERVER,
+      statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
     });
   }
 
@@ -75,6 +106,9 @@ export class AppErrorFactory {
       count: validationErrors.length,
     };
 
-    return this.validation('Validation failed', details);
+    return this.validation({
+      message: DEFAULT_ERROR_MESSAGES.VALIDATION_FAILED,
+      details,
+    });
   }
 }

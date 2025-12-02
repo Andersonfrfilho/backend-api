@@ -1,6 +1,6 @@
 import { randomBytes } from 'node:crypto';
 
-import { Injectable, NestMiddleware } from '@nestjs/common';
+import { HttpStatus, Injectable, NestMiddleware } from '@nestjs/common';
 import { FastifyReply, FastifyRequest } from 'fastify';
 
 /**
@@ -55,8 +55,8 @@ export class CsrfMiddleware implements NestMiddleware {
 
       // Se não há token armazenado, rejeitar
       if (!storedToken) {
-        return res.status(403).send({
-          statusCode: 403,
+        return res.status(HttpStatus.FORBIDDEN).send({
+          statusCode: HttpStatus.FORBIDDEN,
           message: 'CSRF token missing. Please GET a token first.',
           error: 'Forbidden',
         });
@@ -64,8 +64,8 @@ export class CsrfMiddleware implements NestMiddleware {
 
       // Validar token
       if (storedToken.token !== tokenFromHeader) {
-        return res.status(403).send({
-          statusCode: 403,
+        return res.status(HttpStatus.FORBIDDEN).send({
+          statusCode: HttpStatus.FORBIDDEN,
           message: 'CSRF token validation failed',
           error: 'Forbidden',
         });
@@ -75,8 +75,8 @@ export class CsrfMiddleware implements NestMiddleware {
       const tokenAge = Date.now() - storedToken.timestamp;
       if (tokenAge > 300000) {
         csrfTokens.delete(clientIp);
-        return res.status(403).send({
-          statusCode: 403,
+        return res.status(HttpStatus.FORBIDDEN).send({
+          statusCode: HttpStatus.FORBIDDEN,
           message: 'CSRF token expired. Please GET a new token.',
           error: 'Forbidden',
         });

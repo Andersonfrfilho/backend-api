@@ -51,8 +51,8 @@ async function bootstrap() {
   });
   app.useGlobalPipes(
     new ValidationPipe({
-      forbidUnknownValues: true,
-      forbidNonWhitelisted: true,
+      forbidUnknownValues: false,
+      forbidNonWhitelisted: false,
       transform: true,
       whitelist: true,
       skipMissingProperties: false,

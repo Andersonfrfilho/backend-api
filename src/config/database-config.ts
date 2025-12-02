@@ -1,4 +1,7 @@
 import 'dotenv/config';
+
+import { ConfigErrorFactory } from '@modules/error/application/factories';
+
 import envValidationSchema from './env.validation';
 
 export interface DatabaseConfigValues {
@@ -20,7 +23,7 @@ export function getDatabaseConfig(): DatabaseConfigValues {
 
   if (error) {
     const messages = error.details.map((d) => d.message).join(', ');
-    throw new Error(`[Database Config] Validation failed: ${messages}`);
+    throw ConfigErrorFactory.invalidConfiguration(messages);
   }
 
   const {

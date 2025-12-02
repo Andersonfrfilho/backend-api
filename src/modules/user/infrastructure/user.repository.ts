@@ -2,6 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+import {
+  MethodNotImplementedErrorFactory,
+  UserErrorFactory,
+} from '@modules/error/application/factories';
 import { User } from '@modules/shared/domain/entities/user.entity';
 import { CreateUserParams, UpdateUserParams } from '@modules/user/application/types';
 import { UserRepositoryInterface } from '@modules/user/domain/repositories/user.repository.interface';
@@ -12,11 +16,18 @@ export class UserRepository implements UserRepositoryInterface {
     @InjectRepository(User)
     private typeormRepo: Repository<User>,
   ) {}
-  update(id: string, user: UpdateUserParams): Promise<User> {
-    throw new Error('Method not implemented.');
+  async update(id: string, user: UpdateUserParams): Promise<User> {
+    await this.typeormRepo.update(id, user as any);
+    const updatedUser = await this.typeormRepo.findOne({
+      where: { id },
+    });
+    if (!updatedUser) {
+      throw UserErrorFactory.notFound(id);
+    }
+    return updatedUser;
   }
-  delete(id: string): Promise<void> {
-    throw new Error('Method not implemented.');
+  async delete(id: string): Promise<void> {
+    throw MethodNotImplementedErrorFactory.methodNotImplemented('UserRepository.delete');
   }
 
   async create(user: CreateUserParams): Promise<User> {

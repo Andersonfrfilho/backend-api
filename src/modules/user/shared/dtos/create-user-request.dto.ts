@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { ApiProperty } from '@nestjs/swagger';
-import { Transform, Type } from 'class-transformer';
-import { IsEmail, IsNotEmpty, IsNumber, IsString, Min } from 'class-validator';
+import { Expose, Transform } from 'class-transformer';
+import { IsDate, IsEmail, IsString } from 'class-validator';
 
 import { User } from '@modules/shared/domain/entities/user.entity';
 
@@ -10,7 +10,6 @@ export class CreateUserRequestDto implements Partial<User> {
     description: 'The name of the user',
     example: faker.person.firstName(),
   })
-  @IsNotEmpty()
   @IsString()
   name: string;
 
@@ -18,8 +17,7 @@ export class CreateUserRequestDto implements Partial<User> {
     description: 'The last name of the user',
     example: faker.person.lastName(),
   })
-  @Transform(({ obj }) => obj.last_name)
-  @IsNotEmpty()
+  @Expose({ name: 'last_name' })
   @IsString()
   lastName: string;
 
@@ -27,7 +25,6 @@ export class CreateUserRequestDto implements Partial<User> {
     description: 'The email of the user',
     example: faker.internet.email(),
   })
-  @IsNotEmpty()
   @IsEmail()
   email: string;
 
@@ -35,7 +32,6 @@ export class CreateUserRequestDto implements Partial<User> {
     description: 'The CPF of the user',
     example: faker.string.numeric(11),
   })
-  @IsNotEmpty()
   @IsString()
   cpf: string;
 
@@ -43,23 +39,24 @@ export class CreateUserRequestDto implements Partial<User> {
     description: 'The RG of the user',
     example: faker.string.numeric(9),
   })
-  @IsNotEmpty()
   @IsString()
   rg: string;
 
   @ApiProperty({
     description: 'The date of birth of the user as timestamp (milliseconds)',
     example: faker.date.past().getTime(),
+    type: 'integer',
+    format: 'int64',
   })
-  @Transform(({ obj }) => obj.birth_date ? new Date(obj.birth_date) : null)
-  @IsNotEmpty()
+  @IsDate()
+  @Transform(({ obj }) => new Date(obj.birth_date))
+  @Expose({ name: 'birth_date' })
   birthDate: Date;
 
   @ApiProperty({
     description: 'The gender of the user',
     example: faker.person.gender(),
   })
-  @IsNotEmpty()
   @IsString()
   gender: string;
 
@@ -67,8 +64,7 @@ export class CreateUserRequestDto implements Partial<User> {
     description: 'The password hash of the user',
     example: faker.internet.password(),
   })
-  @Transform(({ obj }) => obj.password_hash)
-  @IsNotEmpty()
+  @Expose({ name: 'password_hash' })
   @IsString()
   passwordHash: string;
 }

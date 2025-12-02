@@ -1,4 +1,4 @@
-import { Body, Controller, Inject, Injectable, Post, Version } from '@nestjs/common';
+import { Body, Controller, HttpStatus, Inject, Injectable, Post, Version } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -18,7 +18,6 @@ import {
 } from '@modules/auth/domain/auth.exceptions';
 import type { AuthLoginSessionServiceInterface } from '@modules/auth/domain/auth.login-session.interface';
 import { AUTH_LOGIN_SESSION_SERVICE_PROVIDE } from '@modules/auth/infrastructure/auth.token';
-
 import {
   AuthLoginSessionRequestDto as AuthLoginSessionRequestParamsDto,
   AuthLoginSessionResponseDto as AuthLoginSessionResponseController,
@@ -56,7 +55,7 @@ export class AuthController {
     description: 'Muitas tentativas de login. Bloqueado por 15 minutos.',
     schema: {
       example: {
-        statusCode: 429,
+        statusCode: HttpStatus.TOO_MANY_REQUESTS,
         message: 'Muitas tentativas de login. Tente novamente em 15 minutos.',
       },
     },

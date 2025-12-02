@@ -1,0 +1,37 @@
+export enum UserErrorCode {
+  DUPLICATE_EMAIL = 'DUPLICATE_EMAIL',
+  DUPLICATE_CPF = 'DUPLICATE_CPF',
+  DUPLICATE_RG = 'DUPLICATE_RG',
+  USER_NOT_FOUND = 'USER_NOT_FOUND',
+  INVALID_PASSWORD = 'INVALID_PASSWORD',
+  ACCOUNT_DISABLED = 'ACCOUNT_DISABLED',
+  EMAIL_NOT_VERIFIED = 'EMAIL_NOT_VERIFIED',
+}
+
+export enum AuthErrorCode {
+  INVALID_CREDENTIALS = 'INVALID_CREDENTIALS',
+  TOKEN_EXPIRED = 'TOKEN_EXPIRED',
+  TOKEN_INVALID = 'TOKEN_INVALID',
+  REFRESH_TOKEN_EXPIRED = 'REFRESH_TOKEN_EXPIRED',
+  UNAUTHORIZED_ACCESS = 'UNAUTHORIZED_ACCESS',
+}
+
+export enum RateLimitErrorCode {
+  TOO_MANY_REQUESTS = 'TOO_MANY_REQUESTS',
+}
+
+export enum ConfigErrorCode {
+  INVALID_CONFIGURATION = 'INVALID_CONFIGURATION',
+}
+
+export enum MethodNotImplementedErrorCode {
+  METHOD_NOT_IMPLEMENTED = 'METHOD_NOT_IMPLEMENTED',
+}
+
+export type ErrorCode =
+  | UserErrorCode
+  | AuthErrorCode
+  | RateLimitErrorCode
+  | ConfigErrorCode
+  | MethodNotImplementedErrorCode
+  | string;
