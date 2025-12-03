@@ -52,7 +52,7 @@ export default class Phones1763382684059 implements MigrationInterface {
         foreignKeys: [
           {
             columnNames: ['user_id'],
-            referencedTableName: 'user',
+            referencedTableName: 'users',
             referencedColumnNames: ['id'],
             onDelete: 'CASCADE',
           },

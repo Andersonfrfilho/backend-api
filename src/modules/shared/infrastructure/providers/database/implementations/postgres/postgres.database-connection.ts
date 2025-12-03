@@ -1,7 +1,6 @@
 import { DataSource } from 'typeorm';
 
 import { Phone } from '@app/modules/shared/domain/entities/phone.entity';
-import { Type } from '@app/modules/shared/domain/entities/type.entity';
 import { UserType } from '@app/modules/shared/domain/entities/user-types.entity';
 import { User } from '@app/modules/shared/domain/entities/user.entity';
 import { getDatabaseConfig } from '@config/database-config';
@@ -20,7 +19,7 @@ const PostgresDataSource = new DataSource({
   logging: config.logging,
   synchronize: config.synchronize,
 
-  entities: [User, Type, Phone, UserType],
+  entities: [User, Phone, UserType],
   migrations: PATH_MIGRATIONS_PATTERN,
 });
 

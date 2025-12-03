@@ -1,5 +1,4 @@
-import { PhoneErrorFactory } from '@app/modules/phone/application/factories';
-
+import { PhoneErrorFactory } from '@modules/phone/application/factories/phone.error.factory';
 import {
   PHONE_AREA_END,
   PHONE_AREA_START,

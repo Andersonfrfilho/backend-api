@@ -62,17 +62,6 @@ export default class UserTypes1763256759255 implements MigrationInterface {
         ],
       }),
     );
-
-    // Insert default user types
-    await queryRunner.query(`
-      INSERT INTO user_type (id, user_id, type, active, created_at) VALUES
-      ('00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000000', 'ADMIN', true, CURRENT_TIMESTAMP),
-      ('00000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000000', 'MODERATOR', true, CURRENT_TIMESTAMP),
-      ('00000000-0000-0000-0000-000000000003', '00000000-0000-0000-0000-000000000000', 'USER', true, CURRENT_TIMESTAMP),
-      ('00000000-0000-0000-0000-000000000004', '00000000-0000-0000-0000-000000000000', 'CUSTOMER', true, CURRENT_TIMESTAMP),
-      ('00000000-0000-0000-0000-000000000005', '00000000-0000-0000-0000-000000000000', 'SUPPORT', true, CURRENT_TIMESTAMP)
-      ON CONFLICT DO NOTHING;
-    `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

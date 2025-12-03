@@ -45,7 +45,8 @@ export class UserTypeRepository implements UserTypeRepositoryInterface {
   }
 
   async update(id: string, data: Partial<UserType>): Promise<UserType> {
-    await this.repository.update(id, data);
+    const { user, ...updateData } = data;
+    await this.repository.update(id, updateData);
     const updated = await this.findById(id);
     if (!updated) {
       throw new Error('UserType not found after update');

@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { PhoneModule } from '@app/modules/phone/phone.module';
 import { User } from '@modules/shared/domain/entities/user.entity';
+import { SharedModule } from '@modules/shared/shared.module';
 
 import { UserApplicationCreateUseCase } from './application/use-cases/create-user.use-case';
 import { UserController } from './infrastructure/user.controller';
@@ -14,7 +16,7 @@ import {
 } from './infrastructure/user.token';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User])],
+  imports: [TypeOrmModule.forFeature([User]), PhoneModule, SharedModule],
   controllers: [UserController],
   providers: [
     {
