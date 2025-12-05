@@ -1,10 +1,8 @@
-import { UserTypeEnum } from '@app/modules/shared';
 import { User } from '@app/modules/shared/domain/entities/user.entity';
 
 interface CreateUserDto
-  extends Omit<User, 'id' | 'phones' | 'userTypes' | 'createdAt' | 'updatedAt' | 'deletedAt'> {
+  extends Omit<User, 'id' | 'phones' | 'addresses' | 'createdAt' | 'updatedAt' | 'deletedAt'> {
   phone: string;
-  type: UserTypeEnum;
 }
 export interface UserCreateUseCaseParams extends CreateUserDto {}
 export interface UserCreateUseCaseResponse extends User {}

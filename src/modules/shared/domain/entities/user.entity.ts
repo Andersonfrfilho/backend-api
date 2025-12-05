@@ -1,9 +1,9 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { Phone } from './phone.entity';
-import { UserType } from './user-types.entity';
+import { UserAddress } from './user-address.entity';
 
-@Entity()
+@Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -16,8 +16,8 @@ export class User {
   })
   lastName: string;
 
-  @Column({ default: true })
-  isActive: boolean;
+  @Column({ name: 'active', default: false })
+  active: boolean;
 
   @Column()
   cpf: string;
@@ -41,10 +41,11 @@ export class User {
   birthDate: Date;
 
   @OneToMany('Phone', 'user')
+  @JoinColumn()
   phones: Phone[];
 
-  @OneToMany('UserType', 'user')
-  userTypes: UserType[];
+  @OneToMany(() => UserAddress, (userAddress) => userAddress.user)
+  addresses: UserAddress[];
 
   @Column({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

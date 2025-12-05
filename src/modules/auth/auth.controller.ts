@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('auth')
@@ -8,8 +8,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'User login' })
   @ApiResponse({ status: 200, description: 'Login successful' })
-  async login(@Body() body: any) {
-    // TODO: Implement login logic
+  login(): any {
     return { message: 'Login not implemented yet' };
   }
 
@@ -17,8 +16,7 @@ export class AuthController {
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'User registration' })
   @ApiResponse({ status: 201, description: 'Registration successful' })
-  async register(@Body() body: any) {
-    // TODO: Implement registration logic
+  register(): any {
     return { message: 'Registration not implemented yet' };
   }
 }

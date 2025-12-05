@@ -4,7 +4,7 @@ export default class Phones1763382684059 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'phone',
+        name: 'phones',
         columns: [
           new TableColumn({
             name: 'id',
@@ -73,6 +73,6 @@ export default class Phones1763382684059 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('phone', true, true, true);
+    await queryRunner.dropTable('phones', true, true, true);
   }
 }

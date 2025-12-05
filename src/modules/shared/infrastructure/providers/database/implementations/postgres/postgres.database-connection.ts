@@ -1,11 +1,12 @@
 import { DataSource } from 'typeorm';
 
+import { Address } from '@app/modules/shared/domain/entities/address.entity';
 import { Phone } from '@app/modules/shared/domain/entities/phone.entity';
-import { UserType } from '@app/modules/shared/domain/entities/user-types.entity';
+import { UserAddress } from '@app/modules/shared/domain/entities/user-address.entity';
 import { User } from '@app/modules/shared/domain/entities/user.entity';
 import { getDatabaseConfig } from '@config/database-config';
 
-import { PATH_MIGRATIONS_PATTERN } from './postgres.constant';
+import { migrations } from '../../migrations/index';
 
 const config = getDatabaseConfig();
 
@@ -19,8 +20,8 @@ const PostgresDataSource = new DataSource({
   logging: config.logging,
   synchronize: config.synchronize,
 
-  entities: [User, Phone, UserType],
-  migrations: PATH_MIGRATIONS_PATTERN,
+  entities: [User, Phone, Address, UserAddress],
+  migrations,
 });
 
 export default PostgresDataSource;

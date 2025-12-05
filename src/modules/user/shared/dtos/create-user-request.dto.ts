@@ -1,10 +1,9 @@
 import { faker } from '@faker-js/faker';
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Transform } from 'class-transformer';
-import { IsDate, IsEmail, IsEnum, IsOptional, IsString } from 'class-validator';
+import { IsDate, IsEmail, IsOptional, IsString } from 'class-validator';
 
 import { User } from '@modules/shared/domain/entities/user.entity';
-import { UserTypeEnum } from '@modules/shared/domain/enums/user-type.enum';
 
 export class CreateUserRequestDto implements Partial<User> {
   @ApiProperty({
@@ -83,7 +82,7 @@ export class CreateUserRequestDto implements Partial<User> {
     required: false,
   })
   @IsOptional()
-  isActive: boolean = true;
+  active: boolean = true;
 
   @ApiProperty({
     description: 'The phone number of the user in format +55DDNNNNNNNNN',
@@ -91,12 +90,4 @@ export class CreateUserRequestDto implements Partial<User> {
   })
   @IsString()
   phone: string;
-
-  @ApiProperty({
-    description: 'The user type',
-    enum: UserTypeEnum,
-    example: UserTypeEnum.USER,
-  })
-  @IsEnum(UserTypeEnum)
-  type: UserTypeEnum;
 }

@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { Phone } from '@modules/phone/domain/entities/phone.entity';
 import type {
   CreatePhoneParams,
   PhoneRepositoryInterface,
 } from '@modules/phone/domain/repositories/phone.repository.interface';
+import { Phone } from '@modules/shared/domain/entities/phone.entity';
 
 @Injectable()
 export class PhoneRepository implements PhoneRepositoryInterface {

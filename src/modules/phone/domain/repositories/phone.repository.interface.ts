@@ -1,4 +1,4 @@
-import { Phone } from '@modules/phone/domain/entities/phone.entity';
+import { Phone } from '@modules/shared/domain/entities/phone.entity';
 
 export interface CreatePhoneParams {
   country: string;

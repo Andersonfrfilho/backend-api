@@ -1,74 +1,83 @@
 import { MigrationInterface, QueryRunner, Table, TableColumn } from 'typeorm';
 
-export default class User1763256695093 implements MigrationInterface {
+export default class Addresses1763450000000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'users',
+        name: 'addresses',
         columns: [
           new TableColumn({
             name: 'id',
             type: 'uuid',
             isPrimary: true,
             generationStrategy: 'uuid',
-            default: 'gen_random_uuid()',
+            default: 'uuid_generate_v4()',
           }),
           new TableColumn({
-            name: 'name',
+            name: 'street',
             type: 'varchar',
             isNullable: false,
           }),
           new TableColumn({
-            name: 'last_name',
+            name: 'number',
             type: 'varchar',
             isNullable: false,
           }),
           new TableColumn({
-            name: 'cpf',
+            name: 'complement',
             type: 'varchar',
-            isUnique: true,
-            isNullable: false,
-          }),
-          new TableColumn({
-            name: 'rg',
-            type: 'varchar',
-            isUnique: true,
-            isNullable: false,
-          }),
-          new TableColumn({
-            name: 'email',
-            type: 'varchar',
-            isUnique: true,
-            isNullable: false,
-          }),
-          new TableColumn({
-            name: 'password_hash',
-            type: 'varchar',
-            isNullable: false,
-          }),
-          new TableColumn({
-            name: 'gender',
-            type: 'varchar',
-          }),
-          new TableColumn({
-            name: 'details',
-            type: 'jsonb',
             isNullable: true,
           }),
           new TableColumn({
-            name: 'birth_date',
-            type: 'timestamp',
+            name: 'neighborhood',
+            type: 'varchar',
             isNullable: false,
+          }),
+          new TableColumn({
+            name: 'city',
+            type: 'varchar',
+            isNullable: false,
+          }),
+          new TableColumn({
+            name: 'state',
+            type: 'varchar',
+            isNullable: false,
+          }),
+          new TableColumn({
+            name: 'zip_code',
+            type: 'varchar',
+            isNullable: false,
+          }),
+          new TableColumn({
+            name: 'country',
+            type: 'varchar',
+            isNullable: false,
+            default: "'BR'",
+          }),
+          new TableColumn({
+            name: 'latitude',
+            type: 'numeric',
+            precision: 10,
+            scale: 8,
+            isNullable: true,
+          }),
+          new TableColumn({
+            name: 'longitude',
+            type: 'numeric',
+            precision: 11,
+            scale: 8,
+            isNullable: true,
           }),
           new TableColumn({
             name: 'active',
             type: 'boolean',
+            isNullable: false,
             default: true,
           }),
           new TableColumn({
             name: 'created_at',
             type: 'timestamp',
-            default: 'now()',
+            default: 'CURRENT_TIMESTAMP',
           }),
           new TableColumn({
             name: 'updated_at',
@@ -81,11 +90,29 @@ export default class User1763256695093 implements MigrationInterface {
             isNullable: true,
           }),
         ],
+        indices: [
+          {
+            columnNames: ['city'],
+            name: 'IDX_address_city',
+          },
+          {
+            columnNames: ['state'],
+            name: 'IDX_address_state',
+          },
+          {
+            columnNames: ['zip_code'],
+            name: 'IDX_address_zip_code',
+          },
+          {
+            columnNames: ['active'],
+            name: 'IDX_address_active',
+          },
+        ],
       }),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('users');
+    await queryRunner.dropTable('addresses', true, true, true);
   }
 }

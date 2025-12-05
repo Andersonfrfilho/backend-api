@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { Phone } from '@modules/phone/domain/entities/phone.entity';
 import { PHONE_REPOSITORY_PROVIDE } from '@modules/phone/infrastructure/phone.token';
 import { PhoneRepository } from '@modules/phone/infrastructure/repositories/phone.repository';
+import { Phone } from '@modules/shared/domain/entities/phone.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Phone])],

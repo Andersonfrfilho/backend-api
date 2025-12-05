@@ -2,8 +2,6 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import type { PhoneRepositoryInterface } from '@app/modules/phone/domain/repositories/phone.repository.interface';
 import { PHONE_REPOSITORY_PROVIDE } from '@app/modules/phone/infrastructure/phone.token';
-import type { UserTypeRepositoryInterface } from '@app/modules/shared/domain/repositories/user-type.repository.interface';
-import { USER_TYPE_REPOSITORY_PROVIDE } from '@app/modules/shared/infrastructure/user-type.token';
 import { UserErrorFactory } from '@modules/user/application/factories';
 import type { UserRepositoryInterface } from '@modules/user/domain/repositories/user.repository.interface';
 import { USER_REPOSITORY_PROVIDE } from '@modules/user/infrastructure/user.token';
@@ -22,8 +20,6 @@ export class UserApplicationCreateUseCase implements UserCreateUseCaseInterface 
     private readonly userRepositoryProvide: UserRepositoryInterface,
     @Inject(PHONE_REPOSITORY_PROVIDE)
     private readonly phoneRepositoryProvide: PhoneRepositoryInterface,
-    @Inject(USER_TYPE_REPOSITORY_PROVIDE)
-    private readonly userTypeRepositoryProvide: UserTypeRepositoryInterface,
   ) {}
   async execute(params: UserCreateUseCaseParams): Promise<UserCreateUseCaseResponse> {
     const [userByEmail, userByCpf, userByRg] = await Promise.all([
@@ -45,23 +41,16 @@ export class UserApplicationCreateUseCase implements UserCreateUseCaseInterface 
     }
 
     const phoneFormatted = parsePhone(params.phone);
-
-    const userType = await this.userTypeRepositoryProvide.findByType(params.type);
-
-    if (!userType) {
-      throw UserErrorFactory.invalidUserType(params.type);
-    }
-
+    console.log('Parsed phone:', phoneFormatted);
     const user = await this.userRepositoryProvide.create({
       ...params,
-      userType,
     });
-
+    console.log('Created user:', user);
     await this.phoneRepositoryProvide.create({
       ...phoneFormatted,
       userId: user.id,
     });
-
+    console.log('Created phone:', phoneFormatted);
     return user;
   }
 }

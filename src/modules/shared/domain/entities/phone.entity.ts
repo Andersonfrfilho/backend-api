@@ -1,30 +1,21 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity()
+@Entity('phones')
 export class Phone {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ name: 'user_id' })
-  userId: string;
+  @Column()
+  country: string;
 
   @Column()
-  name: string;
-
-  @Column()
-  ddi: string;
-
-  @Column()
-  ddd: string;
+  area: string;
 
   @Column()
   number: string;
 
-  @Column({ default: true })
-  active: boolean;
-
-  @ManyToOne('User', 'phones')
-  user: any;
+  @Column({ name: 'user_id' })
+  userId: string;
 
   @Column({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
