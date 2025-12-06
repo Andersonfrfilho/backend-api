@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 import { AddressTypeEnum } from '../enums/address-type.enum';
 
@@ -10,10 +10,10 @@ export class UserAddress {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ name: 'user_id' })
   userId: string;
 
-  @Column()
+  @Column({ name: 'address_id' })
   addressId: string;
 
   @Column({
@@ -27,9 +27,11 @@ export class UserAddress {
   isPrimary: boolean;
 
   @ManyToOne(() => User, (user) => user.addresses, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'user_id' })
   user: User;
 
   @ManyToOne(() => Address, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'address_id' })
   address: Address;
 
   @Column({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

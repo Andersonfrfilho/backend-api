@@ -1,9 +1,93 @@
 import { faker } from '@faker-js/faker';
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose, Transform } from 'class-transformer';
-import { IsDate, IsEmail, IsOptional, IsString } from 'class-validator';
+import { Expose, Transform, Type } from 'class-transformer';
+import { IsDate, IsEmail, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
 
 import { User } from '@modules/shared/domain/entities/user.entity';
+
+export class CreateAddressRequestDto {
+  @ApiProperty({
+    description: 'The street name of the address',
+    example: faker.location.street(),
+  })
+  @IsString()
+  street: string;
+
+  @ApiProperty({
+    description: 'The street number of the address',
+    example: faker.location.buildingNumber(),
+  })
+  @IsString()
+  number: string;
+
+  @ApiProperty({
+    description: 'The complement of the address',
+    example: 'Apt 101',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  complement?: string;
+
+  @ApiProperty({
+    description: 'The neighborhood of the address',
+    example: faker.location.city(),
+  })
+  @IsString()
+  neighborhood: string;
+
+  @ApiProperty({
+    description: 'The city of the address',
+    example: faker.location.city(),
+  })
+  @IsString()
+  city: string;
+
+  @ApiProperty({
+    description: 'The state of the address',
+    example: faker.location.state({ abbreviated: true }),
+  })
+  @IsString()
+  state: string;
+
+  @ApiProperty({
+    description: 'The ZIP code of the address',
+    example: faker.location.zipCode(),
+  })
+  @Expose({ name: 'zip_code' })
+  @IsString()
+  zipCode: string;
+
+  @ApiProperty({
+    description: 'The country of the address',
+    example: 'BR',
+    required: false,
+    default: 'BR',
+  })
+  @IsOptional()
+  @IsString()
+  country: string = 'BR';
+
+  @ApiProperty({
+    description: 'The latitude coordinate of the address',
+    example: faker.location.latitude(),
+    required: false,
+    default: 0,
+  })
+  @IsOptional()
+  @IsNumber()
+  latitude: number = 0;
+
+  @ApiProperty({
+    description: 'The longitude coordinate of the address',
+    example: faker.location.longitude(),
+    required: false,
+    default: 0,
+  })
+  @IsOptional()
+  @IsNumber()
+  longitude: number = 0;
+}
 
 export class CreateUserRequestDto implements Partial<User> {
   @ApiProperty({
@@ -90,4 +174,12 @@ export class CreateUserRequestDto implements Partial<User> {
   })
   @IsString()
   phone: string;
+
+  @ApiProperty({
+    description: 'The address of the user',
+    type: CreateAddressRequestDto,
+  })
+  @Type(() => CreateAddressRequestDto)
+  @ValidateNested()
+  address: CreateAddressRequestDto;
 }

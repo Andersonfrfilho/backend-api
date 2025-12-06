@@ -1,11 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common';
 
+import type { AddressRepositoryInterface } from '@app/modules/address/domain/repositories/address.repository.interface';
+import { ADDRESS_REPOSITORY_PROVIDE } from '@app/modules/address/infrastructure/address.token';
 import type { PhoneRepositoryInterface } from '@app/modules/phone/domain/repositories/phone.repository.interface';
 import { PHONE_REPOSITORY_PROVIDE } from '@app/modules/phone/infrastructure/phone.token';
+import { AddressTypeEnum } from '@app/modules/shared';
 import { UserErrorFactory } from '@modules/user/application/factories';
 import type { UserRepositoryInterface } from '@modules/user/domain/repositories/user.repository.interface';
 import { USER_REPOSITORY_PROVIDE } from '@modules/user/infrastructure/user.token';
 
+import type { UserAddressRepositoryInterface } from '../../domain/repositories/user-address.repository.interface';
+import { USER_ADDRESS_REPOSITORY_PROVIDE } from '../../infrastructure/user-address.token';
 import type {
   UserCreateUseCaseInterface,
   UserCreateUseCaseParams,
@@ -20,6 +25,10 @@ export class UserApplicationCreateUseCase implements UserCreateUseCaseInterface 
     private readonly userRepositoryProvide: UserRepositoryInterface,
     @Inject(PHONE_REPOSITORY_PROVIDE)
     private readonly phoneRepositoryProvide: PhoneRepositoryInterface,
+    @Inject(ADDRESS_REPOSITORY_PROVIDE)
+    private readonly addressRepositoryProvide: AddressRepositoryInterface,
+    @Inject(USER_ADDRESS_REPOSITORY_PROVIDE)
+    private readonly userAddressRepositoryProvide: UserAddressRepositoryInterface,
   ) {}
   async execute(params: UserCreateUseCaseParams): Promise<UserCreateUseCaseResponse> {
     const [userByEmail, userByCpf, userByRg] = await Promise.all([
@@ -41,16 +50,28 @@ export class UserApplicationCreateUseCase implements UserCreateUseCaseInterface 
     }
 
     const phoneFormatted = parsePhone(params.phone);
-    console.log('Parsed phone:', phoneFormatted);
+
     const user = await this.userRepositoryProvide.create({
       ...params,
     });
-    console.log('Created user:', user);
     await this.phoneRepositoryProvide.create({
       ...phoneFormatted,
       userId: user.id,
     });
-    console.log('Created phone:', phoneFormatted);
+
+    const address = await this.addressRepositoryProvide.create(params.address);
+    console.log('✅ Created address:', address.id);
+
+    console.log('🔗 Creating UserAddress...');
+    const userAddress = await this.userAddressRepositoryProvide.create({
+      userId: user.id,
+      addressId: address.id,
+      isPrimary: true,
+      type: AddressTypeEnum.RESIDENTIAL,
+    });
+    console.log('✅ Created UserAddress:', userAddress.id);
+
+    console.log('🎉 User creation completed successfully!');
     return user;
   }
 }
