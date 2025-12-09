@@ -1,7 +1,10 @@
-import { MigrationInterface, QueryRunner, Table, TableColumn } from 'typeorm';
+import {MigrationInterface,QueryRunner,Table,TableColumn} from 'typeorm';
 
 export default class User1763256695093 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
+    // Enable uuid-ossp extension for native UUID generation
+    await queryRunner.query('CREATE EXTENSION IF NOT EXISTS "pgcrypto"');
+
     await queryRunner.createTable(
       new Table({
         name: 'users',
@@ -10,8 +13,7 @@ export default class User1763256695093 implements MigrationInterface {
             name: 'id',
             type: 'uuid',
             isPrimary: true,
-            generationStrategy: 'uuid',
-            default: 'gen_random_uuid()',
+            default: 'uuidv7()',
           }),
           new TableColumn({
             name: 'name',
@@ -87,5 +89,6 @@ export default class User1763256695093 implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dropTable('users');
+    // Keep the function for other tables that use it
   }
 }

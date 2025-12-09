@@ -9,6 +9,7 @@ import { SecurityHeadersMiddleware } from '@modules/shared/infrastructure/middle
 
 import * as tsConfig from '../tsconfig.json';
 
+import { BenchmarkModule } from './modules/benchmark/benchmark.module';
 import { SharedModule } from './modules/shared/shared.module';
 import { UserModule } from './modules/user/user.module';
 
@@ -19,7 +20,15 @@ tsConfigPathsRegister({
 });
 
 @Module({
-  imports: [ConfigModule, SharedModule, ErrorModule, HealthModule, AuthModule, UserModule],
+  imports: [
+    ConfigModule,
+    SharedModule,
+    ErrorModule,
+    HealthModule,
+    AuthModule,
+    UserModule,
+    BenchmarkModule,
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
