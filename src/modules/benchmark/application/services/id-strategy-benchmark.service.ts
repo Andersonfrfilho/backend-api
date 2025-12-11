@@ -6,23 +6,19 @@ import { Repository } from 'typeorm';
 import {
   BenchmarkNanoidEntity,
   BenchmarkSnowflakeEntity,
+  BenchmarkUUIDv4Entity,
   BenchmarkUUIDv7Entity,
 } from '../../domain/entities/benchmark.entities';
 import { SnowflakeIDGeneratorService } from '../../infrastructure/services/snowflake-id-generator.service';
 
-/**
- * ID Strategy Benchmark Service
- *
- * Compara performance real das 3 estratégias de ID:
- * - UUID v7: Sortable, BD gera automaticamente
- * - Nanoid: URL-safe string (21 chars), app gera
- * - Snowflake: Discord-style (64-bit), app gera distribuído
- */
 @Injectable()
 export class IDStrategyBenchmarkService {
   constructor(
     @InjectRepository(BenchmarkUUIDv7Entity)
     private uuidV7Repo: Repository<BenchmarkUUIDv7Entity>,
+
+    @InjectRepository(BenchmarkUUIDv4Entity)
+    private uuidV4Repo: Repository<BenchmarkUUIDv4Entity>,
 
     @InjectRepository(BenchmarkNanoidEntity)
     private nanoidRepo: Repository<BenchmarkNanoidEntity>,
@@ -42,6 +38,11 @@ export class IDStrategyBenchmarkService {
       recordsPerSecond: number;
       avgTimePerRecord: number;
     };
+    uuidV4: {
+      duration: number;
+      recordsPerSecond: number;
+      avgTimePerRecord: number;
+    };
     nanoid: {
       duration: number;
       recordsPerSecond: number;
@@ -55,6 +56,7 @@ export class IDStrategyBenchmarkService {
   }> {
     const results = {
       uuidV7: await this.benchmarkInsertStrategy(this.uuidV7Repo, count),
+      uuidV4: await this.benchmarkInsertStrategy(this.uuidV4Repo, count),
       nanoid: await this.benchmarkInsertStrategy(this.nanoidRepo, count, 'nanoid'),
       snowflake: await this.benchmarkInsertStrategy(this.snowflakeRepo, count, 'snowflake'),
     };
@@ -70,6 +72,10 @@ export class IDStrategyBenchmarkService {
       duration: number;
       queriesPerSecond: number;
     };
+    uuidV4: {
+      duration: number;
+      queriesPerSecond: number;
+    };
     nanoid: {
       duration: number;
       queriesPerSecond: number;
@@ -81,6 +87,7 @@ export class IDStrategyBenchmarkService {
   }> {
     return {
       uuidV7: await this.benchmarkSelectStrategy(this.uuidV7Repo, limit),
+      uuidV4: await this.benchmarkSelectStrategy(this.uuidV4Repo, limit),
       nanoid: await this.benchmarkSelectStrategy(this.nanoidRepo, limit),
       snowflake: await this.benchmarkSelectStrategy(this.snowflakeRepo, limit),
     };
@@ -91,6 +98,10 @@ export class IDStrategyBenchmarkService {
    */
   async benchmarkUpdate(count: number = 1000): Promise<{
     uuidV7: {
+      duration: number;
+      updatesPerSecond: number;
+    };
+    uuidV4: {
       duration: number;
       updatesPerSecond: number;
     };
@@ -105,6 +116,7 @@ export class IDStrategyBenchmarkService {
   }> {
     return {
       uuidV7: await this.benchmarkUpdateStrategy(this.uuidV7Repo, count),
+      uuidV4: await this.benchmarkUpdateStrategy(this.uuidV4Repo, count),
       nanoid: await this.benchmarkUpdateStrategy(this.nanoidRepo, count),
       snowflake: await this.benchmarkUpdateStrategy(this.snowflakeRepo, count),
     };
@@ -115,6 +127,10 @@ export class IDStrategyBenchmarkService {
    */
   async benchmarkIndexSearch(iterations: number = 100): Promise<{
     uuidV7: {
+      duration: number;
+      searchesPerSecond: number;
+    };
+    uuidV4: {
       duration: number;
       searchesPerSecond: number;
     };
@@ -129,6 +145,7 @@ export class IDStrategyBenchmarkService {
   }> {
     return {
       uuidV7: await this.benchmarkIndexSearchStrategy(this.uuidV7Repo, iterations),
+      uuidV4: await this.benchmarkIndexSearchStrategy(this.uuidV4Repo, iterations),
       nanoid: await this.benchmarkIndexSearchStrategy(this.nanoidRepo, iterations),
       snowflake: await this.benchmarkIndexSearchStrategy(this.snowflakeRepo, iterations),
     };
@@ -139,6 +156,12 @@ export class IDStrategyBenchmarkService {
    */
   async benchmarkDiskUsage(): Promise<{
     uuidV7: {
+      totalSize: string;
+      indexSize: string;
+      recordCount: number;
+      sizePerRecord: string;
+    };
+    uuidV4: {
       totalSize: string;
       indexSize: string;
       recordCount: number;
@@ -159,6 +182,7 @@ export class IDStrategyBenchmarkService {
   }> {
     return {
       uuidV7: await this.benchmarkDiskUsageStrategy(this.uuidV7Repo, 'benchmark_uuid_v7'),
+      uuidV4: await this.benchmarkDiskUsageStrategy(this.uuidV4Repo, 'benchmark_uuid_v4'),
       nanoid: await this.benchmarkDiskUsageStrategy(this.nanoidRepo, 'benchmark_nanoid'),
       snowflake: await this.benchmarkDiskUsageStrategy(this.snowflakeRepo, 'benchmark_snowflake'),
     };
@@ -207,6 +231,7 @@ export class IDStrategyBenchmarkService {
    */
   async cleanupAll(): Promise<void> {
     await this.uuidV7Repo.query('TRUNCATE TABLE benchmark_uuid_v7 CASCADE');
+    await this.uuidV4Repo.query('TRUNCATE TABLE benchmark_uuid_v4 CASCADE');
     await this.nanoidRepo.query('TRUNCATE TABLE benchmark_nanoid CASCADE');
     await this.snowflakeRepo.query('TRUNCATE TABLE benchmark_snowflake CASCADE');
     console.log('✅ Tabelas limpas');

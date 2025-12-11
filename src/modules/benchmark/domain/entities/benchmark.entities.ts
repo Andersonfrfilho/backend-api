@@ -101,3 +101,37 @@ export class BenchmarkSnowflakeEntity {
   @Column('timestamp', { nullable: true })
   updated_at?: Date;
 }
+
+/**
+ * Benchmark table with UUID v4 IDs
+ * Random UUIDs (RFC 4122 standard)
+ */
+@Entity('benchmark_uuid_v4')
+@Index('idx_uuid_v4_email', ['email'])
+@Index('idx_uuid_v4_city', ['city'])
+@Index('idx_uuid_v4_created_at', ['created_at'])
+export class BenchmarkUUIDv4Entity {
+  @PrimaryColumn('uuid')
+  id: string;
+
+  @Column('varchar', { length: 255 })
+  name: string;
+
+  @Column('varchar', { length: 255 })
+  email: string;
+
+  @Column('integer')
+  age: number;
+
+  @Column('varchar', { length: 100 })
+  city: string;
+
+  @Column('jsonb', { nullable: true })
+  data?: Record<string, any>;
+
+  @CreateDateColumn()
+  created_at: Date;
+
+  @Column('timestamp', { nullable: true })
+  updated_at?: Date;
+}

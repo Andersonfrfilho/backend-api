@@ -5,6 +5,7 @@ import { IDStrategyBenchmarkService } from './application/services/id-strategy-b
 import {
   BenchmarkNanoidEntity,
   BenchmarkSnowflakeEntity,
+  BenchmarkUUIDv4Entity,
   BenchmarkUUIDv7Entity,
 } from './domain/entities/benchmark.entities';
 import { SnowflakeIDGeneratorService } from './infrastructure/services/snowflake-id-generator.service';
@@ -14,6 +15,7 @@ import { IDStrategyBenchmarkController } from './presentation/controllers/id-str
   imports: [
     TypeOrmModule.forFeature([
       BenchmarkUUIDv7Entity,
+      BenchmarkUUIDv4Entity,
       BenchmarkNanoidEntity,
       BenchmarkSnowflakeEntity,
     ]),
