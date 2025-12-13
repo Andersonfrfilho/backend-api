@@ -1,9 +1,9 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
-import { NextFunction, Request, Response } from 'express';
 
 /**
  * Security Headers Middleware
  * Adiciona headers de segurança obrigatórios em todas as respostas
+ * Compatible com Express e Fastify
  *
  * Headers implementados:
  * - X-Content-Type-Options: nosniff (previne MIME type sniffing)
@@ -14,7 +14,7 @@ import { NextFunction, Request, Response } from 'express';
  */
 @Injectable()
 export class SecurityHeadersMiddleware implements NestMiddleware {
-  use(req: Request, res: Response, next: NextFunction) {
+  use(req: any, res: any, next: any) {
     // Previne MIME type sniffing
     res.setHeader('X-Content-Type-Options', 'nosniff');
 
@@ -39,7 +39,9 @@ export class SecurityHeadersMiddleware implements NestMiddleware {
     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
 
     // Remove header padrão que expõe tecnologia
-    res.removeHeader('X-Powered-By');
+    if (typeof res.removeHeader === 'function') {
+      res.removeHeader('X-Powered-By');
+    }
 
     next();
   }

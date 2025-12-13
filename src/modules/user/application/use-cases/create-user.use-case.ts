@@ -60,18 +60,13 @@ export class UserApplicationCreateUseCase implements UserCreateUseCaseInterface 
     });
 
     const address = await this.addressRepositoryProvide.create(params.address);
-    console.log('✅ Created address:', address.id);
 
-    console.log('🔗 Creating UserAddress...');
-    const userAddress = await this.userAddressRepositoryProvide.create({
+    await this.userAddressRepositoryProvide.create({
       userId: user.id,
       addressId: address.id,
       isPrimary: true,
       type: AddressTypeEnum.RESIDENTIAL,
     });
-    console.log('✅ Created UserAddress:', userAddress.id);
-
-    console.log('🎉 User creation completed successfully!');
     return user;
   }
 }

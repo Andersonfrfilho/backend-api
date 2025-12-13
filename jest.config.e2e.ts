@@ -31,6 +31,8 @@ const config: Config.InitialOptions = {
     '!**/*.module.(ts|js)',
     '!**/*.dto.(ts|js)',
     '!**/*.test.ts',
+    // Exclude database migrations from coverage
+    '!**/migrations/**',
   ],
   coveragePathIgnorePatterns: ['/node_modules/', '/dist/', '/.history/', '/coverage/', '/logs/'],
   coverageDirectory: './coverage/e2e',
