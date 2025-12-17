@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 
 import type { LoggingIgnoreConfig } from '@modules/shared/infrastructure/interceptors/logging/logging.config';
 import { DEFAULT_LOGGING_IGNORE_CONFIG } from '@modules/shared/infrastructure/interceptors/logging/logging.config';
-import { LOGGING_IGNORE_CONFIG } from '@modules/shared/infrastructure/log.provider';
+import { LOGGING_IGNORE_CONFIG } from '@modules/shared/infrastructure/providers/log/log.token';
 
 @Global()
 @Module({

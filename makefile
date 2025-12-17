@@ -31,6 +31,15 @@ setup-env:
 app: setup-env
 	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) up -d app
 
+database_postgres: setup-env
+	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) up -d database_postgres
+
+database_postgres-down: setup-env
+	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) down database_postgres
+
+database_postgres-stop: setup-env
+	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) stop database_postgres
+
 sonar-up: setup-env
 	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) up -d sonarqube sonar-db
 
@@ -84,5 +93,19 @@ rebuild-app: setup-env
 
 all: setup-env
 	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) up -d  # Inicia todos os serviços, incluindo app e sonar
+	@echo "⏳ Aguardando banco de dados ficar pronto..."
+	sleep 5
+	@echo "📦 Rodando migrations..."
+	npm run migration:run
+	@echo "✅ Projeto iniciado com sucesso!"
 
-.PHONY: all rebuild-app setup-env clean-all clean-images force-remove down stop app sonar-up sonar-down sonar-scan clean-safe
+setup: setup-env
+	@echo "🚀 Iniciando setup completo do projeto..."
+	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) up -d
+	@echo "⏳ Aguardando banco de dados ficar pronto..."
+	sleep 5
+	@echo "📦 Rodando migrations..."
+	npm run migration:run
+	@echo "✅ Setup completo! Projeto pronto para usar."
+
+.PHONY: all rebuild-app setup-env clean-all clean-images force-remove down stop app sonar-up sonar-down sonar-scan clean-safe database_postgres setup

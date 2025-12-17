@@ -1,9 +1,9 @@
 import { faker } from '@faker-js/faker';
 import { beforeEach, describe, expect, it } from '@jest/globals';
 import type { AuthLoginSessionUseCaseInterface } from '@modules/auth/domain/auth.login-session.interface';
-import { AUTH_LOGIN_SESSION_USE_CASE_PROVIDE } from '@modules/auth/infrastructure/auth.provider';
+import { AUTH_LOGIN_SESSION_USE_CASE_PROVIDE } from '@modules/auth/infrastructure/auth.token';
 import { AuthLoginSessionRequestDto } from '@modules/auth/shared/dtos';
-import { LOG_PROVIDER } from '@modules/shared/infrastructure/log.provider';
+import { LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/log.token';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthLoginSessionService } from './auth.login-session.service';
 

@@ -2,9 +2,8 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { LOG_LEVEL, LogBaseParams, LogProviderInterface } from '@app/modules/shared/domain';
 import { WinstonLogProvider } from '@modules/shared/infrastructure/providers/log/implementations/winston/winston.log.provider';
+import { WINSTON_LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/implementations/winston/winston.log.token';
 import { obfuscatorInfo } from '@modules/shared/infrastructure/providers/log/log.utils';
-
-import { WINSTON_LOG_PROVIDER } from '../../log.provider';
 
 import { ObfuscatorInfoParams } from './log.interface';
 

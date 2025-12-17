@@ -151,7 +151,7 @@ describe('HttpExceptionFilter - Unit Tests', () => {
     it('should maintain consistent error response structure', () => {
       // Arrange
       const errorStructure = {
-        statusCode: 400,
+        statusCode: HttpStatus.BAD_REQUEST,
         timestamp: new Date().toISOString(),
         path: '/api/endpoint',
         message: 'Bad Request',

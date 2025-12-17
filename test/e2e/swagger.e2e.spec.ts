@@ -4,7 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { swaggerConfig } from '@config/swagger.config';
 import { docsFactory } from '@modules/shared/infrastructure/interceptors/docs';
-import { LOG_PROVIDER } from '@modules/shared/infrastructure/log.provider';
+import { LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/log.token';
 import { AppModule } from '../../src/app.module';
 
 describe('Swagger Documentation (e2e)', () => {

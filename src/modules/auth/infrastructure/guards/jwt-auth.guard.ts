@@ -1,6 +1,7 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 
-import { parseTokenWithRoles } from '../strategies/mock-jwt.strategy';
+import { AuthErrorFactory } from '@modules/auth/application/factories';
+import { parseTokenWithRoles } from '@modules/auth/infrastructure/strategies/mock-jwt.strategy';
 
 /**
  * JWT Authentication Guard
@@ -20,13 +21,13 @@ export class JwtAuthGuard implements CanActivate {
     const authHeader = request.headers.authorization as string | undefined;
 
     if (!authHeader) {
-      throw new UnauthorizedException('Missing authorization header');
+      throw AuthErrorFactory.missingAuthorizationHeader();
     }
 
     // Esperado: "Bearer <token>"
     const parts = authHeader.split(' ');
     if (parts.length !== 2 || parts[0].toLowerCase() !== 'bearer') {
-      throw new UnauthorizedException('Invalid authorization header format');
+      throw AuthErrorFactory.invalidAuthorizationHeaderFormat();
     }
 
     const token = parts[1];
@@ -37,7 +38,7 @@ export class JwtAuthGuard implements CanActivate {
       request.user = user;
       return true;
     } catch {
-      throw new UnauthorizedException('Invalid token');
+      throw AuthErrorFactory.tokenInvalid();
     }
   }
 }

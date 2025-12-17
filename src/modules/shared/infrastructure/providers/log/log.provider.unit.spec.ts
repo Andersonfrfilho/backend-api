@@ -2,7 +2,8 @@ import { faker } from '@faker-js/faker';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import type { LogProviderInterface } from '@modules/shared/domain';
-import { LOG_PROVIDER, WINSTON_LOG_PROVIDER } from '@modules/shared/infrastructure/log.provider';
+import { WINSTON_LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/implementations/winston/winston.log.token';
+import { LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/log.token';
 import { WinstonLogProvider } from './implementations/winston/winston.log.provider';
 import { LogProvider } from './log.provider';
 

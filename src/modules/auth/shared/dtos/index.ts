@@ -1,2 +1,2 @@
-export * from './LoginSessionRequest.dto';
-export * from './LoginSessionResponse.dto';
+export * from './login-session-request.dto';
+export * from './login-session-response.dto';

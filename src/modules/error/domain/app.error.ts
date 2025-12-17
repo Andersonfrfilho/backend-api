@@ -12,6 +12,7 @@ export interface AppErrorPayload {
   type: ErrorType;
   message: string;
   statusCode: number;
+  code?: string;
   details?: Record<string, unknown>;
   timestamp?: string;
   requestId?: string;
@@ -20,6 +21,7 @@ export interface AppErrorPayload {
 export class AppError extends Error {
   public readonly type: ErrorType;
   public readonly statusCode: number;
+  public readonly code?: string;
   public readonly details?: Record<string, unknown>;
   public readonly timestamp: string;
   public requestId?: string;
@@ -29,6 +31,7 @@ export class AppError extends Error {
     this.name = 'AppError';
     this.type = payload.type;
     this.statusCode = payload.statusCode;
+    this.code = payload.code;
     this.details = payload.details;
     this.timestamp = payload.timestamp || new Date().toISOString();
     this.requestId = payload.requestId;
@@ -41,6 +44,7 @@ export class AppError extends Error {
       type: this.type,
       message: this.message,
       statusCode: this.statusCode,
+      code: this.code,
       details: this.details,
       timestamp: this.timestamp,
       requestId: this.requestId,

@@ -1,4 +1,4 @@
-import { HealthCheckResponseDto } from '../shared/health.dto';
+import { HealthCheckResponseDto } from '@modules/health/shared/health.dto';
 
 export interface HealthCheckServiceResponse extends HealthCheckResponseDto {}
 export interface HealthCheckUseCaseResponse extends HealthCheckServiceResponse {}

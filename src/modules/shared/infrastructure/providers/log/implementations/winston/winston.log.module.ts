@@ -4,7 +4,7 @@ import { Module } from '@nestjs/common';
 import { utilities as nestWinstonModuleUtilities, WinstonModule } from 'nest-winston';
 import * as winston from 'winston';
 
-import { WINSTON_LOG_PROVIDER } from '@app/modules/shared/infrastructure/log.provider';
+import { WINSTON_LOG_PROVIDER } from '@app/modules/shared/infrastructure/providers/log/implementations/winston/winston.log.token';
 
 import { WinstonLogProvider } from './winston.log.provider';
 

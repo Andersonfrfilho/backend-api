@@ -1,4 +1,4 @@
-import { CallHandler, ExecutionContext } from '@nestjs/common';
+import { CallHandler, ExecutionContext, HttpStatus } from '@nestjs/common';
 import { of, throwError } from 'rxjs';
 
 import type { LogProviderInterface } from '@modules/shared/domain';
@@ -137,7 +137,7 @@ describe('LoggingInterceptor - Unit Tests', () => {
       // Arrange
       const mockRequest = createMockRequest('/api/error', 'DELETE');
       const mockContext = createMockContext(mockRequest);
-      const error = Object.assign(new Error('Forbidden'), { status: 403 });
+      const error = Object.assign(new Error('Forbidden'), { status: HttpStatus.FORBIDDEN });
       const mockCallHandler = createErrorCallHandler(error);
 
       // Act
@@ -148,7 +148,7 @@ describe('LoggingInterceptor - Unit Tests', () => {
             expect.objectContaining({
               message: expect.stringContaining('Request failed'),
               params: expect.objectContaining({
-                statusCode: 403,
+                statusCode: HttpStatus.FORBIDDEN,
               }),
             }),
           );
@@ -171,7 +171,7 @@ describe('LoggingInterceptor - Unit Tests', () => {
           expect(logProvider.error).toHaveBeenCalledWith(
             expect.objectContaining({
               params: expect.objectContaining({
-                statusCode: 500,
+                statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
               }),
             }),
           );

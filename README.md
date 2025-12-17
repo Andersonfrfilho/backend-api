@@ -116,6 +116,12 @@ Check out a few resources that may come in handy when working with NestJS:
 - [] provider http client
 - [] Ajustar erros swagger
 - [] adicionar Variaveis de ambiente nas base urls
+- [] testes de carga
+- [] testes unitarios
+- [] testes de seguranca
+- [] testes de performance
+- [] testes integracao
+- [] testes de e2e
 
 ## Support
 

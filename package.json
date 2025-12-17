@@ -24,7 +24,11 @@
     "test:e2e": "jest --config jest.config.e2e.ts",
     "test:e2e:watch": "jest --watch --config jest.config.e2e.ts",
     "test:all": "npm run test:unit && npm run test:e2e",
-    "sonar": "sonar-scanner"
+    "sonar": "sonar-scanner",
+    "migration:show": "node scripts/migration.js show",
+    "migration:run": "node scripts/migration.js run",
+    "migration:revert": "node scripts/migration.js revert",
+    "migration:generate": "node scripts/migration.js generate"
   },
   "dependencies": {
     "@faker-js/faker": "^10.1.0",
@@ -39,15 +43,18 @@
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/platform-fastify": "^11.1.7",
     "@nestjs/swagger": "^11.2.1",
+    "@nestjs/typeorm": "^11.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "csurf": "^1.11.0",
     "joi": "^17.13.3",
     "nest-winston": "^1.10.2",
     "nestjs-redox": "^2.3.0",
+    "pg": "^8.16.3",
     "redoc": "^2.5.2",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
+    "typeorm": "^0.3.27",
     "winston": "^3.17.0",
     "winston-daily-rotate-file": "^5.0.0"
   },
