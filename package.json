@@ -21,6 +21,7 @@
     "test:unit:watch": "jest --watch --config jest.config.unit.ts",
     "test:unit:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand --config jest.config.unit.ts",
     "test:unit:cov": "jest --coverage --config jest.config.unit.ts",
+    "test:e2e:migration": "NODE_ENV=test npm run migration:run",
     "test:e2e": "jest --config jest.config.e2e.ts",
     "test:e2e:watch": "jest --watch --config jest.config.e2e.ts",
     "test:all": "npm run test:unit && npm run test:e2e",
