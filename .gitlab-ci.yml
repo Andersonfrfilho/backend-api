@@ -1,0 +1,132 @@
+# GitLab CI/CD Pipeline for Backend API
+# Uses environment variables from .env.example
+
+stages:
+  - test
+  - build
+  - deploy
+
+variables:
+  # App Configuration
+  API_APP_CONTAINER_NAME: backend-api-service
+  PORT: '3333'
+
+  # Database Configuration (from .env.example)
+  DATABASE_POSTGRES_PORT: '5432'
+  DATABASE_POSTGRES_NAME: backend_db
+  DATABASE_POSTGRES_HOST: database_postgres
+  DATABASE_POSTGRES_USER: postgres
+  DATABASE_POSTGRES_PASSWORD: postgres1234
+  DATABASE_POSTGRES_SYNCHRONIZE: 'false'
+  DATABASE_POSTGRES_LOGGING: 'true'
+  DATABASE_POSTGRES_TIMEZONE: Z
+
+  # Test Database Configuration
+  DATABASE_POSTGRES_TEST_E2E_PORT: '5432'
+  DATABASE_POSTGRES_TEST_E2E_NAME: backend_db_test_e2e
+  DATABASE_POSTGRES_TEST_E2E_HOST: localhost
+  DATABASE_POSTGRES_TEST_E2E_USER: postgres
+  DATABASE_POSTGRES_TEST_E2E_PASSWORD: postgres1234
+  DATABASE_POSTGRES_TEST_E2E_SYNCHRONIZE: 'false'
+  DATABASE_POSTGRES_TEST_E2E_LOGGING: 'false'
+  DATABASE_POSTGRES_TEST_E2E_TIMEZONE: Z
+
+  # Node.js Configuration
+  NODE_ENV: test
+  NPM_CONFIG_CACHE: $CI_PROJECT_DIR/.npm
+
+# PostgreSQL service for tests
+services:
+  - postgres:18
+
+# Cache configuration
+cache:
+  key: $CI_COMMIT_REF_SLUG
+  paths:
+    - .npm/
+    - node_modules/
+
+# Test stage
+test:
+  stage: test
+  image: node:18-alpine
+  services:
+    - postgres:16-alpine
+  variables:
+    POSTGRES_DB: backend_db_test_e2e
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: postgres1234
+    POSTGRES_HOST_AUTH_METHOD: trust
+  before_script:
+    - apk add --no-cache postgresql-client bash
+    - npm ci --cache .npm --prefer-offline
+    - chmod +x scripts/setup-test-db.sh
+    - ./scripts/setup-test-db.sh
+    - echo "📦 Running migrations..."
+    - npm run migration:run
+  script:
+    - echo "🧪 Running unit tests..."
+    - npm run test:unit
+    - echo "🧪 Running e2e tests..."
+    - npm run test:e2e
+  after_script:
+    - chmod +x scripts/cleanup-test-db.sh
+    - ./scripts/cleanup-test-db.sh
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage/cobertura-coverage.xml
+    expire_in: 1 week
+  coverage: '/All files[^|]*\|([^|]*)\|[^|]*\|([^|]*)\|[^|]*\|([^|]*)/'
+  only:
+    - merge_requests
+    - main
+    - develop
+
+# Build stage
+build:
+  stage: build
+  image: node:18-alpine
+  before_script:
+    - npm ci --cache .npm --prefer-offline
+  script:
+    - echo "🔨 Building application..."
+    - npm run build
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 1 week
+  only:
+    - main
+    - develop
+
+# Deploy stage (example for staging)
+deploy_staging:
+  stage: deploy
+  image: alpine:latest
+  script:
+    - echo "🚀 Deploying to staging environment..."
+    - echo "Application would be deployed here"
+    # Add your deployment commands here
+  environment:
+    name: staging
+    url: https://staging-api.example.com
+  only:
+    - develop
+  when: manual
+
+# Deploy stage (example for production)
+deploy_production:
+  stage: deploy
+  image: alpine:latest
+  script:
+    - echo "🚀 Deploying to production environment..."
+    - echo "Application would be deployed here"
+    # Add your deployment commands here
+  environment:
+    name: production
+    url: https://api.example.com
+  only:
+    - main
+  when: manual
