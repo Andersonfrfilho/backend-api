@@ -11,7 +11,7 @@ describe('HealthController - Unit Tests', () => {
   beforeEach(async () => {
     // Arrange: Setup mocks and test module
     const mockService = {
-      execute: jest.fn().mockReturnValue({
+      execute: jest.fn().mockResolvedValue({
         status: true,
         message: 'Health check passed',
       }),
@@ -44,9 +44,9 @@ describe('HealthController - Unit Tests', () => {
       expect(controller).toBeDefined();
     });
 
-    it('should call service.execute', () => {
+    it('should call service.execute', async () => {
       // Arrange & Act
-      controller.check();
+      await controller.check();
 
       // Assert
       const mockExecute = service.execute as jest.Mock;
@@ -54,9 +54,9 @@ describe('HealthController - Unit Tests', () => {
       expect(mockExecute).toHaveBeenCalledTimes(1);
     });
 
-    it('should return health check response', () => {
+    it('should return health check response', async () => {
       // Arrange & Act
-      const result = controller.check();
+      const result = await controller.check();
 
       // Assert
       expect(result).toBeDefined();
@@ -65,32 +65,30 @@ describe('HealthController - Unit Tests', () => {
       expect(result.status).toBe(true);
     });
 
-    it('should propagate service response', () => {
+    it('should propagate service response', async () => {
       // Arrange
       const mockResponse = {
         status: true,
         message: 'Service is healthy',
       };
       const mockExecute = service.execute as jest.Mock;
-      mockExecute.mockReturnValueOnce(mockResponse);
+      mockExecute.mockResolvedValueOnce(mockResponse);
 
       // Act
-      const result = controller.check();
+      const result = await controller.check();
 
       // Assert
       expect(result).toEqual(mockResponse);
     });
 
-    it('should handle service errors', () => {
+    it('should handle service errors', async () => {
       // Arrange
       const error = new Error('Service Error');
       const mockExecute = service.execute as jest.Mock;
-      mockExecute.mockImplementationOnce(() => {
-        throw error;
-      });
+      mockExecute.mockRejectedValueOnce(error);
 
       // Act & Assert
-      expect(() => controller.check()).toThrow(error);
+      await expect(controller.check()).rejects.toThrow(error);
     });
   });
 
@@ -107,7 +105,7 @@ describe('HealthController - Unit Tests', () => {
           {
             provide: HEALTH_CHECK_SERVICE_PROVIDER,
             useValue: {
-              execute: jest.fn().mockReturnValue({
+              execute: jest.fn().mockResolvedValue({
                 status: true,
                 message: 'Health check passed',
               }),
@@ -124,9 +122,9 @@ describe('HealthController - Unit Tests', () => {
       await testingModule.close();
     });
 
-    it('should controller and service work together', () => {
+    it('should controller and service work together', async () => {
       // Act
-      const result = healthController.check();
+      const result = await healthController.check();
 
       // Assert
       expect(result).toBeDefined();
@@ -134,24 +132,24 @@ describe('HealthController - Unit Tests', () => {
       expect(result.status).toBe(true);
     });
 
-    it('should service execute be called from controller', () => {
+    it('should service execute be called from controller', async () => {
       // Arrange
       const mockExecute = healthService.execute as jest.Mock;
       mockExecute.mockClear();
 
       // Act
-      healthController.check();
+      await healthController.check();
 
       // Assert
       expect(mockExecute).toHaveBeenCalled();
       expect(mockExecute).toHaveBeenCalledTimes(1);
     });
 
-    it('should handle multiple health check calls', () => {
+    it('should handle multiple health check calls', async () => {
       // Act
-      const result1 = healthController.check();
-      const result2 = healthController.check();
-      const result3 = healthController.check();
+      const result1 = await healthController.check();
+      const result2 = await healthController.check();
+      const result3 = await healthController.check();
 
       // Assert
       expect(result1).toBeDefined();
@@ -161,9 +159,9 @@ describe('HealthController - Unit Tests', () => {
       expect(mockExecute).toHaveBeenCalledTimes(3);
     });
 
-    it('should preserve response structure through pipeline', () => {
+    it('should preserve response structure through pipeline', async () => {
       // Act
-      const result = healthController.check();
+      const result = await healthController.check();
 
       // Assert
       expect(result).toHaveProperty('status');
@@ -172,20 +170,20 @@ describe('HealthController - Unit Tests', () => {
       expect(typeof result.message).toBe('string');
     });
 
-    it('should health check complete within performance threshold', () => {
+    it('should health check complete within performance threshold', async () => {
       // Act
       const startTime = Date.now();
-      healthController.check();
+      await healthController.check();
       const executionTime = Date.now() - startTime;
 
       // Assert
       expect(executionTime).toBeLessThan(50);
     });
 
-    it('should handle consistent health status', () => {
+    it('should handle consistent health status', async () => {
       // Act
-      const result1 = healthController.check();
-      const result2 = healthController.check();
+      const result1 = await healthController.check();
+      const result2 = await healthController.check();
 
       // Assert
       expect(result1.status).toBe(result2.status);

@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it } from '@jest/globals';
 import type { AuthLoginSessionServiceInterface } from '@modules/auth/domain/auth.login-session.interface';
 import { AuthLoginSessionRequestDto } from '@modules/auth/shared/dtos';
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthController } from './auth.controller';
+import { AuthController } from './infrastructure/auth.controller';
 import { AUTH_LOGIN_SESSION_SERVICE_PROVIDE } from './infrastructure/auth.token';
 
 // Helper function to generate fake JWT-like tokens for testing

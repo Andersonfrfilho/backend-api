@@ -10,8 +10,7 @@ export default class Phones1763382684059 implements MigrationInterface {
             name: 'id',
             type: 'uuid',
             isPrimary: true,
-            generationStrategy: 'uuid',
-            default: 'uuid_generate_v4()',
+            default: 'uuidv7()',
           }),
           new TableColumn({
             name: 'country',

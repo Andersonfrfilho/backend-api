@@ -23,4 +23,14 @@ export default Joi.object({
   DATABASE_POSTGRES_SYNCHRONIZE: Joi.boolean().default(false),
   DATABASE_POSTGRES_LOGGING: Joi.boolean().optional(),
   DATABASE_POSTGRES_TIMEZONE: Joi.string().default('UTC'),
+
+  // E2E Test Database Configuration
+  DATABASE_POSTGRES_TEST_E2E_HOST: Joi.string().default('localhost'),
+  DATABASE_POSTGRES_TEST_E2E_PORT: Joi.number().default(5433),
+  DATABASE_POSTGRES_TEST_E2E_NAME: Joi.string().default('app_db_e2e'),
+  DATABASE_POSTGRES_TEST_E2E_USER: Joi.string().default('postgres'),
+  DATABASE_POSTGRES_TEST_E2E_PASSWORD: Joi.string().required(), // Obrigatório
+  DATABASE_POSTGRES_TEST_E2E_SYNCHRONIZE: Joi.boolean().default(true),
+  DATABASE_POSTGRES_TEST_E2E_LOGGING: Joi.boolean().optional(),
+  DATABASE_POSTGRES_TEST_E2E_TIMEZONE: Joi.string().default('UTC'),
 });
