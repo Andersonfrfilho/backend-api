@@ -8,3 +8,8 @@ export interface DatabaseConfigValues {
   logging: boolean;
   synchronize: boolean;
 }
+
+export interface DatabaseConfigs {
+  postgres: DatabaseConfigValues;
+  mongo: DatabaseConfigValues;
+}

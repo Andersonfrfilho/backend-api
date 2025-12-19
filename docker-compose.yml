@@ -2,6 +2,7 @@ services:
   app:
     depends_on:
       - database_postgres
+      - database_mongo
     build:
       context: .
       dockerfile: Dockerfile.dev
@@ -22,7 +23,7 @@ services:
   ### DATABASE SERVICE
   database_postgres:
     image: postgres:18
-    container_name: ${PROJECT_NAME}_database
+    container_name: ${PROJECT_NAME}_database_postgres
     environment:
       - POSTGRES_USER=${DATABASE_POSTGRES_USER}
       - POSTGRES_PASSWORD=${DATABASE_POSTGRES_PASSWORD}
@@ -30,7 +31,18 @@ services:
     ports:
       - '${DATABASE_POSTGRES_PORT}:5432'
     volumes:
-      - db_data:/var/lib/postgresql
+      - database_postgres_data:/var/lib/postgresql
+
+  database_mongo:
+    image: mongo:latest
+    container_name: mongo-db # Opcional: nome do container
+    restart: always # Reinicia automaticamente em caso de falha
+    ports:
+      - '${DATABASE_MONGO_PORT}:27017' # Expõe a porta padrão do MongoDB (opcional, se precisar acessar de fora do container)
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${DATABASE_MONGO_USERNAME} # Usuário root (altere para produção)
+      MONGO_INITDB_ROOT_PASSWORD: ${DATABASE_MONGO_PASSWORD} # Senha root (use uma forte e gerencie via secrets em prod)
+      MONGO_INITDB_DATABASE: ${DATABASE_MONGO_NAME} # Banco de dados inicial a ser criado
 
   ### SONAR_QUBE SERVICES
   sonarqube:
@@ -55,13 +67,14 @@ services:
       POSTGRES_PASSWORD: sonar
       POSTGRES_DB: sonar
     volumes:
-      - sonar-db:/var/lib/postgresql
-      - sonar-db_data:/var/lib/postgresql/data
+      - sonar_database:/var/lib/postgresql
+      - sonar_database_postgres_data:/var/lib/postgresql/data
 
 volumes:
   sonarqube_data:
   sonarqube_extensions:
   sonarqube_logs:
-  sonar-db:
-  sonar-db_data:
-  db_data:
+  sonar_database:
+  sonar_database_postgres_data:
+  database_postgres_data:
+  database_mongo_data:
