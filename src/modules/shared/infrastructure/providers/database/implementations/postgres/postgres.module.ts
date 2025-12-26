@@ -3,8 +3,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ConfigModule } from '@app/config/config.module';
 
+import { DATABASE_POSTGRES_SOURCE } from '../../database.token';
+
 import PostgresDataSource from './postgres.database-connection';
-import { databaseProviders } from './postgres.provider';
 
 @Module({
   imports: [
@@ -19,7 +20,14 @@ import { databaseProviders } from './postgres.provider';
       },
     }),
   ],
-  providers: [...databaseProviders],
-  exports: [...databaseProviders, TypeOrmModule],
+  providers: [
+    {
+      provide: DATABASE_POSTGRES_SOURCE,
+      useFactory: async () => {
+        return PostgresDataSource.initialize();
+      },
+    },
+  ],
+  exports: [DATABASE_POSTGRES_SOURCE, TypeOrmModule],
 })
 export class SharedInfrastructureProviderDatabaseImplementationsPostgresModule {}

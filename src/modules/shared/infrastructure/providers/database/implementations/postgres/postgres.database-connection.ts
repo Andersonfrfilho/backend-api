@@ -18,14 +18,13 @@ const config = getDatabaseConfig();
 
 const PostgresDataSource = new DataSource({
   type: 'postgres',
-  host: config.host,
-  port: config.port,
-  username: config.username,
-  password: config.password,
-  database: config.database,
-  logging: config.logging,
-  synchronize: config.synchronize,
-
+  host: config.postgres.host,
+  port: config.postgres.port,
+  username: config.postgres.username,
+  password: config.postgres.password,
+  database: config.postgres.database,
+  logging: config.postgres.logging,
+  synchronize: config.postgres.synchronize,
   entities: [
     User,
     Phone,

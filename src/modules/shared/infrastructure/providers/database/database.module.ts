@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 
-import { SharedInfrastructureProviderDatabaseImplementationsPostgresModule } from './implementations/postgres/postgres.module';
+import { SharedInfrastructureProviderDatabaseImplementationsModule } from './implementations/database.implementation.module';
 
 @Module({
-  imports: [SharedInfrastructureProviderDatabaseImplementationsPostgresModule],
-  exports: [SharedInfrastructureProviderDatabaseImplementationsPostgresModule],
+  imports: [SharedInfrastructureProviderDatabaseImplementationsModule],
+  exports: [SharedInfrastructureProviderDatabaseImplementationsModule],
 })
 export class SharedInfrastructureProviderDatabaseModule {}
