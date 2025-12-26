@@ -1,7 +1,6 @@
 import { DataSource } from 'typeorm';
 
 import { getDatabaseConfig } from '@app/config/database-config';
-import { Notification } from '@app/modules/shared/domain/entities/notification.entity';
 
 import { DATABASE_TYPES, MONGO_AUTH_DATABASE_NAME } from '../constant';
 
@@ -16,6 +15,6 @@ export const MongoDataSource = new DataSource({
   database: config.mongo.database,
   logging: config.mongo.logging,
   synchronize: config.mongo.synchronize,
-  entities: [Notification],
+  entities: [],
   authSource: MONGO_AUTH_DATABASE_NAME.ADMIN, // MongoDB authentication database
 });

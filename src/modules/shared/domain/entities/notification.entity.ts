@@ -1,6 +1,6 @@
 import { Column, Entity, ObjectId, ObjectIdColumn } from 'typeorm';
 
-@Entity()
+@Entity('notifications')
 export class Notification {
   @ObjectIdColumn()
   _id: ObjectId;
@@ -10,4 +10,16 @@ export class Notification {
 
   @Column()
   type: string;
+
+  @Column({ nullable: true })
+  userId?: string;
+
+  @Column({ default: false })
+  read: boolean;
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  createdAt: Date;
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
+  updatedAt: Date;
 }

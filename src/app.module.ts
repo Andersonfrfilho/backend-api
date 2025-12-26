@@ -5,6 +5,7 @@ import { ConfigModule } from '@config/config.module';
 import { AuthModule } from '@modules/auth/auth.module';
 import { ErrorModule } from '@modules/error/error.module';
 import { HealthModule } from '@modules/health/health.module';
+import { NotificationModule } from '@modules/notification/notification.module';
 import { SecurityHeadersMiddleware } from '@modules/shared/infrastructure/middleware/security-headers.middleware';
 
 import * as tsConfig from '../tsconfig.json';
@@ -22,6 +23,7 @@ tsConfigPathsRegister({
 @Module({
   imports: [
     ConfigModule,
+    NotificationModule,
     SharedModule,
     ErrorModule,
     HealthModule,
