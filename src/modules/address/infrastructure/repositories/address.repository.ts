@@ -13,7 +13,7 @@ import { Address } from '@modules/shared/domain/entities/address.entity';
 @Injectable()
 export class AddressRepository implements AddressRepositoryInterface {
   constructor(
-    @InjectRepository(Address)
+    @InjectRepository(Address, 'postgres')
     private typeormRepo: Repository<Address>,
   ) {}
 

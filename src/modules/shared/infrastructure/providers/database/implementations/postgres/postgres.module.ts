@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ConfigModule } from '@app/config/config.module';
 
+import { CONNECTIONS_NAMES } from '../../database.constant';
 import { DATABASE_POSTGRES_SOURCE } from '../../database.token';
 
 import PostgresDataSource from './postgres.database-connection';
@@ -11,6 +12,7 @@ import PostgresDataSource from './postgres.database-connection';
   imports: [
     ConfigModule,
     TypeOrmModule.forRootAsync({
+      name: CONNECTIONS_NAMES.POSTGRES,
       imports: [ConfigModule],
       useFactory: async () => {
         if (!PostgresDataSource.isInitialized) {

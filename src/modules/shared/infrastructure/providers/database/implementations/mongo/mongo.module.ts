@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ConfigModule } from '@app/config/config.module';
 
+import { CONNECTIONS_NAMES } from '../../database.constant';
 import { DATABASE_MONGO_SOURCE } from '../../database.token';
 
 import { MongoDataSource } from './mongo.database-conection';
@@ -11,6 +12,7 @@ import { MongoDataSource } from './mongo.database-conection';
   imports: [
     ConfigModule,
     TypeOrmModule.forRootAsync({
+      name: CONNECTIONS_NAMES.MONGO,
       imports: [ConfigModule],
       useFactory: async () => {
         if (!MongoDataSource.isInitialized) {

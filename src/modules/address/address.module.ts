@@ -5,8 +5,10 @@ import { ADDRESS_REPOSITORY_PROVIDE } from '@modules/address/infrastructure/addr
 import { AddressRepository } from '@modules/address/infrastructure/repositories/address.repository';
 import { Address } from '@modules/shared/domain/entities/address.entity';
 
+import { CONNECTIONS_NAMES } from '../shared/infrastructure/providers/database/database.constant';
+
 @Module({
-  imports: [TypeOrmModule.forFeature([Address])],
+  imports: [TypeOrmModule.forFeature([Address], CONNECTIONS_NAMES.POSTGRES)],
   providers: [
     {
       provide: ADDRESS_REPOSITORY_PROVIDE,

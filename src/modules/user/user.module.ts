@@ -7,6 +7,7 @@ import { SharedModule } from '@modules/shared/shared.module';
 
 import { AddressModule } from '../address/address.module';
 import { PhoneModule } from '../phone/phone.module';
+import { CONNECTIONS_NAMES } from '../shared/infrastructure/providers/database/database.constant';
 
 import { UserApplicationCreateUseCase } from './application/use-cases/create-user.use-case';
 import { UserAddressRepository } from './infrastructure/repositories/user-address.repository';
@@ -22,7 +23,7 @@ import {
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, UserAddress]),
+    TypeOrmModule.forFeature([User, UserAddress], CONNECTIONS_NAMES.POSTGRES),
     SharedModule,
     PhoneModule,
     AddressModule,

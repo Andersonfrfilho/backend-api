@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+import { CONNECTIONS_NAMES } from '@app/modules/shared/infrastructure/providers/database/database.constant';
 import { UserAddress } from '@modules/shared/domain/entities/user-address.entity';
 import { UserAddressErrorFactory } from '@modules/user/application/factories/user-address.error.factory';
 import type {
@@ -13,7 +14,7 @@ import type {
 @Injectable()
 export class UserAddressRepository implements UserAddressRepositoryInterface {
   constructor(
-    @InjectRepository(UserAddress)
+    @InjectRepository(UserAddress, CONNECTIONS_NAMES.POSTGRES)
     private typeormRepo: Repository<UserAddress>,
   ) {}
 

@@ -13,7 +13,7 @@ import { Notification } from '@modules/shared/domain/entities/notification.entit
 @Injectable()
 export class NotificationRepository implements NotificationRepositoryInterface {
   constructor(
-    @InjectRepository(Notification)
+    @InjectRepository(Notification, 'mongo')
     private typeormRepo: Repository<Notification>,
   ) {}
 
