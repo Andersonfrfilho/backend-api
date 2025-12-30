@@ -5,6 +5,7 @@ import { Notification } from '@modules/shared/domain/entities/notification.entit
 import { SharedInfrastructureProviderDatabaseImplementationsMongoModule } from '@modules/shared/infrastructure/providers/database/implementations/mongo/mongo.module';
 
 import { SharedModule } from '../shared';
+import { CONNECTIONS_NAMES } from '../shared/infrastructure/providers/database/database.constant';
 
 import { CreateNotificationUseCase } from './application/use-cases/create-notification.use-case';
 import { DeleteNotificationUseCase } from './application/use-cases/delete-notification.use-case';
@@ -30,7 +31,7 @@ import { NotificationRepository } from './infrastructure/repositories/notificati
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Notification]),
+    TypeOrmModule.forFeature([Notification], CONNECTIONS_NAMES.MONGO),
     SharedInfrastructureProviderDatabaseImplementationsMongoModule,
     SharedModule,
   ],

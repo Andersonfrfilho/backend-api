@@ -11,7 +11,7 @@ import { Phone } from '@modules/shared/domain/entities/phone.entity';
 @Injectable()
 export class PhoneRepository implements PhoneRepositoryInterface {
   constructor(
-    @InjectRepository(Phone)
+    @InjectRepository(Phone, 'postgres')
     private typeormRepo: Repository<Phone>,
   ) {}
 

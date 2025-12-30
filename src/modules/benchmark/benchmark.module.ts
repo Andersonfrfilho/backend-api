@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { CONNECTIONS_NAMES } from '../shared/infrastructure/providers/database/database.constant';
+
 import { IDStrategyBenchmarkService } from './application/services/id-strategy-benchmark.service';
 import {
   BenchmarkNanoidEntity,
@@ -13,12 +15,15 @@ import { IDStrategyBenchmarkController } from './presentation/controllers/id-str
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      BenchmarkUUIDv7Entity,
-      BenchmarkUUIDv4Entity,
-      BenchmarkNanoidEntity,
-      BenchmarkSnowflakeEntity,
-    ]),
+    TypeOrmModule.forFeature(
+      [
+        BenchmarkUUIDv7Entity,
+        BenchmarkUUIDv4Entity,
+        BenchmarkNanoidEntity,
+        BenchmarkSnowflakeEntity,
+      ],
+      CONNECTIONS_NAMES.POSTGRES,
+    ),
   ],
   providers: [IDStrategyBenchmarkService, SnowflakeIDGeneratorService],
   controllers: [IDStrategyBenchmarkController],

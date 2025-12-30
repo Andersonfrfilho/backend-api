@@ -14,16 +14,16 @@ import { SnowflakeIDGeneratorService } from '../../infrastructure/services/snowf
 @Injectable()
 export class IDStrategyBenchmarkService {
   constructor(
-    @InjectRepository(BenchmarkUUIDv7Entity)
+    @InjectRepository(BenchmarkUUIDv7Entity, 'postgres')
     private uuidV7Repo: Repository<BenchmarkUUIDv7Entity>,
 
-    @InjectRepository(BenchmarkUUIDv4Entity)
+    @InjectRepository(BenchmarkUUIDv4Entity, 'postgres')
     private uuidV4Repo: Repository<BenchmarkUUIDv4Entity>,
 
-    @InjectRepository(BenchmarkNanoidEntity)
+    @InjectRepository(BenchmarkNanoidEntity, 'postgres')
     private nanoidRepo: Repository<BenchmarkNanoidEntity>,
 
-    @InjectRepository(BenchmarkSnowflakeEntity)
+    @InjectRepository(BenchmarkSnowflakeEntity, 'postgres')
     private snowflakeRepo: Repository<BenchmarkSnowflakeEntity>,
 
     private snowflakeGenerator: SnowflakeIDGeneratorService,
