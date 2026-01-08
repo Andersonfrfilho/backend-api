@@ -109,6 +109,25 @@ all: setup-env
 	npm run migration:run
 	@echo "✅ Projeto iniciado com sucesso!"
 
+setup-e2e-databases: setup-env
+	@echo "🔧 Criando bancos de dados E2E..."
+	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) up -d database_postgres database_mongo
+	@echo "⏳ Aguardando PostgreSQL ficar pronto..."
+	sleep 3
+	@echo "⏳ Aguardando MongoDB ficar pronto..."
+	sleep 3
+	@echo "✅ Bancos de dados E2E criados com sucesso!"
+	@echo "   - PostgreSQL: backend_database_test_e2e"
+	@echo "   - MongoDB: backend_test_e2e"
+
+test-e2e-ready: setup-env setup-e2e-databases
+	@echo "🧪 Bancos de dados E2E preparados e prontos para testes!"
+	npm run test:e2e
+
+test-e2e-docker: setup-env
+	@echo "🧪 Iniciando testes E2E com Docker Compose..."
+	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) --profile e2e up --abort-on-container-exit --exit-code-from e2e-tests
+
 setup: setup-env
 	@echo "🚀 Iniciando setup completo do projeto..."
 	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) up -d
@@ -118,4 +137,4 @@ setup: setup-env
 	npm run migration:run
 	@echo "✅ Setup completo! Projeto pronto para usar."
 
-.PHONY: all rebuild-app setup-env clean-all clean-images force-remove down stop app sonar-up sonar-down sonar-scan clean-safe database_postgres database_mongo setup
+.PHONY: all rebuild-app setup-env clean-all clean-images force-remove down stop app sonar-up sonar-down sonar-scan clean-safe database_postgres database_mongo setup setup-e2e-databases test-e2e-ready test-e2e-docker

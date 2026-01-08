@@ -27,7 +27,7 @@ describe('Auth Controller (e2e)', () => {
 
     app = moduleFixture.createNestApplication<NestFastifyApplication>(new FastifyAdapter());
     await app.init();
-  });
+  }, 60000); // Timeout de 60s para beforeAll
 
   afterAll(async () => {
     await app.close();

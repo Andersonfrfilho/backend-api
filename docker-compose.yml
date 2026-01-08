@@ -32,17 +32,19 @@ services:
       - '${DATABASE_POSTGRES_PORT}:5432'
     volumes:
       - database_postgres_data:/var/lib/postgresql
+      - ./scripts/init-postgres-e2e.sql:/docker-entrypoint-initdb.d/02-init-e2e.sql
 
   database_mongo:
-    image: mongo:latest
-    container_name: mongo-db # Opcional: nome do container
-    restart: always # Reinicia automaticamente em caso de falha
+    image: mongo:7
+    container_name: mongo-db
+    restart: always
     ports:
-      - '${DATABASE_MONGO_PORT}:27017' # Expõe a porta padrão do MongoDB (opcional, se precisar acessar de fora do container)
+      - '${DATABASE_MONGO_PORT}:27017'
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${DATABASE_MONGO_USERNAME} # Usuário root (altere para produção)
-      MONGO_INITDB_ROOT_PASSWORD: ${DATABASE_MONGO_PASSWORD} # Senha root (use uma forte e gerencie via secrets em prod)
-      MONGO_INITDB_DATABASE: ${DATABASE_MONGO_NAME} # Banco de dados inicial a ser criado
+      MONGO_INITDB_ROOT_USERNAME: ${DATABASE_MONGO_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${DATABASE_MONGO_PASSWORD}
+    volumes:
+      - database_mongo_data:/data/db
 
   ### SONAR_QUBE SERVICES
   sonarqube:

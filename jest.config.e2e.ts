@@ -1,6 +1,27 @@
 import type { Config } from '@jest/types';
+import { config } from 'dotenv';
 
-const config: Config.InitialOptions = {
+// Carregar variáveis de ambiente específicas para E2E
+config({ path: '.env.e2e' });
+
+// Fallback para .env se .env.e2e não existir
+if (!process.env.NODE_ENV || process.env.NODE_ENV !== 'test') {
+  config({ path: '.env' });
+}
+
+// Configurar NODE_ENV para test se não estiver definido
+process.env.NODE_ENV = process.env.NODE_ENV || 'test';
+
+// Configurações específicas para testes E2E
+process.env.JEST_WORKER_ID = process.env.JEST_WORKER_ID || '1';
+
+// Log para debug (remover em produção)
+console.log('🌐 E2E Test Environment Loaded');
+console.log(`   NODE_ENV: ${process.env.NODE_ENV}`);
+console.log(`   PORT: ${process.env.PORT}`);
+console.log(`   DATABASE: ${process.env.DATABASE_POSTGRES_NAME}`);
+
+export default {
   moduleFileExtensions: ['js', 'json', 'ts'],
   rootDir: '.',
   testEnvironment: 'node',
@@ -31,7 +52,6 @@ const config: Config.InitialOptions = {
     '!**/*.module.(ts|js)',
     '!**/*.dto.(ts|js)',
     '!**/*.test.ts',
-    // Exclude database migrations from coverage
     '!**/migrations/**',
   ],
   coveragePathIgnorePatterns: ['/node_modules/', '/dist/', '/.history/', '/coverage/', '/logs/'],
@@ -46,7 +66,7 @@ const config: Config.InitialOptions = {
   },
   coverageProvider: 'v8',
   displayName: '🌐 E2E Tests',
-  testTimeout: 30000,
-};
-
-export default config;
+  testTimeout: 60000, // 60 segundos para dar tempo de inicializar aplicação
+  setupFilesAfterEnv: ['<rootDir>/test/e2e/setup-e2e.ts'],
+  openHandlesTimeout: 60000,
+} as Config.InitialOptions;

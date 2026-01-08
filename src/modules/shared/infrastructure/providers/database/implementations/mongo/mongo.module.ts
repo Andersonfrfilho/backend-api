@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, OnModuleDestroy } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ConfigModule } from '@app/config/config.module';
@@ -15,6 +15,20 @@ import { MongoDataSource } from './mongo.database-conection';
       name: CONNECTIONS_NAMES.MONGO,
       imports: [ConfigModule],
       useFactory: async () => {
+        // Use MONGO_URI if available (recommended approach)
+        if (process.env.MONGO_URI) {
+          console.log('🔌 Using MONGO_URI for MongoDB connection');
+          return {
+            type: 'mongodb',
+            url: process.env.MONGO_URI,
+            useUnifiedTopology: true,
+            autoLoadEntities: true,
+            synchronize: process.env.NODE_ENV !== 'production',
+            dropSchema: false,
+          } as any;
+        }
+
+        // Fallback to individual config values
         if (!MongoDataSource.isInitialized) {
           await MongoDataSource.initialize();
         }
@@ -32,4 +46,17 @@ import { MongoDataSource } from './mongo.database-conection';
   ],
   exports: [TypeOrmModule],
 })
-export class SharedInfrastructureProviderDatabaseImplementationsMongoModule {}
+export class SharedInfrastructureProviderDatabaseImplementationsMongoModule
+  implements OnModuleDestroy
+{
+  async onModuleDestroy() {
+    try {
+      if (MongoDataSource.isInitialized) {
+        await MongoDataSource.destroy();
+      }
+    } catch (error) {
+      // Ignore errors during module destruction
+      console.warn('⚠️  Error destroying MongoDataSource:', (error as Error).message);
+    }
+  }
+}
