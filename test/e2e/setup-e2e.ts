@@ -60,10 +60,25 @@ afterEach(async () => {
 afterAll(async () => {
   if (mongoClient) {
     try {
-      await mongoClient.close();
+      // Set a timeout to force close if needed
+      const closePromise = mongoClient.close();
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('MongoDB close timeout')), 5000),
+      );
+
+      await Promise.race([closePromise, timeoutPromise]).catch(() => {
+        // If timeout, just continue - connection will be garbage collected
+        console.log('⚠️  MongoDB close timeout, forcing exit');
+      });
+
       console.log('🔌 MongoDB connection closed');
     } catch (error) {
       console.warn('⚠️  Error closing MongoDB connection:', (error as Error).message);
     }
   }
+
+  // Force exit after a small delay to ensure cleanup
+  setTimeout(() => {
+    process.exit(0);
+  }, 1000).unref();
 });

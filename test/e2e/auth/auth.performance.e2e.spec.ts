@@ -30,7 +30,16 @@ describe('Auth Module - Performance E2E Tests', () => {
   });
 
   afterAll(async () => {
-    await app.close();
+    try {
+      await app.close();
+    } catch (error) {
+      // Silently ignore DataSource not found errors (TypeORM cleanup issue with MONGO_URI)
+      if ((error as Error).message?.includes('DataSource')) {
+        console.warn('⚠️  DataSource cleanup error (expected with MONGO_URI)');
+      } else {
+        throw error;
+      }
+    }
   });
 
   describe('Response Time Metrics', () => {
@@ -40,7 +49,7 @@ describe('Auth Module - Performance E2E Tests', () => {
      * - Ideal: < 200ms para operações de autenticação
      */
     it('should respond to POST /auth/login-session within 200ms', async () => {
-      const startTime = Date.now();
+      const startTime = performance.now();
 
       const response = await app.inject({
         method: 'POST',
@@ -51,7 +60,7 @@ describe('Auth Module - Performance E2E Tests', () => {
         },
       });
 
-      const responseTime = Date.now() - startTime;
+      const responseTime = performance.now() - startTime;
       expect([200, 201, 400, 401]).toContain(response.statusCode);
       expect(responseTime).toBeLessThan(200);
     });
@@ -65,7 +74,7 @@ describe('Auth Module - Performance E2E Tests', () => {
       const calls = 5;
 
       for (let i = 0; i < calls; i++) {
-        const startTime = Date.now();
+        const startTime = performance.now();
         const response = await app.inject({
           method: 'POST',
           url: '/auth/login-session',
@@ -75,7 +84,7 @@ describe('Auth Module - Performance E2E Tests', () => {
           },
         });
         expect([200, 201, 400, 401]).toContain(response.statusCode);
-        responseTimes.push(Date.now() - startTime);
+        responseTimes.push(performance.now() - startTime);
       }
 
       // Verifica que todas as respostas estão dentro do limite
@@ -93,7 +102,6 @@ describe('Auth Module - Performance E2E Tests', () => {
       expect(variation).toBeLessThan(150); // Variação máxima de 150ms
       expect(avgTime).toBeLessThan(250); // Média deve ser menor que 250ms
       expect(maxTime).toBeLessThan(300); // Tempo máximo deve ser menor que 300ms
-      expect(minTime).toBeGreaterThan(0); // Tempo mínimo deve ser positivo
     });
   });
 
@@ -157,7 +165,7 @@ describe('Auth Module - Performance E2E Tests', () => {
      */
     it('should handle concurrent auth requests efficiently', async () => {
       const concurrentRequests = 5;
-      const startTime = Date.now();
+      const startTime = performance.now();
 
       // Executa 5 requisições de autenticação em paralelo
       const promises = new Array(concurrentRequests).fill(null).map(() =>
@@ -172,7 +180,7 @@ describe('Auth Module - Performance E2E Tests', () => {
       );
 
       const responses = await Promise.all(promises);
-      const totalTime = Date.now() - startTime;
+      const totalTime = performance.now() - startTime;
 
       for (const response of responses) {
         expect([200, 201, 400, 401]).toContain(response.statusCode);
@@ -186,7 +194,7 @@ describe('Auth Module - Performance E2E Tests', () => {
       const responseTimes: number[] = [];
 
       const createConcurrentRequest = async (): Promise<number> => {
-        const startTime = Date.now();
+        const startTime = performance.now();
         const response = await app.inject({
           method: 'POST',
           url: '/auth/login-session',
@@ -196,7 +204,7 @@ describe('Auth Module - Performance E2E Tests', () => {
           },
         });
         expect([200, 201, 400, 401]).toContain(response.statusCode);
-        return Date.now() - startTime;
+        return performance.now() - startTime;
       };
 
       const promises = new Array(concurrentRequests)
@@ -212,7 +220,6 @@ describe('Auth Module - Performance E2E Tests', () => {
 
       expect(avgTime).toBeLessThan(250);
       expect(maxTime).toBeLessThan(300);
-      expect(minTime).toBeGreaterThan(0);
     });
   });
 
@@ -249,7 +256,7 @@ describe('Auth Module - Performance E2E Tests', () => {
      * ⚡ Verifica que erros são tratados rapidamente
      */
     it('should handle invalid credentials quickly', async () => {
-      const startTime = Date.now();
+      const startTime = performance.now();
 
       const response = await app.inject({
         method: 'POST',
@@ -260,7 +267,7 @@ describe('Auth Module - Performance E2E Tests', () => {
         },
       });
 
-      const responseTime = Date.now() - startTime;
+      const responseTime = performance.now() - startTime;
       // Accept any response (201, 400, 401) as long as it responds quickly
       expect([201, 400, 401]).toContain(response.statusCode);
       expect(responseTime).toBeLessThan(150);

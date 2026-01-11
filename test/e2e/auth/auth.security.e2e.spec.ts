@@ -43,7 +43,16 @@ describe('Auth Module - Security E2E Tests', () => {
   });
 
   afterAll(async () => {
-    await app.close();
+    try {
+      await app.close();
+    } catch (error) {
+      // Silently ignore DataSource not found errors (TypeORM cleanup issue with MONGO_URI)
+      if ((error as Error).message?.includes('DataSource')) {
+        console.warn('⚠️  DataSource cleanup error (expected with MONGO_URI)');
+      } else {
+        throw error;
+      }
+    }
   });
 
   describe('Authentication Security - Rate Limiting', () => {
