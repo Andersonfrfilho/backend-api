@@ -2,6 +2,8 @@ import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify
 import { SwaggerModule } from '@nestjs/swagger';
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { EnvironmentProviderInterface } from '@config';
+import { ENVIRONMENT_SERVICE_PROVIDER } from '@config/config.token';
 import { swaggerConfig } from '@config/swagger.config';
 import { docsFactory } from '@modules/shared/infrastructure/interceptors/docs';
 import { LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/log.token';
@@ -29,12 +31,22 @@ describe('Swagger Documentation (e2e)', () => {
     await app.init();
 
     // Initialize Swagger routes for testing
-    const document = SwaggerModule.createDocument(app, swaggerConfig);
+    const environment = app.get<EnvironmentProviderInterface>(ENVIRONMENT_SERVICE_PROVIDER);
+    const document = SwaggerModule.createDocument(app, swaggerConfig(environment));
     docsFactory({ app, document });
   });
 
   afterAll(async () => {
-    await app.close();
+    try {
+      await app.close();
+    } catch (error) {
+      // Silently ignore DataSource not found errors (TypeORM cleanup issue with MONGO_URI)
+      if ((error as Error).message?.includes('DataSource')) {
+        console.warn('⚠️  DataSource cleanup error (expected with MONGO_URI)');
+      } else {
+        throw error;
+      }
+    }
   });
 
   describe('GET /swagger-spec', () => {

@@ -23,12 +23,45 @@ $ npm run start:prod
 # unit tests
 $ npm run test
 
-# e2e tests
+# e2e tests (local)
 $ npm run test:e2e
+
+# e2e tests (docker)
+$ make test-e2e
+
+# all tests
+$ npm run test:all
 
 # test coverage
 $ npm run test:cov
 ```
+
+## Environment Files
+
+O projeto utiliza diferentes arquivos de ambiente para diferentes contextos:
+
+- **`.env`** - Ambiente de desenvolvimento
+- **`.env.e2e`** - Ambiente específico para testes E2E
+- **`.env.example`** - Template com todas as variáveis necessárias
+
+### Configuração para Testes E2E
+
+Para executar testes E2E, o projeto utiliza um ambiente isolado:
+
+```bash
+# Usando Docker (recomendado)
+make test-e2e
+
+# Ou localmente
+npm run test:e2e
+```
+
+O arquivo `.env.e2e` configura:
+
+- Banco de dados separado (`backend_database_test_e2e`)
+- Porta diferente (3334)
+- DataDog desabilitado para testes
+- Sincronização automática das tabelas
 
 ## estrutura do projeto
 

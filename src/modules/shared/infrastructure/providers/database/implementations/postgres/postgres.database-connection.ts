@@ -15,7 +15,6 @@ import { getDatabaseConfig } from '@config/database-config';
 import { migrations } from '../../migrations/index';
 
 const config = getDatabaseConfig();
-
 const PostgresDataSource = new DataSource({
   type: 'postgres',
   host: config.postgres.host,

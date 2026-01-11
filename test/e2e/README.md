@@ -2,7 +2,34 @@
 
 Este diretório contém os testes end-to-end (E2E) da aplicação, organizados por módulo/controller.
 
-## 📚 Padrão de Qualidade: ISO/IEC 25002:2024
+## � Configuração e Execução
+
+### Arquivos de Ambiente
+
+- **`.env.e2e`** - Configurações específicas para testes E2E
+- Banco de dados isolado: `backend_database_test_e2e`
+- Porta separada: `3334`
+- DataDog desabilitado para performance
+
+### Execução
+
+```bash
+# Docker (recomendado - ambiente isolado)
+make test-e2e
+
+# Local (desenvolvimento)
+npm run test:e2e
+```
+
+### Setup Automático
+
+O arquivo `setup-e2e.ts` configura:
+
+- Carregamento do `.env.e2e`
+- Inicialização do banco de dados de teste
+- Timeouts de 30 segundos por teste
+
+## �📚 Padrão de Qualidade: ISO/IEC 25002:2024
 
 Todos os testes seguem o **Standard for Software Product Quality - SQuaRE 2024**.
 

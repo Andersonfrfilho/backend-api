@@ -37,7 +37,16 @@ describe('Health E2E - Load & Stress Tests', () => {
   });
 
   afterAll(async () => {
-    await app.close();
+    try {
+      await app.close();
+    } catch (error) {
+      // Silently ignore DataSource not found errors (TypeORM cleanup issue with MONGO_URI)
+      if ((error as Error).message?.includes('DataSource')) {
+        console.warn('⚠️  DataSource cleanup error (expected with MONGO_URI)');
+      } else {
+        throw error;
+      }
+    }
   });
 
   describe('Concurrent Health Check Requests', () => {
