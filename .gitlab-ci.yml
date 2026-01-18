@@ -8,7 +8,7 @@ stages:
 
 variables:
   # App Configuration
-  API_APP_CONTAINER_NAME: backend-api-service
+  API_APP_CONTAINER_NAME: backend-api
   PORT: '3333'
 
   # Database Configuration (from .env.example)

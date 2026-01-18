@@ -1,8 +1,10 @@
 services:
   app:
     depends_on:
-      - database_postgres
-      - database_mongo
+      database_postgres:
+        condition: service_healthy
+      database_mongo:
+        condition: service_started
     build:
       context: .
       dockerfile: Dockerfile.dev
@@ -32,23 +34,36 @@ services:
       - '${DATABASE_POSTGRES_PORT}:5432'
     volumes:
       - database_postgres_data:/var/lib/postgresql
-      - ./scripts/init-postgres-e2e.sql:/docker-entrypoint-initdb.d/02-init-e2e.sql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${DATABASE_POSTGRES_USER}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   database_mongo:
     image: mongo:7
-    container_name: mongo-db
+    container_name: ${PROJECT_NAME}_database_mongo
+
     restart: always
     ports:
       - '${DATABASE_MONGO_PORT}:27017'
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${DATABASE_MONGO_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${DATABASE_MONGO_PASSWORD}
+
     volumes:
       - database_mongo_data:/data/db
+  cache_redis:
+    image: redis:7
+    container_name: ${PROJECT_NAME}_cache_redis
+    restart: always
+    ports:
+      - '${CACHE_REDIS_PORT}:6379'
+    volumes:
+      - redis_data:/data
 
   ### SONAR_QUBE SERVICES
   sonarqube:
     image: sonarqube:community
+    container_name: ${PROJECT_NAME}_sonarqube
     depends_on:
       - sonar-db
     environment:
@@ -56,7 +71,7 @@ services:
       SONAR_JDBC_USERNAME: sonar
       SONAR_JDBC_PASSWORD: sonar
     ports:
-      - '9000:9000'
+      - '9001:9000'
     volumes:
       - sonarqube_data:/opt/sonarqube/data
       - sonarqube_extensions:/opt/sonarqube/extensions
@@ -64,6 +79,7 @@ services:
 
   sonar-db:
     image: postgres:13
+    container_name: ${PROJECT_NAME}_database_sonarqube
     environment:
       POSTGRES_USER: sonar
       POSTGRES_PASSWORD: sonar
@@ -80,3 +96,4 @@ volumes:
   sonar_database_postgres_data:
   database_postgres_data:
   database_mongo_data:
+  redis_data:

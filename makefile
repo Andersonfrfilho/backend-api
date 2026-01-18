@@ -2,6 +2,7 @@
 # Variáveis de ambiente
 # ========================
 ENV_FILE := .env
+ENV_DEV_LOCAL_FILE := .env.dev.local
 ENV_EXAMPLE := .env.example
 COMPOSE_FILE := docker-compose.yml  # Defina o arquivo docker-compose explicitamente
 
@@ -47,6 +48,15 @@ database_mongo: setup-env
 database_mongo-down: setup-env
 	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) down database_mongo
 
+cache_redis: setup-env
+	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) up -d cache_redis
+
+cache_redis-down: setup-env
+	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) down cache_redis
+
+cache_redis-stop: setup-env
+	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) stop cache_redis
+
 database_mongo-stop: setup-env
 	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) stop database_mongo
 
@@ -84,15 +94,14 @@ clean-safe: setup-env
 
 clean-all: setup-env
 	@echo "🧹 Limpando todos os recursos do projeto $(PROJECT_NAME)..."
+	# Force remove datadog-agent if it exists
+	-docker rm -f datadog-agent 2>/dev/null || true
 	# Remove containers, volumes e redes do projeto
 	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) down -v --remove-orphans
-
 	# Remove imagens criadas com prefixo do projeto
 	-docker rmi -f $(shell docker images --filter=reference='$(PROJECT_NAME)*' -q)
-
 	# Remove volumes do projeto (se restarem)
 	-docker volume rm $(shell docker volume ls --filter name=$(PROJECT_NAME) -q)
-
 	# Remove redes do projeto (se restarem)
 	-docker network rm $(shell docker network ls --filter name=$(PROJECT_NAME) -q)
 
@@ -103,10 +112,8 @@ rebuild-app: setup-env
 
 all: setup-env
 	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) up -d  # Inicia todos os serviços, incluindo app e sonar
-	@echo "⏳ Aguardando banco de dados ficar pronto..."
-	sleep 5
 	@echo "📦 Rodando migrations..."
-	npm run migration:run
+	docker exec -it $(API_APP_CONTAINER_NAME) npm run migration:run
 	@echo "✅ Projeto iniciado com sucesso!"
 
 setup-e2e-databases: setup-env
@@ -131,10 +138,8 @@ test-e2e-docker: setup-env
 setup: setup-env
 	@echo "🚀 Iniciando setup completo do projeto..."
 	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) up -d
-	@echo "⏳ Aguardando banco de dados ficar pronto..."
-	sleep 5
 	@echo "📦 Rodando migrations..."
-	npm run migration:run
+	docker exec -it $(API_APP_CONTAINER_NAME) npm run migration:run
 	@echo "✅ Setup completo! Projeto pronto para usar."
 
 .PHONY: all rebuild-app setup-env clean-all clean-images force-remove down stop app sonar-up sonar-down sonar-scan clean-safe database_postgres database_mongo setup setup-e2e-databases test-e2e-ready test-e2e-docker
