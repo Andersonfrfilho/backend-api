@@ -178,9 +178,9 @@ Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
   - adicionar token via env
   - SONAR_HOST_URL=http://sonarqube:9000
   - SONAR_TOKEN=sqa_67c22563e8b6f0ef7c4224ea45120b667f29d9f8
-  - SONAR_PROJECT_KEY=backend-api-service
+  - SONAR_PROJECT_KEY=backend-api
 - execute o sh do container do app
-  - docker exec -it backend-api-service sh
+  - docker exec -it backend-api sh
   - npm run sonar
   - verifique no painel
 

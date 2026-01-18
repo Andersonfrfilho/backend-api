@@ -4,9 +4,12 @@ import { HealthApplicationModule } from '@modules/health/application/health-appl
 import { HealthInfrastructureModule } from '@modules/health/infrastructure/health.infrastructure.module';
 import { SharedInfrastructureProviderLogModule } from '@modules/shared/infrastructure/providers/log/log.module';
 
+import { SharedInfrastructureProviderCacheModule } from '../shared/infrastructure/providers/cache/cache.module';
+
 @Module({
   imports: [
     SharedInfrastructureProviderLogModule,
+    SharedInfrastructureProviderCacheModule,
     HealthApplicationModule,
     HealthInfrastructureModule,
   ],

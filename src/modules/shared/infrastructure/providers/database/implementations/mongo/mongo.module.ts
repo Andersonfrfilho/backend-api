@@ -15,20 +15,34 @@ import { MongoDataSource } from './mongo.database-conection';
       name: CONNECTIONS_NAMES.MONGO,
       imports: [ConfigModule],
       useFactory: async () => {
+        const isE2E = process.env.NODE_ENV === 'test' || process.env.JEST_WORKER_ID !== undefined;
+
+        // Use MONGO_URI_TEST_E2E for E2E tests if available
+        if (isE2E && process.env.MONGO_URI_TEST_E2E) {
+          console.log('🔌 Using MONGO_URI_TEST_E2E for MongoDB E2E connection');
+          return {
+            type: 'mongodb',
+            url: process.env.MONGO_URI_TEST_E2E,
+            autoLoadEntities: true,
+            synchronize: true,
+            dropSchema: false,
+          } as any;
+        }
+
         // Use MONGO_URI if available (recommended approach)
         if (process.env.MONGO_URI) {
           console.log('🔌 Using MONGO_URI for MongoDB connection');
           return {
             type: 'mongodb',
             url: process.env.MONGO_URI,
-            useUnifiedTopology: true,
             autoLoadEntities: true,
             synchronize: process.env.NODE_ENV !== 'production',
             dropSchema: false,
           } as any;
         }
 
-        // Fallback to individual config values
+        // Fallback to individual config values - only if MONGO_URI is not available
+        console.log('🔌 Using individual MongoDB config values');
         if (!MongoDataSource.isInitialized) {
           await MongoDataSource.initialize();
         }
