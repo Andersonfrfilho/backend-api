@@ -41,7 +41,6 @@ database_postgres-down: setup-env
 database_postgres-stop: setup-env
 	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) stop database_postgres
 
-
 database_mongo: setup-env
 	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) up -d database_mongo
 
@@ -59,6 +58,13 @@ cache_redis-stop: setup-env
 
 database_mongo-stop: setup-env
 	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) stop database_mongo
+
+queue_rabbitmq: setup-env
+	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) up -d queue_rabbitmq
+queue_rabbitmq-down: setup-env
+	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) down queue_rabbitmq
+queue_rabbitmq-stop: setup-env
+	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) stop queue_rabbitmq
 
 sonar-up: setup-env
 	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) up -d sonarqube sonar-db
@@ -142,4 +148,4 @@ setup: setup-env
 	docker exec -it $(API_APP_CONTAINER_NAME) npm run migration:run
 	@echo "✅ Setup completo! Projeto pronto para usar."
 
-.PHONY: all rebuild-app setup-env clean-all clean-images force-remove down stop app sonar-up sonar-down sonar-scan clean-safe database_postgres database_mongo setup setup-e2e-databases test-e2e-ready test-e2e-docker
+.PHONY: all rebuild-app setup-env clean-all clean-images force-remove down stop app sonar-up sonar-down sonar-scan clean-safe database_postgres database_mongo queue_rabbitmq setup setup-e2e-databases test-e2e-ready test-e2e-docker 

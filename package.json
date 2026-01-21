@@ -39,6 +39,7 @@
     "@fastify/helmet": "^13.0.2",
     "@fastify/swagger": "^9.5.2",
     "@fastify/swagger-ui": "^5.2.3",
+    "@golevelup/nestjs-rabbitmq": "^7.1.1",
     "@nestjs-redis/kit": "^0.13.3",
     "@nestjs/cache-manager": "^3.1.0",
     "@nestjs/common": "^11.1.11",

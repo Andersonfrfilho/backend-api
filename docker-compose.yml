@@ -51,6 +51,7 @@ services:
 
     volumes:
       - database_mongo_data:/data/db
+      - database_mongo_config:/data/configdb
   cache_redis:
     image: redis:7
     container_name: ${PROJECT_NAME}_cache_redis
@@ -58,7 +59,19 @@ services:
     ports:
       - '${CACHE_REDIS_PORT}:6379'
     volumes:
-      - redis_data:/data
+      - cache_redis_data:/data
+
+  queue_rabbitmq:
+    image: rabbitmq:3.6.8-management
+    container_name: ${PROJECT_NAME}_queue_rabbitmq
+    ports:
+      - '${QUEUE_RABBITMQ_PORT}:5672'
+      - '${QUEUE_RABBITMQ_MANAGEMENT_PORT}:15672'
+    environment:
+      RABBITMQ_DEFAULT_USER: ${QUEUE_RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${QUEUE_RABBITMQ_DEFAULT_PASS}
+    volumes:
+      - queue_rabbitmq_data:/var/lib/rabbitmq
 
   ### SONAR_QUBE SERVICES
   sonarqube:
@@ -76,6 +89,7 @@ services:
       - sonarqube_data:/opt/sonarqube/data
       - sonarqube_extensions:/opt/sonarqube/extensions
       - sonarqube_logs:/opt/sonarqube/logs
+      - sonarqube_temp:/opt/sonarqube/temp
 
   sonar-db:
     image: postgres:13
@@ -92,8 +106,11 @@ volumes:
   sonarqube_data:
   sonarqube_extensions:
   sonarqube_logs:
+  sonarqube_temp:
   sonar_database:
   sonar_database_postgres_data:
   database_postgres_data:
   database_mongo_data:
-  redis_data:
+  database_mongo_config:
+  cache_redis_data:
+  queue_rabbitmq_data:
