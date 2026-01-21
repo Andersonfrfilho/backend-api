@@ -62,7 +62,7 @@ services:
       - cache_redis_data:/data
 
   queue_rabbitmq:
-    image: rabbitmq:3.6.8-management
+    image: rabbitmq:3.9-management
     container_name: ${PROJECT_NAME}_queue_rabbitmq
     ports:
       - '${QUEUE_RABBITMQ_PORT}:5672'

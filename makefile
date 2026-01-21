@@ -106,10 +106,6 @@ clean-all: setup-env
 	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) down -v --remove-orphans
 	# Remove imagens criadas com prefixo do projeto
 	-docker rmi -f $(shell docker images --filter=reference='$(PROJECT_NAME)*' -q)
-	# Remove volumes do projeto (se restarem)
-	-docker volume rm $(shell docker volume ls --filter name=$(PROJECT_NAME) -q)
-	# Remove redes do projeto (se restarem)
-	-docker network rm $(shell docker network ls --filter name=$(PROJECT_NAME) -q)
 
 rebuild-app: setup-env
 	@echo "🔄 Rebuildando a imagem do serviço 'app' após instalação de dependências..."
