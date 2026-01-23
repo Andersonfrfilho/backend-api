@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
 
+import { SharedInfrastructureProviderQueueProducerImplementationsRabbitMqModule } from './rabbitmq/rabbit.module';
+
 @Module({
-  imports: [],
-  exports: [],
+  imports: [SharedInfrastructureProviderQueueProducerImplementationsRabbitMqModule],
+  exports: [SharedInfrastructureProviderQueueProducerImplementationsRabbitMqModule],
 })
 export class SharedInfrastructureProviderQueueProducerImplementationsModule {}

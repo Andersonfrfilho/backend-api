@@ -5,11 +5,13 @@ import { HealthInfrastructureModule } from '@modules/health/infrastructure/healt
 import { SharedInfrastructureProviderLogModule } from '@modules/shared/infrastructure/providers/log/log.module';
 
 import { SharedInfrastructureProviderCacheModule } from '../shared/infrastructure/providers/cache/cache.module';
+import { SharedInfrastructureProviderQueueProducerModule } from '../shared/infrastructure/providers/queue/producer/producer.module';
 
 @Module({
   imports: [
     SharedInfrastructureProviderLogModule,
     SharedInfrastructureProviderCacheModule,
+    SharedInfrastructureProviderQueueProducerModule,
     HealthApplicationModule,
     HealthInfrastructureModule,
   ],

@@ -1,8 +1,8 @@
-import {MigrationInterface,QueryRunner,Table,TableColumn} from 'typeorm';
+import { MigrationInterface, QueryRunner, Table, TableColumn } from 'typeorm';
 
 export default class User1763256695093 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // Enable uuid-ossp extension for native UUID generation
+    // Create pgcrypto extension if it doesn't exist (safe operation)
     await queryRunner.query('CREATE EXTENSION IF NOT EXISTS "pgcrypto"');
 
     await queryRunner.createTable(
