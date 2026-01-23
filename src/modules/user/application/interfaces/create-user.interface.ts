@@ -8,7 +8,10 @@ interface CreateUserDto
   phone: string;
   address: AddressDto;
 }
-export interface UserCreateUseCaseParams extends CreateUserDto {}
+export interface UserCreateUseCaseParams extends CreateUserDto {
+  ipAddress?: string; // Para auditoria e analytics
+  userAgent?: string; // Para auditoria e analytics
+}
 export interface UserCreateUseCaseResponse extends User {}
 export interface UserCreateUseCaseInterface {
   execute(dto: UserCreateUseCaseParams): Promise<UserCreateUseCaseResponse>;
