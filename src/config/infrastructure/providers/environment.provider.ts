@@ -19,7 +19,11 @@ export class EnvironmentProvider implements EnvironmentProviderInterface {
   }
 
   get apiContainerName(): string {
-    return this.configService.getOrThrow<string>('API_APP_CONTAINER_NAME');
+    return `${this.projectName}_api`;
+  }
+
+  get projectName(): string {
+    return this.configService.getOrThrow<string>('PROJECT_NAME');
   }
 
   get baseUrl(): string {

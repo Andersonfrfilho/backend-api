@@ -1,5 +1,5 @@
 services:
-  app:
+  api:
     depends_on:
       database_postgres:
         condition: service_healthy
@@ -8,13 +8,13 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    container_name: ${API_APP_CONTAINER_NAME}
+    container_name: ${PROJECT_NAME}_api
     environment:
       - NODE_ENV=development
     env_file:
       - .env
     ports:
-      - '${PORT}:${PORT}'
+      - '${PORT_WORKER:-3334}:${PORT_WORKER:-3334}'
     volumes:
       - ./src:/app/src
       - ./dist:/app/dist
@@ -44,14 +44,13 @@ services:
   database_mongo:
     image: mongo:7
     container_name: ${PROJECT_NAME}_database_mongo
-
     restart: always
     ports:
       - '${DATABASE_MONGO_PORT}:27017'
-
     volumes:
       - database_mongo_data:/data/db
       - database_mongo_config:/data/configdb
+
   cache_redis:
     image: redis:7
     container_name: ${PROJECT_NAME}_cache_redis
@@ -73,42 +72,42 @@ services:
     volumes:
       - queue_rabbitmq_data:/var/lib/rabbitmq
 
-  ### SONAR_QUBE SERVICES
-  sonarqube:
-    image: sonarqube:community
-    container_name: ${PROJECT_NAME}_sonarqube
-    depends_on:
-      - sonar-db
-    environment:
-      SONAR_JDBC_URL: jdbc:postgresql://sonar-db:5432/sonar
-      SONAR_JDBC_USERNAME: sonar
-      SONAR_JDBC_PASSWORD: sonar
-    ports:
-      - '9001:9000'
-    volumes:
-      - sonarqube_data:/opt/sonarqube/data
-      - sonarqube_extensions:/opt/sonarqube/extensions
-      - sonarqube_logs:/opt/sonarqube/logs
-      - sonarqube_temp:/opt/sonarqube/temp
+  ### SONAR_QUBE SERVICES (Optional for worker)
+  # sonarqube:
+  #   image: sonarqube:community
+  #   container_name: ${PROJECT_NAME}_sonarqube
+  #   depends_on:
+  #     - sonar-db
+  #   environment:
+  #     SONAR_JDBC_URL: jdbc:postgresql://sonar-db:5432/sonar
+  #     SONAR_JDBC_USERNAME: sonar
+  #     SONAR_JDBC_PASSWORD: sonar
+  #   ports:
+  #     - '9001:9000'
+  #   volumes:
+  #     - sonarqube_data:/opt/sonarqube/data
+  #     - sonarqube_extensions:/opt/sonarqube/extensions
+  #     - sonarqube_logs:/opt/sonarqube/logs
+  #     - sonarqube_temp:/opt/sonarqube/temp
 
-  sonar-db:
-    image: postgres:13
-    container_name: ${PROJECT_NAME}_database_sonarqube
-    environment:
-      POSTGRES_USER: sonar
-      POSTGRES_PASSWORD: sonar
-      POSTGRES_DB: sonar
-    volumes:
-      - sonar_database:/var/lib/postgresql
-      - sonar_database_postgres_data:/var/lib/postgresql/data
+  # sonar-db:
+  #   image: postgres:13
+  #   container_name: ${PROJECT_NAME}_database_sonarqube
+  #   environment:
+  #     POSTGRES_USER: sonar
+  #     POSTGRES_PASSWORD: sonar
+  #     POSTGRES_DB: sonar
+  #   volumes:
+  #     - sonar_database:/var/lib/postgresql
+  #     - sonar_database_postgres_data:/var/lib/postgresql/data
 
 volumes:
-  sonarqube_data:
-  sonarqube_extensions:
-  sonarqube_logs:
-  sonarqube_temp:
-  sonar_database:
-  sonar_database_postgres_data:
+  # sonarqube_data:
+  # sonarqube_extensions:
+  # sonarqube_logs:
+  # sonarqube_temp:
+  # sonar_database:
+  # sonar_database_postgres_data:
   database_postgres_data:
   database_mongo_data:
   database_mongo_config:
