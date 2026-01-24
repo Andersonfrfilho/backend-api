@@ -4,7 +4,7 @@ export interface EnvironmentProviderInterface {
   readonly port: number;
   readonly nodeEnv: NodeEnv;
   readonly baseUrl: string;
-  readonly apiContainerName: string;
+  readonly projectName: string;
 
   readonly baseUrlDevelopment: string;
   readonly baseUrlStaging: string;

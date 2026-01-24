@@ -42,6 +42,6 @@ RUN sed -i 's/"deleteOutDir": true/"deleteOutDir": false/' nest-cli.json
 # Cria pasta de logs
 RUN mkdir -p logs
 
-# DESENVOLVIMENTO: Roda migrations automáticamente + inicia em modo watch
+# DESENVOLVIMENTO: Inicia em modo watch (migrations serão executadas via pipeline)
 # Nota: deleteOutDir é desabilitado em dev para evitar conflito com dist/ copiado
-CMD ["sh", "-c", "npm run migration:run && npm run start:dev"]
+CMD ["npm", "run", "start:dev"]
