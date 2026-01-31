@@ -115,7 +115,7 @@ rebuild-app: setup-env
 all: setup-env
 	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) up -d  # Inicia todos os serviços, incluindo app e sonar
 	@echo "📦 Rodando migrations..."
-	docker exec -it $(API_APP_CONTAINER_NAME) npm run migration:run
+	docker exec -it $(PROJECT_NAME)_api npm run migration:run
 	@echo "✅ Projeto iniciado com sucesso!"
 
 setup-e2e-databases: setup-env
@@ -141,7 +141,7 @@ setup: setup-env
 	@echo "🚀 Iniciando setup completo do projeto..."
 	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) up -d
 	@echo "📦 Rodando migrations..."
-	docker exec -it $(API_APP_CONTAINER_NAME) npm run migration:run
+	docker exec -it $(PROJECT_NAME)_api npm run migration:run
 	@echo "✅ Setup completo! Projeto pronto para usar."
 
 .PHONY: all rebuild-app setup-env clean-all clean-images force-remove down stop app sonar-up sonar-down sonar-scan clean-safe database_postgres database_mongo queue_rabbitmq setup setup-e2e-databases test-e2e-ready test-e2e-docker 
