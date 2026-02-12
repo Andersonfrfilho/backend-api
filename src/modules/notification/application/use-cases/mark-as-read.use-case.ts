@@ -1,6 +1,6 @@
+import type { NotificationRepositoryInterface } from '@modules/notification/domain/repositories/notification.repository.interface';
 import { Inject, Injectable } from '@nestjs/common';
 
-import type { NotificationRepositoryInterface } from '@modules/notification/domain/repositories/notification.repository.interface';
 import { NOTIFICATION_REPOSITORY_PROVIDE } from '@modules/notification/infrastructure/notification.token';
 
 import type {
@@ -16,7 +16,7 @@ export class MarkAsReadUseCase implements MarkAsReadUseCaseInterface {
     private readonly notificationRepository: NotificationRepositoryInterface,
   ) {}
 
-  async execute(params: MarkAsReadUseCaseParams): Promise<MarkAsReadUseCaseResponse> {
+  execute(params: MarkAsReadUseCaseParams): Promise<MarkAsReadUseCaseResponse> {
     return this.notificationRepository.markAsRead(params.id);
   }
 }

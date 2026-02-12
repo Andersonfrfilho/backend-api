@@ -264,36 +264,51 @@ export class IDStrategyBenchmarkController {
     const recommendations: string[] = [];
 
     // Análise de INSERT
-    // @ts-ignore
-    const insertWinner = Object.entries(results.insert).reduce(
-      (prev: [string, any], current: [string, any]) => {
+    // @ts-expect-error - TypeScript cannot infer the correct types for Object.entries reduce
+    const insertWinner = Object.entries(
+      results.insert as Record<string, { recordsPerSecond: number }>,
+    ).reduce(
+      (
+        prev: [string, { recordsPerSecond: number }],
+        current: [string, { recordsPerSecond: number }],
+      ) => {
         return current[1].recordsPerSecond > prev[1].recordsPerSecond ? current : prev;
       },
-    ) as [string, any];
+    );
     recommendations.push(
       `📝 INSERT: ${insertWinner[0]} é ${Math.round(insertWinner[1].recordsPerSecond)} registros/s`,
     );
 
     // Análise de SELECT
-    // @ts-ignore
-    const selectWinner = Object.entries(results.select).reduce(
-      (prev: [string, any], current: [string, any]) => {
+    // @ts-expect-error - TypeScript cannot infer the correct types for Object.entries reduce
+    const selectWinner = Object.entries(
+      results.select as Record<string, { queriesPerSecond: number }>,
+    ).reduce(
+      (
+        prev: [string, { queriesPerSecond: number }],
+        current: [string, { queriesPerSecond: number }],
+      ) => {
         return current[1].queriesPerSecond > prev[1].queriesPerSecond ? current : prev;
       },
-    ) as [string, any];
+    );
     recommendations.push(
       `🔍 SELECT: ${selectWinner[0]} é ${selectWinner[1].queriesPerSecond} queries/s`,
     );
 
     // Análise de DISK
-    // @ts-ignore
-    const diskWinner = Object.entries(results.diskUsage).reduce(
-      (prev: [string, any], current: [string, any]) => {
+    // @ts-expect-error - TypeScript cannot infer the correct types for Object.entries reduce
+    const diskWinner = Object.entries(
+      results.diskUsage as Record<string, { totalSize: string; sizePerRecord: string }>,
+    ).reduce(
+      (
+        prev: [string, { totalSize: string; sizePerRecord: string }],
+        current: [string, { totalSize: string; sizePerRecord: string }],
+      ) => {
         const prevSize = this.parseSize(prev[1].totalSize);
         const currentSize = this.parseSize(current[1].totalSize);
         return currentSize < prevSize ? current : prev;
       },
-    ) as [string, any];
+    );
     recommendations.push(
       `💾 DISCO: ${diskWinner[0]} usa ${diskWinner[1].totalSize} (${diskWinner[1].sizePerRecord}/registro)`,
     );

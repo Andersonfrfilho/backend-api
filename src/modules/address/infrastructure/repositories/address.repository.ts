@@ -9,11 +9,12 @@ import type {
   UpdateAddressParams,
 } from '@modules/address/domain/repositories/address.repository.interface';
 import { Address } from '@modules/shared/domain/entities/address.entity';
+import { CONNECTIONS_NAMES } from '@modules/shared/infrastructure/providers/database/database.constant';
 
 @Injectable()
 export class AddressRepository implements AddressRepositoryInterface {
   constructor(
-    @InjectRepository(Address, 'postgres')
+    @InjectRepository(Address, CONNECTIONS_NAMES.POSTGRES)
     private typeormRepo: Repository<Address>,
   ) {}
 

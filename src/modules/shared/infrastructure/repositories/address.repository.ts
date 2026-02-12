@@ -39,7 +39,10 @@ export class AddressRepository implements IAddressRepository {
   }
 
   async updateAddress(id: string, address: Partial<Address>): Promise<Address | null> {
-    await this.typeormRepo.update({ id } as any, { ...address, updatedAt: new Date() });
+    await this.typeormRepo.update(
+      { id: id as string | number },
+      { ...address, updatedAt: new Date() },
+    );
     return this.typeormRepo.findOne({ where: { id } });
   }
 

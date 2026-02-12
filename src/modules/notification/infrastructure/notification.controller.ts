@@ -57,7 +57,7 @@ export class NotificationController {
     description: 'Erro interno do servidor.',
   })
   async create(@Body() params: CreateNotificationRequestDto): Promise<NotificationResponseDto> {
-    return this.notificationService.createNotification(params);
+    return await this.notificationService.createNotification(params);
   }
 
   @Get(':id')
@@ -81,7 +81,7 @@ export class NotificationController {
     description: 'Erro interno do servidor.',
   })
   async getById(@Param('id') id: string): Promise<NotificationResponseDto> {
-    return this.notificationService.getNotification({ id });
+    return await this.notificationService.getNotification({ id });
   }
 
   @Get()
@@ -103,7 +103,7 @@ export class NotificationController {
     description: 'Erro interno do servidor.',
   })
   async getAll(@Query('userId') userId?: string): Promise<NotificationResponseDto[]> {
-    return this.notificationService.getAllNotifications(userId ? { userId } : undefined);
+    return await this.notificationService.getAllNotifications(userId ? { userId } : undefined);
   }
 
   @Put(':id')
@@ -133,7 +133,7 @@ export class NotificationController {
     @Param('id') id: string,
     @Body() params: UpdateNotificationRequestDto,
   ): Promise<NotificationResponseDto> {
-    return this.notificationService.updateNotification({ id, ...params });
+    return await this.notificationService.updateNotification({ id, ...params });
   }
 
   @Delete(':id')
@@ -157,7 +157,7 @@ export class NotificationController {
     description: 'Erro interno do servidor.',
   })
   async delete(@Param('id') id: string): Promise<DeleteNotificationResponseDto> {
-    return this.notificationService.deleteNotification({ id });
+    return await this.notificationService.deleteNotification({ id });
   }
 
   @Patch(':id/read')
@@ -181,7 +181,7 @@ export class NotificationController {
     description: 'Erro interno do servidor.',
   })
   async markAsRead(@Param('id') id: string): Promise<NotificationResponseDto> {
-    return this.notificationService.markAsRead({ id });
+    return await this.notificationService.markAsRead({ id });
   }
 
   @Patch('/user/:userId/read-all')
@@ -202,6 +202,6 @@ export class NotificationController {
     description: 'Erro interno do servidor.',
   })
   async markAllAsRead(@Param('userId') userId: string): Promise<MarkAllAsReadResponseDto> {
-    return this.notificationService.markAllAsRead({ userId });
+    return await this.notificationService.markAllAsRead({ userId });
   }
 }

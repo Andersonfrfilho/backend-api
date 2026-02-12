@@ -7,7 +7,7 @@ import {
   CreateNotificationParams,
   NotificationRepositoryInterface,
   UpdateNotificationParams,
-} from '@modules/notification/domain/repositories/notification.repository.interface';
+} from '@modules/notification/domain/notification.interface';
 import { Notification } from '@modules/shared/domain/entities/notification.entity';
 
 @Injectable()
@@ -42,7 +42,7 @@ export class NotificationRepository implements NotificationRepositoryInterface {
   }
 
   async update(id: string, notification: UpdateNotificationParams): Promise<Notification> {
-    await this.typeormRepo.update(id, notification as any);
+    await this.typeormRepo.update(id, notification as Partial<Notification>);
     const updatedNotification = await this.typeormRepo.findOne({
       where: { _id: id as any },
     });
@@ -64,6 +64,6 @@ export class NotificationRepository implements NotificationRepositoryInterface {
   }
 
   async markAllAsRead(userId: string): Promise<void> {
-    await this.typeormRepo.update({ userId, read: false }, { read: true } as any);
+    await this.typeormRepo.update({ userId, read: false }, { read: true } as Partial<Notification>);
   }
 }

@@ -1,11 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+import type {
+  CreatePhoneParams,
+  PhoneRepositoryInterface,
+} from '@modules/phone/domain/repositories/phone.interface';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import type {
-  CreatePhoneParams,
-  PhoneRepositoryInterface,
-} from '@modules/phone/domain/repositories/phone.repository.interface';
 import { Phone } from '@modules/shared/domain/entities/phone.entity';
 
 @Injectable()
@@ -22,7 +23,7 @@ export class PhoneRepository implements PhoneRepositoryInterface {
 
   async findById(id: string): Promise<Phone | null> {
     return this.typeormRepo.findOne({
-      where: { id },
+      where: { id: id },
     });
   }
 
@@ -33,9 +34,9 @@ export class PhoneRepository implements PhoneRepositoryInterface {
   }
 
   async update(id: string, phone: Partial<CreatePhoneParams>): Promise<Phone> {
-    await this.typeormRepo.update(id, phone);
+    await this.typeormRepo.update(id, phone as any);
     const updated = await this.typeormRepo.findOne({
-      where: { id },
+      where: { id: id },
     });
     if (!updated) {
       throw new Error('Phone not found');

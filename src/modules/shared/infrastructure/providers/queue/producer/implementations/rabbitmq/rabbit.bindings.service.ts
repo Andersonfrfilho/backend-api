@@ -23,7 +23,7 @@ export class RabbitBindingsService implements OnModuleInit {
           console.log('🔗 RabbitMQ channel available, creating bindings...');
           return;
         }
-      } catch (error) {
+      } catch {
         // Channel not ready yet
       }
       await new Promise((resolve) => setTimeout(resolve, delayMs));

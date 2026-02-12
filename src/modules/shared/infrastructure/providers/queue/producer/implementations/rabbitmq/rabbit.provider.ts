@@ -66,20 +66,20 @@ export class RabbitMQMessageProducer<T = any> implements QueueProducerMessagePro
       // Check connection status
       const isConnected = this.amqpConnection.connected;
 
-      return {
+      return Promise.resolve({
         isHealthy: isConnected,
         connectionStatus: isConnected ? 'connected' : 'disconnected',
         pendingMessages: 0, // RabbitMQ doesn't expose this easily
         uptime: Date.now() - this.metrics.uptime,
-      };
+      });
     } catch (error) {
-      return {
+      return Promise.resolve({
         isHealthy: false,
         connectionStatus: 'error',
         pendingMessages: 0,
         lastError: error as Error,
         uptime: Date.now() - this.metrics.uptime,
-      };
+      });
     }
   }
 
@@ -94,7 +94,6 @@ export class RabbitMQMessageProducer<T = any> implements QueueProducerMessagePro
       persistent?: boolean;
     },
   ): Promise<SendResult> {
-    const startTime = Date.now();
     const messageId = message.metadata?.messageId || this.generateMessageId();
 
     try {
@@ -276,7 +275,8 @@ export class RabbitMQMessageProducer<T = any> implements QueueProducerMessagePro
   async sendWithQoS(
     queueName: string,
     message: BaseMessage<T>,
-    qos: QoSLevel,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    _qos: QoSLevel,
   ): Promise<SendResult> {
     // For RabbitMQ, QoS is handled at channel level, not per message
     // This is a simplified implementation
@@ -361,10 +361,13 @@ export class RabbitMQMessageProducer<T = any> implements QueueProducerMessagePro
     return this.send(queueName, ttlMessage);
   }
 
-  async getPendingMessages(queueName: string): Promise<number> {
+  async getPendingMessages(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    _queueName: string,
+  ): Promise<number> {
     // RabbitMQ doesn't provide this information easily through the client
     // In a real implementation, you might use management API
-    return 0;
+    return Promise.resolve(0);
   }
 
   async purgeQueue(queueName: string): Promise<number> {
@@ -376,14 +379,14 @@ export class RabbitMQMessageProducer<T = any> implements QueueProducerMessagePro
         context: 'RabbitMQMessageProducer.purgeQueue',
         params: { queueName },
       });
-      return 0;
+      return Promise.resolve(0);
     } catch (error) {
       this.logger.error({
         message: `Failed to purge queue ${queueName}`,
         context: 'RabbitMQMessageProducer.purgeQueue',
         params: { queueName, error: error.message },
       });
-      return 0;
+      return Promise.resolve(0);
     }
   }
 
@@ -402,12 +405,14 @@ export class RabbitMQMessageProducer<T = any> implements QueueProducerMessagePro
         context: 'RabbitMQMessageProducer.close',
         params: { producerId: this.producerId },
       });
+      return Promise.resolve();
     } catch (error) {
       this.logger.error({
         message: `Error closing producer ${this.producerId}`,
         context: 'RabbitMQMessageProducer.close',
         params: { producerId: this.producerId, error: error.message },
       });
+      return Promise.resolve();
     }
   }
 
@@ -418,9 +423,14 @@ export class RabbitMQMessageProducer<T = any> implements QueueProducerMessagePro
       context: 'RabbitMQMessageProducer.reconnect',
       params: { producerId: this.producerId },
     });
+    return Promise.resolve();
   }
 
-  on(event: string, listener: (...args: any[]) => void): void {
+  on(
+    event: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    _listener: (...args: any[]) => void,
+  ): void {
     // Event handling would be implemented based on specific needs
     this.logger.debug({
       message: `Event listener added for ${event}`,
@@ -429,7 +439,11 @@ export class RabbitMQMessageProducer<T = any> implements QueueProducerMessagePro
     });
   }
 
-  off(event: string, listener: (...args: any[]) => void): void {
+  off(
+    event: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    _listener: (...args: any[]) => void,
+  ): void {
     // Event handling would be implemented based on specific needs
     this.logger.debug({
       message: `Event listener removed for ${event}`,

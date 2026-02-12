@@ -322,7 +322,7 @@ export class IDStrategyBenchmarkService {
     const records = await repo.find({ take: count });
 
     for (const record of records) {
-      await repo.update(record.id, {
+      await repo.update(record.id as string | number, {
         data: { updated: true, timestamp: new Date() },
       });
     }
@@ -385,7 +385,7 @@ export class IDStrategyBenchmarkService {
 
     const totalSize = sizeResult[0].total_size;
     const indexSize = sizeResult[0].index_size;
-    const recordCount = parseInt(countResult[0].count);
+    const recordCount = parseInt(String(countResult[0].count));
     const tableSizeBytes = await this.getTableSizeBytes(manager, tableName);
     const sizePerRecord =
       recordCount > 0 ? ((tableSizeBytes / recordCount) * 8).toFixed(2) + ' bits' : 'N/A';
@@ -402,6 +402,6 @@ export class IDStrategyBenchmarkService {
     const result = await manager.query(`
       SELECT pg_total_relation_size('${tableName}') as size
     `);
-    return parseInt(result[0].size);
+    return parseInt(String(result[0].size));
   }
 }

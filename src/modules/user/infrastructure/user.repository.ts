@@ -15,7 +15,7 @@ export class UserRepository implements UserRepositoryInterface {
     private typeormRepo: Repository<User>,
   ) {}
   async update(id: string, user: UpdateUserParams): Promise<User> {
-    await this.typeormRepo.update(id, user as any);
+    await this.typeormRepo.update(id, user as Partial<User>);
     const updatedUser = await this.typeormRepo.findOne({
       where: { id },
     });
