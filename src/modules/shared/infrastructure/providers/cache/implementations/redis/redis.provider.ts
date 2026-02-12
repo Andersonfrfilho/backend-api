@@ -1,6 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import Redis from 'ioredis';
 
+import { AppErrorFactory } from '@modules/error/application/app.error.factory';
+
 import { CacheProviderInterface } from '../../cache.interface';
 import { CACHE_REDIS_CONNECTION } from '../../cache.token';
 
@@ -15,7 +17,9 @@ export class CacheRedisProvider
       const data = await this.cacheRedisProvider.get(key);
       return data as unknown as T | null;
     } catch (error) {
-      throw new Error(`Error getting cache for key ${key}: ${error.message}`);
+      throw AppErrorFactory.businessLogic({
+        message: `Error getting cache for key ${key}: ${error.message}`,
+      });
     }
   }
 
@@ -27,7 +31,9 @@ export class CacheRedisProvider
         await this.cacheRedisProvider.set(key, JSON.stringify(value));
       }
     } catch (error) {
-      throw new Error(`Error setting cache for key ${key}: ${error.message}`);
+      throw AppErrorFactory.businessLogic({
+        message: `Error setting cache for key ${key}: ${error.message}`,
+      });
     }
   }
 
@@ -35,7 +41,9 @@ export class CacheRedisProvider
     try {
       await this.cacheRedisProvider.del(key);
     } catch (error) {
-      throw new Error(`Error deleting cache for key ${key}: ${error.message}`);
+      throw AppErrorFactory.businessLogic({
+        message: `Error deleting cache for key ${key}: ${error.message}`,
+      });
     }
   }
 
@@ -43,7 +51,9 @@ export class CacheRedisProvider
     try {
       await this.cacheRedisProvider.flushdb();
     } catch (error) {
-      throw new Error(`Error clearing cache: ${error.message}`);
+      throw AppErrorFactory.businessLogic({
+        message: `Error clearing cache: ${error.message}`,
+      });
     }
   }
 }

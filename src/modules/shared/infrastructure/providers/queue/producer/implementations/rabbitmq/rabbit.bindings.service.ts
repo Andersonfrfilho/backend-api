@@ -1,6 +1,8 @@
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 
+import { AppErrorFactory } from '@modules/error/application/app.error.factory';
+
 @Injectable()
 export class RabbitBindingsService implements OnModuleInit {
   constructor(private readonly amqpConnection: AmqpConnection) {}
@@ -28,7 +30,9 @@ export class RabbitBindingsService implements OnModuleInit {
       }
       await new Promise((resolve) => setTimeout(resolve, delayMs));
     }
-    throw new Error('RabbitMQ channel not available after retries');
+    throw AppErrorFactory.businessLogic({
+      message: 'RabbitMQ channel not available after retries',
+    });
   }
 
   private async createBindings() {

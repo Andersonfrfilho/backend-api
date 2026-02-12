@@ -7,6 +7,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+import { AppErrorFactory } from '@modules/error/application/app.error.factory';
 import { Phone } from '@modules/shared/domain/entities/phone.entity';
 
 @Injectable()
@@ -39,7 +40,10 @@ export class PhoneRepository implements PhoneRepositoryInterface {
       where: { id: id },
     });
     if (!updated) {
-      throw new Error('Phone not found');
+      throw AppErrorFactory.notFound({
+        message: 'Phone not found',
+        code: 'PHONE_NOT_FOUND',
+      });
     }
     return updated;
   }
