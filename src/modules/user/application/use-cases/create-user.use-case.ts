@@ -1,4 +1,4 @@
-import type { PhoneRepositoryInterface } from '@app/modules/phone/domain/repositories/phone.repository.interface';
+import type { PhoneRepositoryInterface } from '@modules/phone/domain/phone.interface';
 import { Inject, Injectable } from '@nestjs/common';
 
 import type { AddressRepositoryInterface } from '@app/modules/address/domain/repositories/address.repository.interface';

@@ -30,12 +30,12 @@ describe('RateLimitInterceptor - Unit Tests', () => {
         getResponse: jest.fn().mockReturnValue({
           setHeader: jest.fn(),
         }),
-      }),
+      } as any),
     };
 
     mockCallHandler = {
       handle: jest.fn().mockReturnValue(of({ success: true })),
-    };
+    } as any;
   });
 
   describe('intercept', () => {
@@ -317,7 +317,7 @@ describe('RateLimitInterceptor - Unit Tests', () => {
             setHeader: jest.fn(),
           }),
         }),
-      };
+      } as any;
 
       expect(() => {
         interceptor.intercept(badContext as ExecutionContext, mockCallHandler as CallHandler);

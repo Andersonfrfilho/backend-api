@@ -2,6 +2,7 @@ import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 
 import { AppErrorFactory } from '@modules/error/application/app.error.factory';
+import { MethodNotImplementedErrorCode } from '@modules/error/domain/error-codes';
 
 @Injectable()
 export class RabbitBindingsService implements OnModuleInit {
@@ -32,6 +33,7 @@ export class RabbitBindingsService implements OnModuleInit {
     }
     throw AppErrorFactory.businessLogic({
       message: 'RabbitMQ channel not available after retries',
+      code: MethodNotImplementedErrorCode.METHOD_NOT_IMPLEMENTED,
     });
   }
 

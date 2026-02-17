@@ -1,52 +1,172 @@
-# 🔐 Auth Module
+# Authentication Module
 
-Módulo de autenticação responsável por gerenciar login de sessão de usuários e geração de tokens de acesso.
+This module provides authentication services with support for multiple providers (Keycloak, Auth0, etc.).
 
----
+## Features
 
-## 📋 Visão Geral
+- **Provider Abstraction**: Unified interface for different authentication providers
+- **Token Management**: Automatic token fetching, caching, and refresh
+- **HTTP Interceptors**: Automatic token injection in HTTP requests
+- **401 Handling**: Automatic token refresh on authentication failures
 
-O módulo Auth implementa **Clean Architecture** com separação clara de responsabilidades em 3 camadas:
+## Architecture
 
-- **Domain**: Contratos puros sem dependências externas
-- **Application**: Lógica de negócio (Use Cases)
-- **Infrastructure**: Implementações e orquestração
+```
+auth/
+├── domain/
+│   ├── auth.interface.ts      # Core interfaces
+│   └── auth.token.ts          # Dependency injection tokens
+├── application/
+│   ├── auth.provider.ts       # Main auth provider (delegates to implementations)
+│   └── auth.http.interceptor.ts # HTTP interceptor for automatic auth
+├── infrastructure/
+│   └── providers/
+│       └── keycloak/          # Keycloak implementation
+└── auth.module.ts             # Main module
+```
 
----
+## Usage
 
-## 🏗️ Arquitetura
-
-### Domain Layer (`domain/`)
-
-Define os contratos puros do módulo:
+### Basic Usage
 
 ```typescript
-// auth.login-session.interface.ts
-export interface AuthLoginSessionUseCaseInterface {
-  execute(params: AuthLoginSessionUseCaseParams): Promise<AuthLoginSessionUseCaseResponse>;
-}
+import { Injectable } from '@nestjs/common';
+import { AuthProvider } from '@modules/auth/application/auth.provider';
 
-export interface AuthLoginSessionServiceInterface {
-  execute(params: AuthLoginSessionServiceParams): Promise<AuthLoginSessionServiceResponse>;
+@Injectable()
+export class MyService {
+  constructor(private readonly authProvider: AuthProvider) {}
+
+  async makeAuthenticatedRequest() {
+    const token = await this.authProvider.getAccessToken();
+
+    // Use token in your requests
+    const response = await this.httpProvider.get('/api/protected', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  }
 }
 ```
 
-**Responsabilidades**:
+### With HTTP Interceptor (Recommended)
 
-- Define interfaces do UseCase e Service
-- Garante contrato claro entre camadas
-- Sem dependências de frameworks
+When you import the `AuthModule`, the HTTP interceptor is automatically configured:
 
-**Arquivos**:
+```typescript
+import { Module } from '@nestjs/common';
+import { AuthModule } from '@modules/auth/auth.module';
 
-- `auth.login-session.interface.ts` - Interfaces do caso de uso
-- `exceptions.ts` - Exceções de domínio
+@Module({
+  imports: [AuthModule],
+  providers: [MyService],
+})
+export class MyModule {}
+```
 
----
+Now all HTTP requests will automatically include the Bearer token:
 
-### Application Layer (`application/`)
+```typescript
+@Injectable()
+export class MyService {
+  constructor(private readonly httpProvider: HttpProvider) {}
 
-Contém a lógica de negócio pura e Use Cases:
+  async makeRequest() {
+    // Token is automatically added by interceptor
+    const response = await this.httpProvider.get('/api/protected');
+    return response.data;
+  }
+}
+```
+
+## Auth Provider Interface
+
+### `getAccessToken()`
+
+Gets a valid access token, using cache when possible.
+
+```typescript
+const token = await authProvider.getAccessToken();
+```
+
+### `refreshToken(refreshToken)`
+
+Refreshes an access token using a refresh token.
+
+```typescript
+const newTokens = await authProvider.refreshToken(refreshToken);
+```
+
+### `validateToken(token)`
+
+Validates if a token is still active.
+
+```typescript
+const isValid = await authProvider.validateToken(token);
+```
+
+### `getUserInfo(token)`
+
+Gets user information from a valid token.
+
+```typescript
+const userInfo = await authProvider.getUserInfo(token);
+```
+
+### `clearTokenCache()`
+
+Clears the cached token, forcing a new token request.
+
+```typescript
+authProvider.clearTokenCache();
+```
+
+## Supported Providers
+
+### Keycloak
+
+Environment variables for Keycloak:
+
+```env
+KEYCLOAK_BASE_URL=http://localhost:8080
+KEYCLOAK_REALM=master
+KEYCLOAK_CLIENT_ID=backend-api
+KEYCLOAK_CLIENT_SECRET=backend-api-secret
+```
+
+## Adding New Providers
+
+1. Create a new provider class implementing `AuthProviderInterface`
+2. Create a module for the provider
+3. Update the main `AuthModule` to import the new provider module
+4. Add environment variables and configuration
+
+Example:
+
+```typescript
+@Injectable()
+export class MyAuthProvider implements AuthProviderInterface {
+  // Implement interface methods
+}
+```
+
+## Configuration
+
+The auth module uses environment variables for configuration. See the provider-specific documentation for required variables.
+
+## Error Handling
+
+- **Token Request Failures**: Logged as warnings, requests continue without auth
+- **Token Refresh Failures**: Original 401 error is thrown
+- **Network Errors**: Handled by the underlying HTTP provider
+
+## Security Considerations
+
+- Tokens are cached in memory only
+- Tokens expire 60 seconds before actual expiration to prevent race conditions
+- Refresh tokens are handled securely
+- Failed authentication attempts don't expose sensitive information
 
 ```typescript
 // use-cases/auth-login-session.use-case.ts

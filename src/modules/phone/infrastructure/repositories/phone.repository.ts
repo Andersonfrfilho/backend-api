@@ -2,7 +2,7 @@
 import type {
   CreatePhoneParams,
   PhoneRepositoryInterface,
-} from '@modules/phone/domain/repositories/phone.interface';
+} from '@modules/phone/domain/phone.interface';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -19,7 +19,7 @@ export class PhoneRepository implements PhoneRepositoryInterface {
 
   async create(phone: CreatePhoneParams): Promise<Phone> {
     const newPhone = this.typeormRepo.create(phone);
-    return this.typeormRepo.save(newPhone);
+    return this.typeormRepo.save(newPhone) as Promise<Phone>;
   }
 
   async findById(id: string): Promise<Phone | null> {

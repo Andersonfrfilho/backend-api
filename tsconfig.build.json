@@ -5,10 +5,6 @@
     "test", 
     "dist", 
     "**/*.spec.ts",
-    "**/*.test.ts",
-    "**/*.mock.ts",
-    "**/*.d.ts",
-    "logs",
-    "**/migrations/**"
+    "**/*.test.ts"
   ]
 }

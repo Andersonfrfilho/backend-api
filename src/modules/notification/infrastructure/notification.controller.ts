@@ -21,7 +21,7 @@ import {
   ApiQuery,
 } from '@nestjs/swagger';
 
-import type { NotificationServiceInterface } from '@modules/notification/infrastructure/notification.service';
+import type { NotificationServiceInterface } from '@modules/notification/shared/types';
 import { NOTIFICATION_SERVICE_PROVIDE } from '@modules/notification/infrastructure/notification.token';
 import {
   CreateNotificationRequestDto,

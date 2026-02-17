@@ -29,10 +29,15 @@ export enum MethodNotImplementedErrorCode {
   METHOD_NOT_IMPLEMENTED = 'METHOD_NOT_IMPLEMENTED',
 }
 
+export enum CacheErrorCode {
+  CACHE_OPERATION_FAILED = 'CACHE_OPERATION_FAILED',
+}
+
 export type ErrorCode =
   | UserErrorCode
   | AuthErrorCode
   | RateLimitErrorCode
   | ConfigErrorCode
   | MethodNotImplementedErrorCode
+  | CacheErrorCode
   | string;

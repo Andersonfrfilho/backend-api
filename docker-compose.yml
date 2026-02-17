@@ -72,44 +72,85 @@ services:
     volumes:
       - queue_rabbitmq_data:/var/lib/rabbitmq
 
-  ### SONAR_QUBE SERVICES (Optional for worker)
-  # sonarqube:
-  #   image: sonarqube:community
-  #   container_name: ${PROJECT_NAME}_sonarqube
-  #   depends_on:
-  #     - sonar-db
-  #   environment:
-  #     SONAR_JDBC_URL: jdbc:postgresql://sonar-db:5432/sonar
-  #     SONAR_JDBC_USERNAME: sonar
-  #     SONAR_JDBC_PASSWORD: sonar
-  #   ports:
-  #     - '9001:9000'
-  #   volumes:
-  #     - sonarqube_data:/opt/sonarqube/data
-  #     - sonarqube_extensions:/opt/sonarqube/extensions
-  #     - sonarqube_logs:/opt/sonarqube/logs
-  #     - sonarqube_temp:/opt/sonarqube/temp
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0
+    container_name: ${PROJECT_NAME}_keycloak
+    environment:
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN_USER:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://database_keycloak:5432/keycloak
+      KC_DB_USERNAME: ${KEYCLOAK_DB_USER:-keycloak}
+      KC_DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD:-keycloak}
+      KC_HOSTNAME_STRICT: false
+      KC_HOSTNAME_STRICT_HTTPS: false
+      KC_HTTP_ENABLED: true
+      KC_IMPORT_REALM: /opt/keycloak/data/import/backend-realm.json
+    ports:
+      - '${KEYCLOAK_PORT:-8080}:8080'
+    depends_on:
+      database_keycloak:
+        condition: service_healthy
+    command: start-dev
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+      - ./keycloak-config/backend-realm.json:/opt/keycloak/data/import/backend-realm.json
 
-  # sonar-db:
-  #   image: postgres:13
-  #   container_name: ${PROJECT_NAME}_database_sonarqube
-  #   environment:
-  #     POSTGRES_USER: sonar
-  #     POSTGRES_PASSWORD: sonar
-  #     POSTGRES_DB: sonar
-  #   volumes:
-  #     - sonar_database:/var/lib/postgresql
-  #     - sonar_database_postgres_data:/var/lib/postgresql/data
+  database_keycloak:
+    image: postgres:18
+    container_name: ${PROJECT_NAME}_database_keycloak
+    environment:
+      POSTGRES_USER: ${KEYCLOAK_DB_USER:-keycloak}
+      POSTGRES_PASSWORD: ${KEYCLOAK_DB_PASSWORD:-keycloak}
+      POSTGRES_DB: keycloak
+    volumes:
+      - database_keycloak_data:/var/lib/postgresql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${KEYCLOAK_DB_USER:-keycloak} -d keycloak']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  ### SONAR_QUBE SERVICES (Optional for worker)
+  sonarqube:
+    image: sonarqube:community
+    container_name: ${PROJECT_NAME}_sonarqube
+    depends_on:
+      - sonar-db
+    environment:
+      SONAR_JDBC_URL: jdbc:postgresql://sonar-db:5432/sonar
+      SONAR_JDBC_USERNAME: sonar
+      SONAR_JDBC_PASSWORD: sonar
+    ports:
+      - '9001:9000'
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+      - sonarqube_temp:/opt/sonarqube/temp
+
+  sonar-db:
+    image: postgres:13
+    container_name: ${PROJECT_NAME}_database_sonarqube
+    environment:
+      POSTGRES_USER: sonar
+      POSTGRES_PASSWORD: sonar
+      POSTGRES_DB: sonar
+    volumes:
+      - sonar_database:/var/lib/postgresql
+      - sonar_database_postgres_data:/var/lib/postgresql/data
 
 volumes:
-  # sonarqube_data:
-  # sonarqube_extensions:
-  # sonarqube_logs:
-  # sonarqube_temp:
-  # sonar_database:
-  # sonar_database_postgres_data:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:
+  sonarqube_temp:
+  sonar_database:
+  sonar_database_postgres_data:
   database_postgres_data:
   database_mongo_data:
   database_mongo_config:
   cache_redis_data:
   queue_rabbitmq_data:
+  keycloak_data:
+  database_keycloak_data:

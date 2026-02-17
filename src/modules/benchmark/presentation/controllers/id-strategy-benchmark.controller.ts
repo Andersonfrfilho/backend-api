@@ -264,7 +264,6 @@ export class IDStrategyBenchmarkController {
     const recommendations: string[] = [];
 
     // Análise de INSERT
-    // @ts-expect-error - TypeScript cannot infer the correct types for Object.entries reduce
     const insertWinner = Object.entries(
       results.insert as Record<string, { recordsPerSecond: number }>,
     ).reduce(
@@ -280,7 +279,6 @@ export class IDStrategyBenchmarkController {
     );
 
     // Análise de SELECT
-    // @ts-expect-error - TypeScript cannot infer the correct types for Object.entries reduce
     const selectWinner = Object.entries(
       results.select as Record<string, { queriesPerSecond: number }>,
     ).reduce(
@@ -296,7 +294,6 @@ export class IDStrategyBenchmarkController {
     );
 
     // Análise de DISK
-    // @ts-expect-error - TypeScript cannot infer the correct types for Object.entries reduce
     const diskWinner = Object.entries(
       results.diskUsage as Record<string, { totalSize: string; sizePerRecord: string }>,
     ).reduce(

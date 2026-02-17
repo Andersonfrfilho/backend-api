@@ -30,7 +30,7 @@ setup-env:
 # ========================
 
 app: setup-env
-	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) up -d app
+	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) up -d api
 
 database_postgres: setup-env
 	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) up -d database_postgres
@@ -66,6 +66,23 @@ queue_rabbitmq-down: setup-env
 queue_rabbitmq-stop: setup-env
 	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) stop queue_rabbitmq
 
+keycloak: setup-env
+	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) up -d keycloak database_keycloak
+
+keycloak-down: setup-env
+	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) down keycloak database_keycloak
+
+keycloak-stop: setup-env
+	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) stop keycloak database_keycloak
+
+keycloak-logs: setup-env
+	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) logs -f keycloak
+
+keycloak-admin: setup-env
+	@echo "🔗 Keycloak Admin Console: http://localhost:$(KEYCLOAK_PORT)"
+	@echo "👤 Username: $(KEYCLOAK_ADMIN_USER)"
+	@echo "🔑 Password: $(KEYCLOAK_ADMIN_PASSWORD)"
+
 sonar-up: setup-env
 	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) up -d sonarqube sonar-db
 
@@ -79,7 +96,7 @@ stop: setup-env
 	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) stop
 
 down: setup-env
-	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) down $(SERVICE_NAME)  # Use SERVICE_NAME se definido, ou remova se não necessário
+	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) down api database_postgres database_mongo cache_redis queue_rabbitmq keycloak database_keycloak
 
 force-remove: setup-env
 	docker rm -f $(shell docker ps -a -q --filter "name=$(SERVICE_NAME)")
@@ -108,12 +125,12 @@ clean-all: setup-env
 	-docker rmi -f $(shell docker images --filter=reference='$(PROJECT_NAME)*' -q)
 
 rebuild-app: setup-env
-	@echo "🔄 Rebuildando a imagem do serviço 'app' após instalação de dependências..."
-	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) build app
-	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) up -d --force-recreate app
+	@echo "🔄 Rebuildando a imagem do serviço 'api' após instalação de dependências..."
+	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) build api
+	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) up -d --force-recreate api
 
 all: setup-env
-	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) up -d  # Inicia todos os serviços, incluindo app e sonar
+	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) up -d --remove-orphans  # Inicia todos os serviços, incluindo api e sonar
 	@echo "📦 Rodando migrations..."
 	docker exec -it $(PROJECT_NAME)_api npm run migration:run
 	@echo "✅ Projeto iniciado com sucesso!"
@@ -139,9 +156,9 @@ test-e2e-docker: setup-env
 
 setup: setup-env
 	@echo "🚀 Iniciando setup completo do projeto..."
-	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) up -d
+	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) up -d --remove-orphans
 	@echo "📦 Rodando migrations..."
 	docker exec -it $(PROJECT_NAME)_api npm run migration:run
 	@echo "✅ Setup completo! Projeto pronto para usar."
 
-.PHONY: all rebuild-app setup-env clean-all clean-images force-remove down stop app sonar-up sonar-down sonar-scan clean-safe database_postgres database_mongo queue_rabbitmq setup setup-e2e-databases test-e2e-ready test-e2e-docker 
+.PHONY: all rebuild-app setup-env clean-all clean-images force-remove down stop app sonar-up sonar-down sonar-scan clean-safe database_postgres database_mongo queue_rabbitmq keycloak keycloak-down keycloak-stop keycloak-logs keycloak-admin setup setup-e2e-databases test-e2e-ready test-e2e-docker 

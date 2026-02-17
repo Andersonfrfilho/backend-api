@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import Redis from 'ioredis';
 
 import { AppErrorFactory } from '@modules/error/application/app.error.factory';
+import { CacheErrorCode } from '@modules/error/domain/error-codes';
 
 import { CacheProviderInterface } from './cache.interface';
 import { CACHE_REDIS_CONNECTION } from './cache.token';
@@ -17,6 +18,7 @@ export class CacheProvider implements CacheProviderInterface {
     } catch (error) {
       throw AppErrorFactory.businessLogic({
         message: `Error getting cache for key ${key}: ${error.message}`,
+        code: CacheErrorCode.CACHE_OPERATION_FAILED,
       });
     }
   }
@@ -32,6 +34,7 @@ export class CacheProvider implements CacheProviderInterface {
     } catch (error) {
       throw AppErrorFactory.businessLogic({
         message: `Error setting cache for key ${key}: ${error.message}`,
+        code: CacheErrorCode.CACHE_OPERATION_FAILED,
       });
     }
   }
@@ -46,6 +49,7 @@ export class CacheProvider implements CacheProviderInterface {
     } catch (error) {
       throw AppErrorFactory.businessLogic({
         message: `Error deleting cache for key ${key}: ${error.message}`,
+        code: CacheErrorCode.CACHE_OPERATION_FAILED,
       });
     }
   }
@@ -69,6 +73,7 @@ export class CacheProvider implements CacheProviderInterface {
     } catch (error) {
       throw AppErrorFactory.businessLogic({
         message: `Error invalidating cache by pattern ${pattern}: ${error.message}`,
+        code: CacheErrorCode.CACHE_OPERATION_FAILED,
       });
     }
   }
@@ -79,6 +84,7 @@ export class CacheProvider implements CacheProviderInterface {
     } catch (error) {
       throw AppErrorFactory.businessLogic({
         message: `Error clearing cache: ${error.message}`,
+        code: CacheErrorCode.CACHE_OPERATION_FAILED,
       });
     }
   }
@@ -95,6 +101,7 @@ export class CacheProvider implements CacheProviderInterface {
     } catch (error) {
       throw AppErrorFactory.businessLogic({
         message: `Error setting encrypted cache for key ${key}: ${error.message}`,
+        code: CacheErrorCode.CACHE_OPERATION_FAILED,
       });
     }
   }
@@ -110,6 +117,7 @@ export class CacheProvider implements CacheProviderInterface {
     } catch (error) {
       throw AppErrorFactory.businessLogic({
         message: `Error getting decrypted cache for key ${key}: ${error.message}`,
+        code: CacheErrorCode.CACHE_OPERATION_FAILED,
       });
     }
   }

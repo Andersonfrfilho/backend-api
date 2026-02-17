@@ -55,4 +55,17 @@ export default Joi.object({
   DATABASE_MONGO_TEST_E2E_TIMEZONE: Joi.string().default('Z'),
   DATABASE_MONGO_TEST_E2E_LOGGING: Joi.boolean().default(true),
   DATABASE_MONGO_TEST_E2E_SYNCHRONIZE: Joi.boolean().default(false),
+
+  // ============================================
+  // Keycloak Configuration
+  // ============================================
+  KEYCLOAK_PORT: Joi.number().default(8081),
+  KEYCLOAK_ADMIN_USER: Joi.string().default('admin'),
+  KEYCLOAK_ADMIN_PASSWORD: Joi.string().default('admin'),
+  KEYCLOAK_DB_USER: Joi.string().default('keycloak'),
+  KEYCLOAK_DB_PASSWORD: Joi.string().default('keycloak'),
+  KEYCLOAK_REALM: Joi.string().default('BACKEND'),
+  KEYCLOAK_CLIENT_ID: Joi.string().default('backend-api'),
+  KEYCLOAK_CLIENT_SECRET: Joi.string().default('backend-api-secret'),
+  KEYCLOAK_BASE_URL: Joi.string().default('http://localhost:8081'),
 });
