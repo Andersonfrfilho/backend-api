@@ -1,14 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Observable } from 'rxjs';
 
-import { AuthProvider } from '@modules/auth/application/auth.provider';
-import { LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/log.token';
+import type { AuthProviderInterface } from '@modules/auth/domain/auth.interface';
 import type {
   HttpProviderInterface,
   HttpRequestConfig,
   HttpResponse,
 } from '@modules/shared/infrastructure/providers/http/http.interface';
 import { HTTP_PROVIDER } from '@modules/shared/infrastructure/providers/http/http.token';
+import { LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/log.token';
 
 /**
  * Authenticated HTTP provider that automatically adds tokens to requests
@@ -18,7 +18,7 @@ export class AuthenticatedHttpProvider implements HttpProviderInterface {
   constructor(
     @Inject(HTTP_PROVIDER)
     private readonly httpProvider: HttpProviderInterface,
-    private readonly authProvider: AuthProvider,
+    private readonly authProvider: AuthProviderInterface,
     @Inject(LOG_PROVIDER) private readonly loggerProvider?: any,
   ) {}
 
@@ -27,7 +27,10 @@ export class AuthenticatedHttpProvider implements HttpProviderInterface {
     config?: Omit<HttpRequestConfig, 'url' | 'method'>,
   ): Promise<HttpResponse<T>> {
     try {
-      this.loggerProvider?.info?.({ message: 'AuthenticatedHttpProvider.get - acquiring token', params: { url } });
+      this.loggerProvider?.info?.({
+        message: 'AuthenticatedHttpProvider.get - acquiring token',
+        params: { url },
+      });
     } catch (e) {
       // ignore logging errors
     }
@@ -35,7 +38,10 @@ export class AuthenticatedHttpProvider implements HttpProviderInterface {
     const token = await this.authProvider.getAccessToken();
 
     try {
-      this.loggerProvider?.info?.({ message: 'AuthenticatedHttpProvider.get - token acquired', params: { url } });
+      this.loggerProvider?.info?.({
+        message: 'AuthenticatedHttpProvider.get - token acquired',
+        params: { url },
+      });
     } catch (e) {
       // ignore logging errors
     }
@@ -50,12 +56,18 @@ export class AuthenticatedHttpProvider implements HttpProviderInterface {
     config?: Omit<HttpRequestConfig, 'url' | 'method' | 'data'>,
   ): Promise<HttpResponse<T>> {
     try {
-      this.loggerProvider?.info?.({ message: 'AuthenticatedHttpProvider.post - acquiring token', params: { url } });
+      this.loggerProvider?.info?.({
+        message: 'AuthenticatedHttpProvider.post - acquiring token',
+        params: { url },
+      });
     } catch (e) {}
 
     const token = await this.authProvider.getAccessToken();
     try {
-      this.loggerProvider?.info?.({ message: 'AuthenticatedHttpProvider.post - token acquired', params: { url } });
+      this.loggerProvider?.info?.({
+        message: 'AuthenticatedHttpProvider.post - token acquired',
+        params: { url },
+      });
     } catch (e) {}
 
     const authConfig = this.addAuthHeader(config, token);
@@ -68,12 +80,18 @@ export class AuthenticatedHttpProvider implements HttpProviderInterface {
     config?: Omit<HttpRequestConfig, 'url' | 'method' | 'data'>,
   ): Promise<HttpResponse<T>> {
     try {
-      this.loggerProvider?.info?.({ message: 'AuthenticatedHttpProvider.put - acquiring token', params: { url } });
+      this.loggerProvider?.info?.({
+        message: 'AuthenticatedHttpProvider.put - acquiring token',
+        params: { url },
+      });
     } catch (e) {}
 
     const token = await this.authProvider.getAccessToken();
     try {
-      this.loggerProvider?.info?.({ message: 'AuthenticatedHttpProvider.put - token acquired', params: { url } });
+      this.loggerProvider?.info?.({
+        message: 'AuthenticatedHttpProvider.put - token acquired',
+        params: { url },
+      });
     } catch (e) {}
 
     const authConfig = this.addAuthHeader(config, token);
@@ -86,12 +104,18 @@ export class AuthenticatedHttpProvider implements HttpProviderInterface {
     config?: Omit<HttpRequestConfig, 'url' | 'method' | 'data'>,
   ): Promise<HttpResponse<T>> {
     try {
-      this.loggerProvider?.info?.({ message: 'AuthenticatedHttpProvider.patch - acquiring token', params: { url } });
+      this.loggerProvider?.info?.({
+        message: 'AuthenticatedHttpProvider.patch - acquiring token',
+        params: { url },
+      });
     } catch (e) {}
 
     const token = await this.authProvider.getAccessToken();
     try {
-      this.loggerProvider?.info?.({ message: 'AuthenticatedHttpProvider.patch - token acquired', params: { url } });
+      this.loggerProvider?.info?.({
+        message: 'AuthenticatedHttpProvider.patch - token acquired',
+        params: { url },
+      });
     } catch (e) {}
 
     const authConfig = this.addAuthHeader(config, token);
@@ -103,12 +127,18 @@ export class AuthenticatedHttpProvider implements HttpProviderInterface {
     config?: Omit<HttpRequestConfig, 'url' | 'method'>,
   ): Promise<HttpResponse<T>> {
     try {
-      this.loggerProvider?.info?.({ message: 'AuthenticatedHttpProvider.delete - acquiring token', params: { url } });
+      this.loggerProvider?.info?.({
+        message: 'AuthenticatedHttpProvider.delete - acquiring token',
+        params: { url },
+      });
     } catch (e) {}
 
     const token = await this.authProvider.getAccessToken();
     try {
-      this.loggerProvider?.info?.({ message: 'AuthenticatedHttpProvider.delete - token acquired', params: { url } });
+      this.loggerProvider?.info?.({
+        message: 'AuthenticatedHttpProvider.delete - token acquired',
+        params: { url },
+      });
     } catch (e) {}
 
     const authConfig = this.addAuthHeader(config, token);
@@ -120,12 +150,18 @@ export class AuthenticatedHttpProvider implements HttpProviderInterface {
     config?: Omit<HttpRequestConfig, 'url' | 'method'>,
   ): Promise<HttpResponse<T>> {
     try {
-      this.loggerProvider?.info?.({ message: 'AuthenticatedHttpProvider.head - acquiring token', params: { url } });
+      this.loggerProvider?.info?.({
+        message: 'AuthenticatedHttpProvider.head - acquiring token',
+        params: { url },
+      });
     } catch (e) {}
 
     const token = await this.authProvider.getAccessToken();
     try {
-      this.loggerProvider?.info?.({ message: 'AuthenticatedHttpProvider.head - token acquired', params: { url } });
+      this.loggerProvider?.info?.({
+        message: 'AuthenticatedHttpProvider.head - token acquired',
+        params: { url },
+      });
     } catch (e) {}
 
     const authConfig = this.addAuthHeader(config, token);
@@ -137,12 +173,18 @@ export class AuthenticatedHttpProvider implements HttpProviderInterface {
     config?: Omit<HttpRequestConfig, 'url' | 'method'>,
   ): Promise<HttpResponse<T>> {
     try {
-      this.loggerProvider?.info?.({ message: 'AuthenticatedHttpProvider.options - acquiring token', params: { url } });
+      this.loggerProvider?.info?.({
+        message: 'AuthenticatedHttpProvider.options - acquiring token',
+        params: { url },
+      });
     } catch (e) {}
 
     const token = await this.authProvider.getAccessToken();
     try {
-      this.loggerProvider?.info?.({ message: 'AuthenticatedHttpProvider.options - token acquired', params: { url } });
+      this.loggerProvider?.info?.({
+        message: 'AuthenticatedHttpProvider.options - token acquired',
+        params: { url },
+      });
     } catch (e) {}
 
     const authConfig = this.addAuthHeader(config, token);
@@ -151,12 +193,18 @@ export class AuthenticatedHttpProvider implements HttpProviderInterface {
 
   async request<T = any>(config: HttpRequestConfig): Promise<HttpResponse<T>> {
     try {
-      this.loggerProvider?.info?.({ message: 'AuthenticatedHttpProvider.request - acquiring token', params: { url: config.url } });
+      this.loggerProvider?.info?.({
+        message: 'AuthenticatedHttpProvider.request - acquiring token',
+        params: { url: config.url },
+      });
     } catch (e) {}
 
     const token = await this.authProvider.getAccessToken();
     try {
-      this.loggerProvider?.info?.({ message: 'AuthenticatedHttpProvider.request - token acquired', params: { url: config.url } });
+      this.loggerProvider?.info?.({
+        message: 'AuthenticatedHttpProvider.request - token acquired',
+        params: { url: config.url },
+      });
     } catch (e) {}
 
     const authConfig = this.addAuthHeaderToRequest(config, token);

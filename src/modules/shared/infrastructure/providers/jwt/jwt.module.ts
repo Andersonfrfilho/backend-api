@@ -11,15 +11,8 @@ import { JWT_PROVIDER } from './jwt.token';
       provide: JWT_PROVIDER,
       useClass: JwtProvider,
     },
-    {
-      provide: 'JwtProvider',
-      useClass: JwtProvider,
-    },
-    {
-      provide: JwtProvider,
-      useClass: JwtProvider,
-    },
+    JwtProvider,
   ],
-  exports: [JWT_PROVIDER, 'JwtProvider', JwtProvider],
+  exports: [JWT_PROVIDER, JwtProvider],
 })
 export class SharedInfrastructureProviderJwtModule {}

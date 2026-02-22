@@ -7,6 +7,7 @@ import { LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/log.t
 
 import { RequestContextService } from '../context/request-context.service';
 import { SharedInfrastructureProviderHttpModule } from '../providers/http/http.module';
+import { HTTP_PROVIDER } from '../providers/http/http.token';
 
 import { KeycloakClient } from './keycloak.client';
 import { KeycloakHttpInterceptor } from './keycloak.http.interceptor';
@@ -49,7 +50,7 @@ export const createKeycloakConfig = (configService: ConfigService): KeycloakConf
         loggerProvider: any,
         requestContext: any,
       ) => new KeycloakClient(config, httpProvider, loggerProvider, requestContext),
-      inject: [KEYCLOAK_CONFIG, 'HttpProvider', LOG_PROVIDER, RequestContextService],
+      inject: [KEYCLOAK_CONFIG, HTTP_PROVIDER, LOG_PROVIDER, RequestContextService],
     },
     {
       provide: KeycloakHttpInterceptor,

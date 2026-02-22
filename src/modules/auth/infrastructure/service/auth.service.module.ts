@@ -6,7 +6,10 @@ import { AuthLoginSessionService } from '@modules/auth/infrastructure/service/au
 import { SharedInfrastructureProviderLogModule } from '@modules/shared/infrastructure/providers/log/log.module';
 import { MockApiClientService } from '@modules/auth/application/mock-api-client.service';
 import { AuthenticatedHttpProviderModule } from '@modules/auth/infrastructure/providers/authenticated-http/authenticated.http.provider.module';
+import { AuthenticatedHttpProvider } from '@modules/auth/infrastructure/providers/authenticated-http/authenticated.http.provider';
+import { AUTHENTICATED_HTTP_PROVIDER } from '@modules/auth/infrastructure/providers/authenticated-http/authenticated.http.provider.token';
 import { MockApiProvider } from '@modules/shared/infrastructure/providers/mock-api/mock-api.provider';
+import { AUTHENTICATED_MOCK_API_PROVIDER } from '@modules/auth/infrastructure/providers/mock-api/authenticated.mock-api.provider.token';
 
 @Module({
   imports: [
@@ -20,16 +23,17 @@ import { MockApiProvider } from '@modules/shared/infrastructure/providers/mock-a
       useClass: AuthLoginSessionService,
     },
     {
-      provide: 'AuthenticatedMockApiProvider',
-      useFactory: (authenticatedHttp: any) => new MockApiProvider(authenticatedHttp),
-      inject: ['AuthenticatedHttpProvider'],
+      provide: AUTHENTICATED_MOCK_API_PROVIDER,
+      useFactory: (authenticatedHttp: AuthenticatedHttpProvider) =>
+        new MockApiProvider(authenticatedHttp),
+      inject: [AUTHENTICATED_HTTP_PROVIDER],
     },
     MockApiClientService,
   ],
   exports: [
     AUTH_LOGIN_SESSION_SERVICE_PROVIDE,
     MockApiClientService,
-    'AuthenticatedMockApiProvider',
+    AUTHENTICATED_MOCK_API_PROVIDER,
   ],
 })
 export class AuthInfrastructureServiceModule {}

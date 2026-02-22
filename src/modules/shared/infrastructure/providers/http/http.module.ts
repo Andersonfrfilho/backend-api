@@ -11,11 +11,8 @@ import { SharedInfrastructureProviderHttpImplementationModule } from './implemen
       provide: HTTP_PROVIDER,
       useClass: HttpProvider,
     },
-    {
-      provide: 'HttpProvider',
-      useClass: HttpProvider,
-    },
+    HttpProvider,
   ],
-  exports: [HTTP_PROVIDER, 'HttpProvider'],
+  exports: [HTTP_PROVIDER, HttpProvider],
 })
 export class SharedInfrastructureProviderHttpModule {}

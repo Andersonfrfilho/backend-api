@@ -17,6 +17,22 @@ export class HttpProvider implements HttpProviderInterface {
     private readonly axiosHttpProvider: AxiosHttpProviderInterface,
   ) {}
 
+  /**
+   * Expose underlying axios instance when available from the axios provider implementation.
+   * This is intentionally typed as unknown/any to avoid leaking implementation details.
+   */
+  getAxiosInstance(): any | undefined {
+    try {
+      // Some implementations expose `axiosInstance` or `instance`.
+      // Use brute-force access guarded in try/catch to avoid runtime errors.
+
+      const provider: any = this.axiosHttpProvider as any;
+      return provider?.axiosInstance ?? provider?.instance ?? undefined;
+    } catch (e) {
+      return undefined;
+    }
+  }
+
   async get<T>(url: string, config?: HttpRequestConfig): Promise<HttpResponse<T>> {
     return this.axiosHttpProvider.get<T>(url, config);
   }

@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
+import { AUTHENTICATED_MOCK_API_PROVIDER } from '@modules/auth/infrastructure/providers/mock-api/authenticated.mock-api.provider.token';
 import { MockApiProvider } from '@modules/shared/infrastructure/providers/mock-api/mock-api.provider';
 
 /**
@@ -8,7 +9,7 @@ import { MockApiProvider } from '@modules/shared/infrastructure/providers/mock-a
 @Injectable()
 export class MockApiClientService {
   constructor(
-    @Inject('AuthenticatedMockApiProvider')
+    @Inject(AUTHENTICATED_MOCK_API_PROVIDER)
     private readonly mockApiProvider: MockApiProvider,
   ) {}
 

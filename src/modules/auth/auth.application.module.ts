@@ -1,10 +1,10 @@
 import { Module, forwardRef } from '@nestjs/common';
 
+import { SharedInfrastructureProviderLogModule } from '@modules/shared/infrastructure/providers/log/log.module';
+
 import { AuthProvider } from './application/auth.provider';
-import { AUTH_PROVIDER_TOKEN } from './domain/auth.token';
 import { AuthInfrastructureModule } from './infrastructure/auth.infrastructure.module';
 import { KeycloakAuthProviderModule } from './infrastructure/providers/keycloak/keycloak.auth.provider.module';
-import { SharedInfrastructureProviderLogModule } from '@modules/shared/infrastructure/providers/log/log.module';
 
 @Module({
   imports: [
@@ -12,16 +12,7 @@ import { SharedInfrastructureProviderLogModule } from '@modules/shared/infrastru
     KeycloakAuthProviderModule,
     SharedInfrastructureProviderLogModule,
   ],
-  providers: [
-    {
-      provide: 'AuthProvider',
-      useClass: AuthProvider,
-    },
-    {
-      provide: AuthProvider,
-      useClass: AuthProvider,
-    },
-  ],
-  exports: ['AuthProvider', AuthProvider],
+  providers: [AuthProvider],
+  exports: [AuthProvider, KeycloakAuthProviderModule],
 })
 export class AuthApplicationModule {}

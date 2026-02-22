@@ -1,7 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import type { AuthProviderInterface, AuthTokenResponse, UserInfo } from '../domain/auth.interface';
 import { LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/log.token';
+
+import type { AuthProviderInterface, AuthTokenResponse, UserInfo } from '../domain/auth.interface';
 import { AUTH_PROVIDER_TOKEN } from '../domain/auth.token';
 
 /**
@@ -20,11 +21,23 @@ export class AuthProvider implements AuthProviderInterface {
    */
   async getAccessToken(): Promise<string> {
     try {
-      // Log delegation for visibility
-      (this as any).loggerProvider?.info?.({
+      // Log delegation for visibility. usamos o logger injetado quando disponível.
+      this.loggerProvider?.info?.({
         message: 'AuthProvider.getAccessToken - delegating to underlying provider',
       });
-    } catch (e) {}
+    } catch (e) {
+      // Se ocorrer erro durante o log, tentamos registrar o erro (fallback para console se necessário)
+      try {
+        this.loggerProvider?.error?.({
+          message: 'AuthProvider.getAccessToken - error while logging delegation',
+          error: e?.message ?? String(e),
+        });
+      } catch {
+        console.error('AuthProvider.getAccessToken - logging failed:', e);
+      }
+    }
+
+    // Delega para o provedor subjacente que implementa a lógica real de obtenção de token
     return this.authProvider.getAccessToken();
   }
 
