@@ -14,7 +14,7 @@ services:
     env_file:
       - .env
     ports:
-      - '${PORT_WORKER:-3334}:${PORT_WORKER:-3334}'
+      - '${PORT}:${PORT}'
     volumes:
       - ./src:/app/src
       - ./dist:/app/dist
@@ -87,11 +87,12 @@ services:
       KC_HTTP_ENABLED: true
       KC_IMPORT_REALM: /opt/keycloak/data/import/backend-realm.json
     ports:
-      - '${KEYCLOAK_PORT:-8080}:8080'
+      - '${KEYCLOAK_PORT}:8080'
     depends_on:
       database_keycloak:
         condition: service_healthy
-    command: start-dev
+    # start Keycloak in dev mode and import realms placed under /opt/keycloak/data/import
+    command: ['start-dev', '--import-realm']
     volumes:
       - keycloak_data:/opt/keycloak/data
       - ./keycloak-config/backend-realm.json:/opt/keycloak/data/import/backend-realm.json

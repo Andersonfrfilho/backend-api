@@ -1,6 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
+import { SharedInfrastructureContextModule } from '@modules/shared/infrastructure/context/context.module';
+import { SharedInfrastructureProviderLogModule } from '@modules/shared/infrastructure/providers/log/log.module';
+import { LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/log.token';
+
+import { RequestContextService } from '../context/request-context.service';
 import { SharedInfrastructureProviderHttpModule } from '../providers/http/http.module';
 
 import { KeycloakClient } from './keycloak.client';
@@ -25,7 +30,11 @@ export const createKeycloakConfig = (configService: ConfigService): KeycloakConf
  * Keycloak infrastructure module
  */
 @Module({
-  imports: [SharedInfrastructureProviderHttpModule],
+  imports: [
+    SharedInfrastructureProviderHttpModule,
+    SharedInfrastructureProviderLogModule,
+    SharedInfrastructureContextModule,
+  ],
   providers: [
     {
       provide: KEYCLOAK_CONFIG,
@@ -34,9 +43,13 @@ export const createKeycloakConfig = (configService: ConfigService): KeycloakConf
     },
     {
       provide: KeycloakClient,
-      useFactory: (config: KeycloakConfig, httpProvider: any) =>
-        new KeycloakClient(config, httpProvider),
-      inject: [KEYCLOAK_CONFIG, 'HttpProvider'],
+      useFactory: (
+        config: KeycloakConfig,
+        httpProvider: any,
+        loggerProvider: any,
+        requestContext: any,
+      ) => new KeycloakClient(config, httpProvider, loggerProvider, requestContext),
+      inject: [KEYCLOAK_CONFIG, 'HttpProvider', LOG_PROVIDER, RequestContextService],
     },
     {
       provide: KeycloakHttpInterceptor,

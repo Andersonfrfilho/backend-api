@@ -415,6 +415,14 @@ export class AxiosHttpProvider implements AxiosHttpProviderInterface {
    */
   setAuthToken(token: string, type: string = 'Bearer'): void {
     this.axiosInstance.defaults.headers.common['Authorization'] = `${type} ${token}`;
+    // Log only the initial part of the token to avoid exposing the full secret in logs
+    try {
+      const masked = AxiosHttpProvider.maskToken(token);
+
+      console.debug(`[AxiosHttpProvider] setAuthToken ${type} ${masked}`);
+    } catch (err) {
+      // swallow logging errors
+    }
   }
 
   /**
@@ -439,6 +447,14 @@ export class AxiosHttpProvider implements AxiosHttpProviderInterface {
     }
 
     return processedError;
+  }
+
+  /**
+   * Returns a masked version of the token showing only the initial characters.
+   */
+  private static maskToken(token: string, visibleChars = 8): string {
+    if (!token || typeof token !== 'string') return '';
+    return token.length <= visibleChars ? token : `${token.slice(0, visibleChars)}...`;
   }
 
   /**

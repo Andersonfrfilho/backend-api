@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import type { AuthProviderInterface, AuthTokenResponse, UserInfo } from '../domain/auth.interface';
+import { LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/log.token';
 import { AUTH_PROVIDER_TOKEN } from '../domain/auth.token';
 
 /**
@@ -11,12 +12,19 @@ export class AuthProvider implements AuthProviderInterface {
   constructor(
     @Inject(AUTH_PROVIDER_TOKEN)
     private readonly authProvider: AuthProviderInterface,
+    @Inject(LOG_PROVIDER) private readonly loggerProvider?: any,
   ) {}
 
   /**
    * Get access token
    */
   async getAccessToken(): Promise<string> {
+    try {
+      // Log delegation for visibility
+      (this as any).loggerProvider?.info?.({
+        message: 'AuthProvider.getAccessToken - delegating to underlying provider',
+      });
+    } catch (e) {}
     return this.authProvider.getAccessToken();
   }
 

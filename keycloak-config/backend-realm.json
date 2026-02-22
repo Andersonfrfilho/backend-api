@@ -14,6 +14,7 @@
       "name": "Backend API",
       "description": "Client for Backend API service",
       "enabled": true,
+      "directAccessGrantsEnabled": true,
       "clientAuthenticatorType": "client-secret",
       "secret": "api-client-secret",
       "serviceAccountsEnabled": true,
@@ -51,10 +52,6 @@
         "offline_access",
         "microprofile-jwt"
       ],
-      "serviceAccountUserRealmRoleMappings": {
-        "create-user": [],
-        "send-notifications": []
-      },
       "access": {
         "view": true,
         "configure": true,
@@ -66,6 +63,7 @@
       "name": "Backend Worker",
       "description": "Client for Backend Worker service",
       "enabled": true,
+      "directAccessGrantsEnabled": true,
       "clientAuthenticatorType": "client-secret",
       "secret": "worker-client-secret",
       "serviceAccountsEnabled": true,
@@ -114,6 +112,7 @@
       "name": "Backend Cron",
       "description": "Client for Backend Cron service",
       "enabled": true,
+      "directAccessGrantsEnabled": true,
       "clientAuthenticatorType": "client-secret",
       "secret": "cron-client-secret",
       "serviceAccountsEnabled": true,
@@ -182,56 +181,39 @@
   ],
   "users": [
     {
-      "username": "backend-api",
+      "username": "test-user",
       "enabled": true,
-      "emailVerified": false,
-      "firstName": "Backend",
-      "lastName": "API",
+      "email": "test-user@example.com",
+      "emailVerified": true,
+      "firstName": "Test",
+      "lastName": "User",
       "credentials": [
         {
           "type": "password",
-          "value": "api-password",
+          "value": "test-password",
           "temporary": false
         }
       ],
-      "realmRoles": [
-        "uma_protection"
-      ],
+      "realmRoles": [],
       "groups": []
     },
     {
-      "username": "backend-worker",
+      "username": "test-admin",
       "enabled": true,
-      "emailVerified": false,
-      "firstName": "Backend",
-      "lastName": "Worker",
+      "email": "test-admin@example.com",
+      "emailVerified": true,
+      "firstName": "Test",
+      "lastName": "Admin",
       "credentials": [
         {
           "type": "password",
-          "value": "worker-password",
+          "value": "admin-password",
           "temporary": false
         }
       ],
       "realmRoles": [
-        "uma_protection"
-      ],
-      "groups": []
-    },
-    {
-      "username": "backend-cron",
-      "enabled": true,
-      "emailVerified": false,
-      "firstName": "Backend",
-      "lastName": "Cron",
-      "credentials": [
-        {
-          "type": "password",
-          "value": "cron-password",
-          "temporary": false
-        }
-      ],
-      "realmRoles": [
-        "uma_protection"
+        "create-user",
+        "send-notifications"
       ],
       "groups": []
     }
