@@ -1,11 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+import type {
+  CreatePhoneParams,
+  PhoneRepositoryInterface,
+} from '@modules/phone/domain/phone.interface';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import type {
-  CreatePhoneParams,
-  PhoneRepositoryInterface,
-} from '@modules/phone/domain/repositories/phone.repository.interface';
+import { AppErrorFactory } from '@modules/error/application/app.error.factory';
 import { Phone } from '@modules/shared/domain/entities/phone.entity';
 
 @Injectable()
@@ -17,12 +19,12 @@ export class PhoneRepository implements PhoneRepositoryInterface {
 
   async create(phone: CreatePhoneParams): Promise<Phone> {
     const newPhone = this.typeormRepo.create(phone);
-    return this.typeormRepo.save(newPhone);
+    return this.typeormRepo.save(newPhone) as Promise<Phone>;
   }
 
   async findById(id: string): Promise<Phone | null> {
     return this.typeormRepo.findOne({
-      where: { id },
+      where: { id: id },
     });
   }
 
@@ -33,12 +35,15 @@ export class PhoneRepository implements PhoneRepositoryInterface {
   }
 
   async update(id: string, phone: Partial<CreatePhoneParams>): Promise<Phone> {
-    await this.typeormRepo.update(id, phone);
+    await this.typeormRepo.update(id, phone as any);
     const updated = await this.typeormRepo.findOne({
-      where: { id },
+      where: { id: id },
     });
     if (!updated) {
-      throw new Error('Phone not found');
+      throw AppErrorFactory.notFound({
+        message: 'Phone not found',
+        code: 'PHONE_NOT_FOUND',
+      });
     }
     return updated;
   }

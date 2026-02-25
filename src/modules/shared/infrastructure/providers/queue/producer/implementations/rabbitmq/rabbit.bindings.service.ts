@@ -1,6 +1,9 @@
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 
+import { AppErrorFactory } from '@modules/error/application/app.error.factory';
+import { MethodNotImplementedErrorCode } from '@modules/error/domain/error-codes';
+
 @Injectable()
 export class RabbitBindingsService implements OnModuleInit {
   constructor(private readonly amqpConnection: AmqpConnection) {}
@@ -23,12 +26,15 @@ export class RabbitBindingsService implements OnModuleInit {
           console.log('🔗 RabbitMQ channel available, creating bindings...');
           return;
         }
-      } catch (error) {
+      } catch {
         // Channel not ready yet
       }
       await new Promise((resolve) => setTimeout(resolve, delayMs));
     }
-    throw new Error('RabbitMQ channel not available after retries');
+    throw AppErrorFactory.businessLogic({
+      message: 'RabbitMQ channel not available after retries',
+      code: MethodNotImplementedErrorCode.METHOD_NOT_IMPLEMENTED,
+    });
   }
 
   private async createBindings() {

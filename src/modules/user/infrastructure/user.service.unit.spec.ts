@@ -134,7 +134,7 @@ describe('UserService - Unit Tests', () => {
 
       mockUserCreateUseCase.execute.mockResolvedValue({ id: 'user-1' });
 
-      service.createUser(params).then(() => {
+      void service.createUser(params).then(() => {
         expect(mockUserCreateUseCase.execute).toHaveBeenCalled();
         done();
       });

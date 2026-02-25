@@ -205,8 +205,8 @@ describe('User Entity', () => {
         },
       };
 
-      expect(user.details.preferences.theme).toBe('dark');
-      expect(user.details.metadata.source).toBe('mobile');
+      expect((user.details as any).preferences.theme).toBe('dark');
+      expect((user.details as any).metadata.source).toBe('mobile');
     });
 
     it('should store array in object', () => {

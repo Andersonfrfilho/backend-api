@@ -28,6 +28,14 @@ export class LoggingInterceptor implements NestInterceptor {
     this.loggingConfig = loggingConfig || DEFAULT_LOGGING_IGNORE_CONFIG;
   }
 
+  // inject RequestContext lazily to avoid circular issues in unit tests
+  private requestContext: any;
+
+  // allow DI to set requestContext via property in runtime (module imports ensure provider available)
+  setRequestContext(requestContext: any) {
+    this.requestContext = requestContext;
+  }
+
   private shouldSkipLogging(path: string): boolean {
     if (!this.loggingConfig.enabled) {
       return false;
@@ -38,6 +46,7 @@ export class LoggingInterceptor implements NestInterceptor {
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const request = context.switchToHttp().getRequest<Request>();
+    const caller = `${context.getClass()?.name ?? 'Unknown'}::${context.getHandler()?.name ?? 'handler'}`;
 
     if (this.shouldSkipLogging(request.url)) {
       return next.handle();
@@ -51,7 +60,15 @@ export class LoggingInterceptor implements NestInterceptor {
         query: request['query'],
         params: request['params'],
         body: request['body'],
+        caller,
       };
+      // set caller into RequestContext if available
+      try {
+        this.requestContext?.run?.({ caller, requestId: request['requestId'] }, () => {});
+      } catch (e) {
+        // ignore if context not available
+      }
+
       this.logProvider.info({
         message: `Request started - ${request.method} ${request.url}`,
         context: 'LoggingInterceptor',

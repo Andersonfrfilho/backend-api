@@ -15,6 +15,5 @@ logs
 *.md
 .env.example
 jest.config.*
-tsconfig.build.json
 .github
 makefile

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
+import { ENV_VARS } from '@config/constants';
 import { EnvironmentProviderInterface } from '@config/domain/interfaces/environment.interface';
 
 @Injectable()
@@ -11,11 +12,11 @@ export class EnvironmentProvider implements EnvironmentProviderInterface {
   // ============================================
 
   get port(): number {
-    return this.configService.getOrThrow<number>('PORT');
+    return this.configService.getOrThrow<number>(ENV_VARS.PORT);
   }
 
   get nodeEnv(): 'development' | 'production' | 'test' {
-    return this.configService.getOrThrow<'development' | 'production' | 'test'>('NODE_ENV');
+    return this.configService.getOrThrow<'development' | 'production' | 'test'>(ENV_VARS.NODE_ENV);
   }
 
   get apiContainerName(): string {
@@ -23,11 +24,11 @@ export class EnvironmentProvider implements EnvironmentProviderInterface {
   }
 
   get projectName(): string {
-    return this.configService.getOrThrow<string>('PROJECT_NAME');
+    return this.configService.getOrThrow<string>(ENV_VARS.PROJECT_NAME);
   }
 
   get baseUrl(): string {
-    const baseUrl = this.configService.get<string>('BASE_URL');
+    const baseUrl = this.configService.get<string>(ENV_VARS.BASE_URL);
     return baseUrl ?? `http://localhost:${this.port}`;
   }
 
@@ -36,23 +37,23 @@ export class EnvironmentProvider implements EnvironmentProviderInterface {
   // ============================================
 
   get databasePostgresHost(): string {
-    return this.configService.getOrThrow<string>('DATABASE_POSTGRES_HOST');
+    return this.configService.getOrThrow<string>(ENV_VARS.DATABASE_POSTGRES_HOST);
   }
 
   get databasePostgresPort(): number {
-    return this.configService.getOrThrow<number>('DATABASE_POSTGRES_PORT');
+    return this.configService.getOrThrow<number>(ENV_VARS.DATABASE_POSTGRES_PORT);
   }
 
   get databasePostgresName(): string {
-    return this.configService.getOrThrow<string>('DATABASE_POSTGRES_NAME');
+    return this.configService.getOrThrow<string>(ENV_VARS.DATABASE_POSTGRES_NAME);
   }
 
   get databasePostgresUser(): string {
-    return this.configService.getOrThrow<string>('DATABASE_POSTGRES_USER');
+    return this.configService.getOrThrow<string>(ENV_VARS.DATABASE_POSTGRES_USER);
   }
 
   get databasePostgresPassword(): string {
-    return this.configService.getOrThrow<string>('DATABASE_POSTGRES_PASSWORD');
+    return this.configService.getOrThrow<string>(ENV_VARS.DATABASE_POSTGRES_PASSWORD);
   }
 
   get databasePostgresUrl(): string {
@@ -60,11 +61,11 @@ export class EnvironmentProvider implements EnvironmentProviderInterface {
   }
 
   get databasePostgresSynchronize(): boolean {
-    return this.configService.getOrThrow<boolean>('DATABASE_POSTGRES_SYNCHRONIZE');
+    return this.configService.getOrThrow<boolean>(ENV_VARS.DATABASE_POSTGRES_SYNCHRONIZE);
   }
 
   get databasePostgresLogging(): boolean {
-    const logging = this.configService.get<boolean>('DATABASE_POSTGRES_LOGGING');
+    const logging = this.configService.get<boolean>(ENV_VARS.DATABASE_POSTGRES_LOGGING);
     if (logging !== undefined) {
       return logging;
     }
@@ -72,7 +73,7 @@ export class EnvironmentProvider implements EnvironmentProviderInterface {
   }
 
   get databasePostgresTimezone(): string {
-    return this.configService.getOrThrow<string>('DB_TIMEZONE');
+    return this.configService.getOrThrow<string>(ENV_VARS.DB_TIMEZONE);
   }
 
   // ============================================
@@ -92,17 +93,17 @@ export class EnvironmentProvider implements EnvironmentProviderInterface {
   }
 
   get baseUrlDevelopment(): string {
-    const baseUrl = this.configService.get<string>('BASE_URL_DEVELOPMENT');
+    const baseUrl = this.configService.get<string>(ENV_VARS.BASE_URL_DEVELOPMENT);
     return baseUrl ?? `http://localhost:${this.port}`;
   }
 
   get baseUrlStaging(): string {
-    const baseUrl = this.configService.get<string>('BASE_URL_STAGING');
+    const baseUrl = this.configService.get<string>(ENV_VARS.BASE_URL_STAGING);
     return baseUrl ?? `http://localhost:${this.port}`;
   }
 
   get baseUrlProduction(): string {
-    const baseUrl = this.configService.get<string>('BASE_URL_PRODUCTION');
+    const baseUrl = this.configService.get<string>(ENV_VARS.BASE_URL_PRODUCTION);
     return baseUrl ?? `http://localhost:${this.port}`;
   }
 

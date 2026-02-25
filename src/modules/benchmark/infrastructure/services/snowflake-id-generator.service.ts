@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { AppErrorFactory } from '@modules/error/application/app.error.factory';
+
 /**
  * Snowflake ID Generator Service
  *
@@ -25,10 +27,14 @@ export class SnowflakeIDGeneratorService {
    */
   private validate(): void {
     if (this.WORKER_ID < 0 || this.WORKER_ID > 31) {
-      throw new Error('WORKER_ID must be between 0 and 31');
+      throw AppErrorFactory.validation({
+        message: 'WORKER_ID must be between 0 and 31',
+      });
     }
     if (this.DATACENTER_ID < 0 || this.DATACENTER_ID > 31) {
-      throw new Error('DATACENTER_ID must be between 0 and 31');
+      throw AppErrorFactory.validation({
+        message: 'DATACENTER_ID must be between 0 and 31',
+      });
     }
   }
 

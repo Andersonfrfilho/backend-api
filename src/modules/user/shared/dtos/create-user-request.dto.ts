@@ -133,7 +133,7 @@ export class CreateUserRequestDto implements Partial<User> {
     format: 'int64',
   })
   @IsDate()
-  @Transform(({ obj }) => new Date(obj.birth_date))
+  @Transform(({ obj }) => new Date(obj.birth_date as string | number | Date))
   @Expose({ name: 'birth_date' })
   birthDate: Date;
 

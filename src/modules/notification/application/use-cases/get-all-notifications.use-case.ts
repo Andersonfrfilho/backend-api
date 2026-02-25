@@ -1,6 +1,6 @@
+import type { NotificationRepositoryInterface } from '@modules/notification/domain/notification.interface';
 import { Inject, Injectable } from '@nestjs/common';
 
-import type { NotificationRepositoryInterface } from '@modules/notification/domain/repositories/notification.repository.interface';
 import { NOTIFICATION_REPOSITORY_PROVIDE } from '@modules/notification/infrastructure/notification.token';
 
 import type {
@@ -16,7 +16,7 @@ export class GetAllNotificationsUseCase implements GetAllNotificationsUseCaseInt
     private readonly notificationRepository: NotificationRepositoryInterface,
   ) {}
 
-  async execute(
+  execute(
     params?: GetAllNotificationsUseCaseParams,
   ): Promise<GetAllNotificationsUseCaseResponse[]> {
     if (params?.userId) {

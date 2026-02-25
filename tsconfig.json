@@ -33,8 +33,6 @@
     "node_modules",
     "dist",
     "**/*.spec.ts",
-    "**/*.unit.spec.ts",
-    "**/*.e2e.spec.ts",
-    "test"
+    "**/*.test.ts"
   ]
 }

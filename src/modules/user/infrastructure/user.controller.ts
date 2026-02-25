@@ -6,12 +6,12 @@ import {
   ApiOperation,
 } from '@nestjs/swagger';
 
+import type { CacheProviderInterface } from '@modules/shared/infrastructure/providers/cache/cache.interface';
+import { CACHE_PROVIDER } from '@modules/shared/infrastructure/providers/cache/cache.token';
 import type { UserServiceInterface } from '@modules/user/application/interfaces/create-user.interface';
 import { USER_SERVICE_PROVIDE } from '@modules/user/infrastructure/user.token';
 import { CreateUserRequestDto } from '@modules/user/shared/dtos/create-user-request.dto';
 import { CreateUserResponseDto } from '@modules/user/shared/dtos/create-user-response.dto';
-import type { CacheProviderInterface } from '@modules/shared/infrastructure/providers/cache/cache.interface';
-import { CACHE_PROVIDER } from '@modules/shared/infrastructure/providers/cache/cache.token';
 
 @Injectable()
 @Controller('/user')

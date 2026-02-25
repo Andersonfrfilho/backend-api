@@ -1,10 +1,10 @@
-import { AUTH_LOGIN_SESSION_USE_CASE_PROVIDE } from '@modules/auth/infrastructure/auth.token';
 import { Inject, Injectable } from '@nestjs/common';
 
 import type {
   AuthLoginSessionServiceInterface,
   AuthLoginSessionUseCaseInterface,
 } from '@modules/auth/domain/auth.login-session.interface';
+import { AUTH_LOGIN_SESSION_USE_CASE_PROVIDE } from '@modules/auth/infrastructure/auth.token';
 import {
   AuthLoginSessionRequestDto as AuthLoginSessionRequestServiceParams,
   AuthLoginSessionResponseDto as AuthLoginSessionResponseServiceParams,

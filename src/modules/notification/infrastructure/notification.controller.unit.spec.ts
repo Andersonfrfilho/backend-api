@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { NotificationController } from '@modules/notification/infrastructure/notification.controller';
-import { NotificationServiceInterface } from '@modules/notification/infrastructure/notification.service';
+import { NotificationServiceInterface } from '@modules/notification/shared/types';
 import { NOTIFICATION_SERVICE_PROVIDE } from '@modules/notification/infrastructure/notification.token';
 
 describe('NotificationController', () => {

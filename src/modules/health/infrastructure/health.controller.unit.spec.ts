@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals
 
 import type { HealthCheckServiceInterface } from '@modules/health/domain/health.get.interface';
 import { HealthCheckResponseDto } from '@modules/health/shared/health.dto';
-import { HealthController } from './health.controller.ts';
+import { HealthController } from './health.controller';
 
 describe('HealthController', () => {
   let controller: HealthController;

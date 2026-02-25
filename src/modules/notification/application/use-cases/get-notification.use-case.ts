@@ -1,7 +1,7 @@
+import type { NotificationRepositoryInterface } from '@modules/notification/domain/notification.interface';
 import { Inject, Injectable } from '@nestjs/common';
 
 import { NotificationErrorFactory } from '@modules/notification/application/factories/notification-error.factory';
-import type { NotificationRepositoryInterface } from '@modules/notification/domain/repositories/notification.repository.interface';
 import { NOTIFICATION_REPOSITORY_PROVIDE } from '@modules/notification/infrastructure/notification.token';
 
 import type {

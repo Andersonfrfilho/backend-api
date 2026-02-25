@@ -65,7 +65,7 @@ describe('UserApplicationCreateUseCase - Unit Tests', () => {
 
       mockUserRepository.findByEmail.mockResolvedValue({ id: 'user-1', email: params.email });
 
-      expect(() => useCase.execute(params)).rejects.toThrow();
+      void expect(() => useCase.execute(params)).rejects.toThrow();
       expect(mockUserRepository.findByEmail).toHaveBeenCalledWith(params.email);
     });
 
@@ -90,7 +90,7 @@ describe('UserApplicationCreateUseCase - Unit Tests', () => {
       mockUserRepository.findByEmail.mockResolvedValue(null);
       mockUserRepository.findByCpf.mockResolvedValue({ id: 'user-1', cpf: params.cpf });
 
-      expect(() => useCase.execute(params)).rejects.toThrow();
+      void expect(() => useCase.execute(params)).rejects.toThrow();
       expect(mockUserRepository.findByCpf).toHaveBeenCalledWith(params.cpf);
     });
 
@@ -116,7 +116,7 @@ describe('UserApplicationCreateUseCase - Unit Tests', () => {
       mockUserRepository.findByCpf.mockResolvedValue(null);
       mockUserRepository.findByRg.mockResolvedValue({ id: 'user-1', rg: params.rg });
 
-      expect(() => useCase.execute(params)).rejects.toThrow();
+      void expect(() => useCase.execute(params)).rejects.toThrow();
       expect(mockUserRepository.findByRg).toHaveBeenCalledWith(params.rg);
     });
 

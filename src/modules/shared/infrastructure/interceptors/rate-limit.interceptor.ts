@@ -9,9 +9,10 @@
  * - Configurável por rota
  */
 
-import { RateLimitErrorFactory } from '@modules/shared/application/factories';
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { Observable } from 'rxjs';
+
+import { RateLimitErrorFactory } from '@modules/shared/application/factories';
 
 /**
  * Configuração de rate limit

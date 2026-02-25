@@ -104,9 +104,9 @@ describe('UserAddress Entity', () => {
       expect(userAddress.type).toBe(AddressTypeEnum.BILLING);
     });
 
-    it('should support SHIPPING type', () => {
-      userAddress.type = AddressTypeEnum.SHIPPING;
-      expect(userAddress.type).toBe(AddressTypeEnum.SHIPPING);
+    it('should support DELIVERY type', () => {
+      userAddress.type = AddressTypeEnum.DELIVERY;
+      expect(userAddress.type).toBe(AddressTypeEnum.DELIVERY);
     });
   });
 

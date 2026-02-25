@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsStrongPassword } from 'class-validator';
+import { IsEmail, IsString, IsNotEmpty } from 'class-validator';
 
 export class AuthLoginSessionRequestDto {
   @ApiProperty({
@@ -14,6 +14,7 @@ export class AuthLoginSessionRequestDto {
     description: 'The password of the user',
     example: faker.internet.password(),
   })
-  @IsStrongPassword()
+  @IsString()
+  @IsNotEmpty()
   password: string;
 }

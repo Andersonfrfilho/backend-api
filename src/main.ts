@@ -65,7 +65,7 @@ async function bootstrap() {
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
   const environment = app.get<EnvironmentProviderInterface>(ENVIRONMENT_SERVICE_PROVIDER);
   const document = SwaggerModule.createDocument(app, swaggerConfig(environment));
-  SwaggerModule.setup('docs', app, document, swaggerCustomOptions);
+  SwaggerModule.setup('docs', app, document, swaggerCustomOptions(environment));
   const outputPath = join(process.cwd(), 'swagger-spec.json');
   writeFileSync(outputPath, JSON.stringify(document, null, 2));
 

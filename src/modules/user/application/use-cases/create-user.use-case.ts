@@ -1,8 +1,8 @@
+import type { PhoneRepositoryInterface } from '@modules/phone/domain/phone.interface';
 import { Inject, Injectable } from '@nestjs/common';
 
 import type { AddressRepositoryInterface } from '@app/modules/address/domain/repositories/address.repository.interface';
 import { ADDRESS_REPOSITORY_PROVIDE } from '@app/modules/address/infrastructure/address.token';
-import type { PhoneRepositoryInterface } from '@app/modules/phone/domain/repositories/phone.repository.interface';
 import { PHONE_REPOSITORY_PROVIDE } from '@app/modules/phone/infrastructure/phone.token';
 import { AddressTypeEnum } from '@app/modules/shared';
 import type { QueueProducerMessageProviderInterface } from '@modules/shared/infrastructure/providers/queue/producer/producer.interface';

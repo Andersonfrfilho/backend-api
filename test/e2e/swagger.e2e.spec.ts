@@ -2,9 +2,9 @@ import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify
 import { SwaggerModule } from '@nestjs/swagger';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { EnvironmentProviderInterface } from '@config';
-import { ENVIRONMENT_SERVICE_PROVIDER } from '@config/config.token';
-import { swaggerConfig } from '@config/swagger.config';
+import { EnvironmentProviderInterface } from '../../src/config';
+import { ENVIRONMENT_SERVICE_PROVIDER } from '../../src/config/config.token';
+import { swaggerConfig } from '../../src/config/swagger.config';
 import { docsFactory } from '@modules/shared/infrastructure/interceptors/docs';
 import { LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/log.token';
 import { AppModule } from '../../src/app.module';

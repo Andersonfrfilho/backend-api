@@ -1,6 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import Redis from 'ioredis';
 
+import { AppErrorFactory } from '@modules/error/application/app.error.factory';
+import { CacheErrorCode } from '@modules/error/domain/error-codes';
+
 import { CacheProviderInterface } from '../../cache.interface';
 import { CACHE_REDIS_CONNECTION } from '../../cache.token';
 
@@ -15,7 +18,10 @@ export class CacheRedisProvider
       const data = await this.cacheRedisProvider.get(key);
       return data as unknown as T | null;
     } catch (error) {
-      throw new Error(`Error getting cache for key ${key}: ${error.message}`);
+      throw AppErrorFactory.businessLogic({
+        message: `Error getting cache for key ${key}: ${error.message}`,
+        code: CacheErrorCode.CACHE_OPERATION_FAILED,
+      });
     }
   }
 
@@ -27,7 +33,10 @@ export class CacheRedisProvider
         await this.cacheRedisProvider.set(key, JSON.stringify(value));
       }
     } catch (error) {
-      throw new Error(`Error setting cache for key ${key}: ${error.message}`);
+      throw AppErrorFactory.businessLogic({
+        message: `Error setting cache for key ${key}: ${error.message}`,
+        code: CacheErrorCode.CACHE_OPERATION_FAILED,
+      });
     }
   }
 
@@ -35,7 +44,10 @@ export class CacheRedisProvider
     try {
       await this.cacheRedisProvider.del(key);
     } catch (error) {
-      throw new Error(`Error deleting cache for key ${key}: ${error.message}`);
+      throw AppErrorFactory.businessLogic({
+        message: `Error deleting cache for key ${key}: ${error.message}`,
+        code: CacheErrorCode.CACHE_OPERATION_FAILED,
+      });
     }
   }
 
@@ -43,7 +55,38 @@ export class CacheRedisProvider
     try {
       await this.cacheRedisProvider.flushdb();
     } catch (error) {
-      throw new Error(`Error clearing cache: ${error.message}`);
+      throw AppErrorFactory.businessLogic({
+        message: `Error clearing cache: ${error.message}`,
+        code: CacheErrorCode.CACHE_OPERATION_FAILED,
+      });
+    }
+  }
+
+  async save<T>(key: string, value: T, ttl?: number): Promise<void> {
+    return this.set<T>(key, value, ttl);
+  }
+
+  async invalidate(key: string): Promise<void> {
+    return this.del(key);
+  }
+
+  async invalidateByPattern(pattern: string): Promise<void> {
+    try {
+      let cursor = '0';
+      do {
+        const result = await this.cacheRedisProvider.scan(cursor, 'MATCH', pattern, 'COUNT', 100);
+        cursor = result[0];
+        const keys = result[1];
+
+        if (keys.length > 0) {
+          await this.cacheRedisProvider.del(...keys);
+        }
+      } while (cursor !== '0');
+    } catch (error) {
+      throw AppErrorFactory.businessLogic({
+        message: `Error invalidating cache by pattern ${pattern}: ${error.message}`,
+        code: CacheErrorCode.CACHE_OPERATION_FAILED,
+      });
     }
   }
 }
