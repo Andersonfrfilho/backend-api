@@ -33,6 +33,7 @@
     "migration:generate": "node scripts/migration.js generate"
   },
   "dependencies": {
+    "@adatechnology/http-client": "^0.0.6",
     "@faker-js/faker": "^10.1.0",
     "@fastify/cookie": "^11.0.2",
     "@fastify/csrf-protection": "^7.1.0",

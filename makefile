@@ -92,6 +92,33 @@ sonar-down: setup-env
 sonar-scan: setup-env
 	npm run sonar  # Executa o script de análise do SonarQube definido no package.json
 
+# One-shot setup that waits for SonarQube and creates an admin token file at ./sonar_output/sonar_token.env
+sonar-setup: setup-env
+	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) run --rm sonar-setup
+
+# Show the generated token (if present)
+sonar-token: setup-env sonar-setup
+	@echo "Token file: ./sonar_output/sonar_token.env"
+	@cat ./sonar_output/sonar_token.env || echo "No token found. Run 'make sonar-setup' first."
+
+# Full flow: bring Sonar up, run setup, then run scanner (uses SONAR_TOKEN from token file)
+sonar-all: setup-env
+	@$(MAKE) sonar-up
+	@echo "Waiting 10s for SonarQube to initialize..."
+	sleep 10
+	@$(MAKE) sonar-setup
+	@echo "Loading token and running scanner..."
+	@if [ -f ./sonar_output/sonar_token.env ]; then \
+		# read token safely without letting Make interpret $ characters
+		SONAR_TOKEN=$$(sed -n "s/^SONAR_TOKEN=\(.*\)/\1/p" ./sonar_output/sonar_token.env); \
+		export SONAR_TOKEN; \
+		# When running scanner from host, SonarQube is reachable at localhost:9001 (mapped)
+		SONAR_HOST_URL=http://localhost:9001; \
+		SONAR_HOST_URL=$$SONAR_HOST_URL SONAR_TOKEN=$$SONAR_TOKEN npm run sonar; \
+	else \
+		echo "Token file not found, skipping sonar scan"; \
+	fi
+
 stop: setup-env
 	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) stop
 
@@ -161,4 +188,4 @@ setup: setup-env
 	docker exec -it $(PROJECT_NAME)_api npm run migration:run
 	@echo "✅ Setup completo! Projeto pronto para usar."
 
-.PHONY: all rebuild-app setup-env clean-all clean-images force-remove down stop app sonar-up sonar-down sonar-scan clean-safe database_postgres database_mongo queue_rabbitmq keycloak keycloak-down keycloak-stop keycloak-logs keycloak-admin setup setup-e2e-databases test-e2e-ready test-e2e-docker 
+.PHONY: all rebuild-app setup-env clean-all clean-images force-remove down stop app sonar-up sonar-down sonar-scan sonar-setup sonar-token sonar-all clean-safe database_postgres database_mongo queue_rabbitmq keycloak keycloak-down keycloak-stop keycloak-logs keycloak-admin setup setup-e2e-databases test-e2e-ready test-e2e-docker 

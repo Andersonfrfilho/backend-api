@@ -1,233 +1,77 @@
 import { Observable } from 'rxjs';
 
-/**
- * HTTP methods supported
- */
-export enum HttpMethod {
-  GET = 'GET',
-  POST = 'POST',
-  PUT = 'PUT',
-  PATCH = 'PATCH',
-  DELETE = 'DELETE',
-  HEAD = 'HEAD',
-  OPTIONS = 'OPTIONS',
-}
-
-/**
- * Content types for HTTP requests
- */
-export enum ContentType {
-  JSON = 'application/json',
-  FORM_URLENCODED = 'application/x-www-form-urlencoded',
-  FORM_DATA = 'multipart/form-data',
-  TEXT = 'text/plain',
-  XML = 'application/xml',
-}
-
-/**
- * HTTP request configuration
- */
 export interface HttpRequestConfig {
-  url: string;
-  method?: HttpMethod;
+  method?: string;
+  url?: string;
   headers?: Record<string, string>;
   params?: Record<string, any>;
   data?: any;
   timeout?: number;
-  contentType?: ContentType;
-  responseType?: 'json' | 'text' | 'blob' | 'arraybuffer';
-  withCredentials?: boolean;
-  retryAttempts?: number;
-  retryDelay?: number;
-  cache?: boolean; // Enable/disable caching for this request
-  cacheTtl?: number; // Cache TTL in milliseconds
+  [key: string]: any;
 }
 
-/**
- * HTTP response structure
- */
 export interface HttpResponse<T = any> {
   data: T;
   status: number;
-  statusText: string;
-  headers: Record<string, string>;
-  config: HttpRequestConfig;
-  request?: any;
-}
-
-/**
- * HTTP error structure
- */
-export interface HttpError extends Error {
-  config: HttpRequestConfig;
-  response?: HttpResponse;
-  status?: number;
   statusText?: string;
-  isNetworkError?: boolean;
-  isTimeout?: boolean;
+  headers?: Record<string, string>;
+  config?: HttpRequestConfig;
 }
 
-/**
- * Error interceptor function
- */
-export type ErrorInterceptor = (error: any) => any;
+export interface HttpClientConfig {
+  baseURL?: string;
+  timeout?: number;
+  headers?: Record<string, string>;
+}
 
-/**
- * HTTP provider interface
- */
 export interface HttpProviderInterface {
-  /**
-   * Make a GET request
-   */
-  get<T = any>(
-    url: string,
-    config?: Omit<HttpRequestConfig, 'url' | 'method'>,
-  ): Promise<HttpResponse<T>>;
+  // Promise API
+  get<T>(url: string, config?: HttpRequestConfig): Promise<HttpResponse<T>>;
+  post<T>(url: string, data?: any, config?: HttpRequestConfig): Promise<HttpResponse<T>>;
+  put<T>(url: string, data?: any, config?: HttpRequestConfig): Promise<HttpResponse<T>>;
+  patch<T>(url: string, data?: any, config?: HttpRequestConfig): Promise<HttpResponse<T>>;
+  delete<T>(url: string, config?: HttpRequestConfig): Promise<HttpResponse<T>>;
+  head<T>(url: string, config?: HttpRequestConfig): Promise<HttpResponse<T>>;
+  options<T>(url: string, config?: HttpRequestConfig): Promise<HttpResponse<T>>;
+  request<T>(config: HttpRequestConfig): Promise<HttpResponse<T>>;
 
-  /**
-   * Make a POST request
-   */
-  post<T = any>(
-    url: string,
-    data?: any,
-    config?: Omit<HttpRequestConfig, 'url' | 'method' | 'data'>,
-  ): Promise<HttpResponse<T>>;
+  // Observable API
+  get$<T>(url: string, config?: HttpRequestConfig): Observable<HttpResponse<T>>;
+  post$<T>(url: string, data?: any, config?: HttpRequestConfig): Observable<HttpResponse<T>>;
+  put$<T>(url: string, data?: any, config?: HttpRequestConfig): Observable<HttpResponse<T>>;
+  patch$<T>(url: string, data?: any, config?: HttpRequestConfig): Observable<HttpResponse<T>>;
+  delete$<T>(url: string, config?: HttpRequestConfig): Observable<HttpResponse<T>>;
+  head$<T>(url: string, config?: HttpRequestConfig): Observable<HttpResponse<T>>;
+  options$<T>(url: string, config?: HttpRequestConfig): Observable<HttpResponse<T>>;
+  request$<T>(config: HttpRequestConfig): Observable<HttpResponse<T>>;
 
-  /**
-   * Make a PUT request
-   */
-  put<T = any>(
-    url: string,
-    data?: any,
-    config?: Omit<HttpRequestConfig, 'url' | 'method' | 'data'>,
-  ): Promise<HttpResponse<T>>;
-
-  /**
-   * Make a PATCH request
-   */
-  patch<T = any>(
-    url: string,
-    data?: any,
-    config?: Omit<HttpRequestConfig, 'url' | 'method' | 'data'>,
-  ): Promise<HttpResponse<T>>;
-
-  /**
-   * Make a DELETE request
-   */
-  delete<T = any>(
-    url: string,
-    config?: Omit<HttpRequestConfig, 'url' | 'method'>,
-  ): Promise<HttpResponse<T>>;
-
-  /**
-   * Make a HEAD request
-   */
-  head<T = any>(
-    url: string,
-    config?: Omit<HttpRequestConfig, 'url' | 'method'>,
-  ): Promise<HttpResponse<T>>;
-
-  /**
-   * Make an OPTIONS request
-   */
-  options<T = any>(
-    url: string,
-    config?: Omit<HttpRequestConfig, 'url' | 'method'>,
-  ): Promise<HttpResponse<T>>;
-
-  /**
-   * Make a generic HTTP request
-   */
-  request<T = any>(config: HttpRequestConfig): Promise<HttpResponse<T>>;
-
-  /**
-   * Set global headers
-   */
-  setGlobalHeader(key: string, value: string): void;
-
-  /**
-   * Remove global header
-   */
-  removeGlobalHeader(key: string): void;
-
-  /**
-   * Get global headers
-   */
-  getGlobalHeaders(): Record<string, string>;
-
-  /**
-   * Set base URL for all requests
-   */
-  setBaseUrl(baseUrl: string): void;
-
-  /**
-   * Get current base URL
-   */
-  getBaseUrl(): string;
-
-  /**
-   * Set default timeout
-   */
-  setDefaultTimeout(timeout: number): void;
-
-  /**
-   * Add error interceptor
-   */
-  addErrorInterceptor(interceptor: ErrorInterceptor): number;
-
-  /**
-   * Remove error interceptor
-   */
+  // Interceptors
+  addRequestInterceptor(onFulfilled?: any, onRejected?: any): number;
+  addResponseInterceptor(onFulfilled?: any, onRejected?: any): number;
+  removeRequestInterceptor(interceptorId: number): void;
+  removeResponseInterceptor(interceptorId: number): void;
+  // Error-specific interceptors (legacy names)
+  addErrorInterceptor(onFulfilled?: any, onRejected?: any): number;
   removeErrorInterceptor(id: number): void;
 
-  /**
-   * Clear cache for a specific key or all cache
-   */
-  clearCache(key?: string): void;
-
-  /**
-   * Set authorization token
-   */
+  // Configuration
+  createInstance(config?: HttpClientConfig): HttpProviderInterface;
+  setBaseURL(baseURL: string): void;
+  // Legacy alias
+  setBaseUrl(baseUrl: string): void;
+  getBaseUrl(): string;
+  setTimeout(timeout: number): void;
+  setDefaultTimeout(timeout: number): void;
+  setHeaders(headers: Record<string, string>): void;
+  // Global header helpers
+  setGlobalHeader(key: string, value: string): void;
+  removeGlobalHeader(key: string): void;
+  getGlobalHeaders(): Record<string, string>;
   setAuthToken(token: string, type?: string): void;
-
-  /**
-   * Clear authorization token
-   */
   clearAuthToken(): void;
-
-  /**
-   * Observable version for reactive programming
-   */
-  get$<T = any>(
-    url: string,
-    config?: Omit<HttpRequestConfig, 'url' | 'method'>,
-  ): Observable<HttpResponse<T>>;
-  post$<T = any>(
-    url: string,
-    data?: any,
-    config?: Omit<HttpRequestConfig, 'url' | 'method' | 'data'>,
-  ): Observable<HttpResponse<T>>;
-  put$<T = any>(
-    url: string,
-    data?: any,
-    config?: Omit<HttpRequestConfig, 'url' | 'method' | 'data'>,
-  ): Observable<HttpResponse<T>>;
-  patch$<T = any>(
-    url: string,
-    data?: any,
-    config?: Omit<HttpRequestConfig, 'url' | 'method' | 'data'>,
-  ): Observable<HttpResponse<T>>;
-  delete$<T = any>(
-    url: string,
-    config?: Omit<HttpRequestConfig, 'url' | 'method'>,
-  ): Observable<HttpResponse<T>>;
-  head$<T = any>(
-    url: string,
-    config?: Omit<HttpRequestConfig, 'url' | 'method'>,
-  ): Observable<HttpResponse<T>>;
-  options$<T = any>(
-    url: string,
-    config?: Omit<HttpRequestConfig, 'url' | 'method'>,
-  ): Observable<HttpResponse<T>>;
-  request$<T = any>(config: HttpRequestConfig): Observable<HttpResponse<T>>;
+  clearCache(key?: string): void;
+  // Optional access to underlying axios instance if present
+  getAxiosInstance?(): any;
 }
+
+export default HttpProviderInterface;

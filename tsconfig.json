@@ -19,6 +19,7 @@
       "@app/*": ["src/*"],
       "@common/*": ["src/common/*"],
       "@config/*": ["src/config/*"],
+      "@backend/*": ["src/backend/*"],
       "@modules/*": ["src/modules/*"]
     },
     "incremental": true,

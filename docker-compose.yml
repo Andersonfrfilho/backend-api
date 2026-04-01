@@ -8,6 +8,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
+      args:
+        NPM_TOKEN: ${NPM_TOKEN:-}
     container_name: ${PROJECT_NAME}_api
     environment:
       - NODE_ENV=development
@@ -140,6 +142,22 @@ services:
     volumes:
       - sonar_database:/var/lib/postgresql
       - sonar_database_postgres_data:/var/lib/postgresql/data
+
+  # One-shot setup container: waits for SonarQube and creates an admin token
+  sonar-setup:
+    image: curlimages/curl:8.3.0
+    container_name: ${PROJECT_NAME}_sonar_setup
+    depends_on:
+      - sonarqube
+    volumes:
+      - ./scripts/sonar-init.sh:/opt/sonar-init/sonar-init.sh:ro
+      - ./sonar_output:/output
+    environment:
+      - SONAR_HOST=${SONAR_HOST_URL:-http://sonarqube:9000}
+      - SONAR_ADMIN_PASSWORD=${SONAR_ADMIN_PASSWORD:-admin}
+      - SONAR_ADMIN_NEW_PASSWORD=${SONAR_ADMIN_NEW_PASSWORD:-change_me}
+      - SONAR_TOKEN_NAME=${SONAR_TOKEN_NAME:-ci-token}
+    entrypoint: ['/bin/sh', '/opt/sonar-init/sonar-init.sh']
 
 volumes:
   sonarqube_data:

@@ -5,7 +5,14 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm ci
+# Allow injecting a private registry token at build time (ARG not persisted)
+# Use NPM_TOKEN for consistency with local env
+ARG NPM_TOKEN
+RUN if [ -n "$NPM_TOKEN" ]; then \
+      printf "@adatechnology:registry=https://npm.adatechnology.com/\n//npm.adatechnology.com/:_authToken=${NPM_TOKEN}\n" > .npmrc; \
+    fi && \
+    npm ci && \
+    rm -f .npmrc
 
 COPY . .
 

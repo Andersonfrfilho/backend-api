@@ -1,12 +1,12 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Observable } from 'rxjs';
-
-import type { AuthProviderInterface } from '@modules/auth/domain/auth.interface';
 import type {
   HttpProviderInterface,
   HttpRequestConfig,
   HttpResponse,
 } from '@modules/shared/infrastructure/providers/http/http.interface';
+import { Inject, Injectable } from '@nestjs/common';
+import { Observable } from 'rxjs';
+
+import type { AuthProviderInterface } from '@modules/auth/domain/auth.interface';
 import { HTTP_PROVIDER } from '@modules/shared/infrastructure/providers/http/http.token';
 import { LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/log.token';
 
@@ -48,6 +48,17 @@ export class AuthenticatedHttpProvider implements HttpProviderInterface {
 
     const authConfig = this.addAuthHeader(config, token);
     return this.httpProvider.get<T>(url, authConfig);
+  }
+
+  createInstance(
+    config?: import('@modules/shared/infrastructure/providers/http/http.interface').HttpClientConfig,
+  ): HttpProviderInterface {
+    const inner = this.httpProvider.createInstance?.(config) ?? this.httpProvider;
+    return new AuthenticatedHttpProvider(inner, this.authProvider, this.loggerProvider);
+  }
+
+  setBaseURL(baseURL: string): void {
+    this.httpProvider.setBaseURL(baseURL);
   }
 
   async post<T = any>(
@@ -338,6 +349,27 @@ export class AuthenticatedHttpProvider implements HttpProviderInterface {
 
   request$<T = any>(config: HttpRequestConfig): Observable<HttpResponse<T>> {
     throw new Error('Observable methods not supported for authenticated HTTP provider');
+  }
+
+  // Interceptor passthroughs
+  addRequestInterceptor(onFulfilled: any, onRejected?: any): number {
+    return this.httpProvider.addRequestInterceptor(onFulfilled, onRejected);
+  }
+
+  addResponseInterceptor(onFulfilled: any, onRejected?: any): number {
+    return this.httpProvider.addResponseInterceptor(onFulfilled, onRejected);
+  }
+
+  removeRequestInterceptor(id: number): void {
+    this.httpProvider.removeRequestInterceptor(id);
+  }
+
+  removeResponseInterceptor(id: number): void {
+    this.httpProvider.removeResponseInterceptor(id);
+  }
+
+  setHeaders(headers: Record<string, string>): void {
+    this.httpProvider.setHeaders(headers);
   }
 
   private addAuthHeader(

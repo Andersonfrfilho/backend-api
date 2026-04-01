@@ -1,14 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Param,
-  HttpCode,
-  HttpStatus,
-  Inject,
-  Version,
-} from '@nestjs/common';
+import { Body, Controller, Post, Inject, Version } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -19,10 +9,8 @@ import {
   ApiTooManyRequestsResponse,
   ApiUnauthorizedResponse,
   ApiTags,
-  ApiResponse,
 } from '@nestjs/swagger';
 
-import { HTTP_STATUS } from '@config/constants';
 import {
   AuthBadRequestErrorValidationRequestDto,
   AuthLoginSessionServiceErrorInvalidCredentialsDto,
@@ -36,15 +24,12 @@ import {
   AuthLoginSessionResponseDto as AuthLoginSessionResponseController,
 } from '@modules/auth/shared/dtos';
 
-import { MockApiClientService } from './application/mock-api-client.service';
-
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(
     @Inject(AUTH_LOGIN_SESSION_SERVICE_PROVIDE)
     private readonly authLoginSessionServiceProvider: AuthLoginSessionServiceInterface,
-    private readonly mockApiClient: MockApiClientService,
   ) {}
 
   /**
@@ -70,31 +55,5 @@ export class AuthController {
     @Body() params: AuthLoginSessionRequestParamsDto,
   ): Promise<AuthLoginSessionResponseController> {
     return this.authLoginSessionServiceProvider.execute(params);
-  }
-
-  // --- Mock API endpoints (kept for testing external calls using authenticated provider)
-  @Get('mock/posts')
-  @Version('1')
-  @ApiOperation({ summary: 'Get posts from mock API with auth' })
-  @ApiResponse({ status: HTTP_STATUS.OK, description: 'Posts retrieved' })
-  async getPosts() {
-    return this.mockApiClient.getPosts();
-  }
-
-  @Get('mock/posts/:id')
-  @Version('1')
-  @ApiOperation({ summary: 'Get a specific post from mock API with auth' })
-  @ApiResponse({ status: HTTP_STATUS.OK, description: 'Post retrieved' })
-  async getPost(@Param('id') id: number) {
-    return this.mockApiClient.getPost(id);
-  }
-
-  @Post('mock/posts')
-  @Version('1')
-  @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: 'Create a post in mock API with auth' })
-  @ApiResponse({ status: HTTP_STATUS.CREATED, description: 'Post created' })
-  async createPost(@Body() data: { title: string; body: string; userId: number }) {
-    return this.mockApiClient.createPost(data);
   }
 }
