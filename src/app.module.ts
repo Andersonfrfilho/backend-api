@@ -7,7 +7,6 @@ import { register as tsConfigPathsRegister } from 'tsconfig-paths';
 
 import { ConfigModule } from '@config/config.module';
 import { buildKeycloakConfigFromEnv } from '@config/keycloak.config';
-import { AuthModule } from '@modules/auth/auth.module';
 import { ErrorModule } from '@modules/error/error.module';
 import { HealthModule } from '@modules/health/health.module';
 import { NotificationModule } from '@modules/notification/notification.module';
@@ -38,7 +37,6 @@ tsConfigPathsRegister({
     SharedModule,
     ErrorModule,
     HealthModule,
-    AuthModule,
     UserModule,
     BenchmarkModule,
   ],

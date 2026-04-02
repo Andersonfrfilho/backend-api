@@ -1,12 +1,10 @@
-import { ContextType } from '@modules/shared/domain/enums';
-
 export interface RequestContext {
   requestId: string;
   userId?: string;
   timestamp: Date;
   path: string;
   method: string;
-  contextType: ContextType;
+  contextType: unknown;
 }
 
 export interface ApplicationContext {

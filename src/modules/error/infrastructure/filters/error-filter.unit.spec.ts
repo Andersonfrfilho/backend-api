@@ -1,14 +1,14 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 
-import type { LogProviderInterface } from '@modules/shared/domain';
 import { HttpExceptionFilter } from './error-filter';
+import type { LoggerProviderInterface } from '@adatechnology/logger';
 
 describe('HttpExceptionFilter - Unit Tests', () => {
   let filter: HttpExceptionFilter;
   let logMock: jest.Mock;
   let errorMock: jest.Mock;
   let warnMock: jest.Mock;
-  let mockLogProvider: LogProviderInterface;
+  let mockLogProvider: LoggerProviderInterface;
 
   beforeEach(() => {
     // Arrange: Setup all mocks fresh for each test
@@ -21,7 +21,7 @@ describe('HttpExceptionFilter - Unit Tests', () => {
       error: errorMock,
       warn: warnMock,
       debug: jest.fn(),
-    } as unknown as LogProviderInterface;
+    } as unknown as LoggerProviderInterface;
 
     // Instantiate filter directly without Test.createTestingModule
     filter = new HttpExceptionFilter(mockLogProvider);

@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 
-import { SharedInfrastructureProviderLogModule } from '../../../../log/log.module';
 import { QUEUE_PRODUCER_PROVIDER } from '../../producer.token';
 
 import { RabbitBindingsService } from './rabbit.bindings.service';
@@ -8,7 +7,7 @@ import { rabbitConnection } from './rabbit.connection';
 import { RabbitMQMessageProducer } from './rabbit.provider';
 
 @Module({
-  imports: [rabbitConnection, SharedInfrastructureProviderLogModule],
+  imports: [rabbitConnection],
   providers: [
     {
       provide: QUEUE_PRODUCER_PROVIDER,

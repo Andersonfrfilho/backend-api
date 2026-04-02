@@ -1,5 +1,5 @@
 export { AppErrorFactory } from '@modules/error/application/app.error.factory';
-export { AuthErrorFactory, UserErrorFactory } from '@modules/error/application/factories';
+export { UserErrorFactory } from '@modules/error/application/factories';
 export { AppError, ErrorType, type AppErrorPayload } from '@modules/error/domain/app.error';
 export {
   AUTH_ERROR_CONFIGS,

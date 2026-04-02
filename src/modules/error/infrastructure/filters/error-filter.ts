@@ -1,4 +1,9 @@
 import {
+  LOGGER_PROVIDER,
+  type LoggerProviderInterface,
+  type LogPayload,
+} from '@adatechnology/logger';
+import {
   ArgumentsHost,
   Catch,
   ExceptionFilter,
@@ -11,14 +16,14 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 
 import { AppError } from '@modules/error';
 import { APP_ERROR_TYPE } from '@modules/error/infrastructure/filters/error-filter.constant';
-import type { LogProviderInterface } from '@modules/shared/domain';
-import { requestContext } from '@modules/shared/infrastructure/context/request-context';
-import { LOGGER_PROVIDER } from '@adatechnology/logger';
 
 @Catch()
 @Injectable()
 export class HttpExceptionFilter implements ExceptionFilter {
-  constructor(@Inject(LOGGER_PROVIDER) private readonly logProvider: LogProviderInterface) {}
+  constructor(@Inject(LOGGER_PROVIDER) private readonly logProvider: LoggerProviderInterface) {}
+  // requestContext may be provided by the logger library at runtime via AsyncLocalStorage.
+  // Fallback to globalThis if the library attaches it there.
+  private readonly requestContext: any = (globalThis as any).requestContext;
   logResponse(
     exception: AppError | HttpException | Error,
     request: FastifyRequest,
@@ -28,24 +33,26 @@ export class HttpExceptionFilter implements ExceptionFilter {
       const rawRequestId = request.headers['x-request-id'];
       const headerRequestId = (Array.isArray(rawRequestId) ? rawRequestId[0] : rawRequestId) ?? '';
 
-      this.logProvider.error({
+      const payload: LogPayload = {
         message: 'Exception caught in filter',
         context: 'HttpExceptionFilter',
-        requestId: headerRequestId,
-        params: {
+        meta: {
           request: {
             query: request.query,
             params: request.params,
             headers: request.headers,
             method: request.method,
             url: request.url,
+            requestId: headerRequestId,
           },
           exceptionType: exception instanceof AppError ? exception.type : 'Error',
           exceptionMessage: exception instanceof Error ? exception.message : String(exception),
           details: exception instanceof AppError ? exception.details : undefined,
           responseBody,
         },
-      });
+      };
+
+      this.logProvider.error(payload);
     } catch (logError) {
       console.error('[HttpExceptionFilter] Logger failed:', String(logError));
     }
@@ -58,9 +65,13 @@ export class HttpExceptionFilter implements ExceptionFilter {
     }
 
     // 2. Try to get from requestContext (fallback)
-    const contextStore = requestContext.getStore();
-    if (contextStore?.requestId) {
-      return contextStore.requestId;
+    try {
+      const contextStore = this.requestContext?.getStore?.();
+      if (contextStore?.requestId) {
+        return contextStore.requestId;
+      }
+    } catch (e) {
+      // ignore
     }
 
     // 3. Try to get from x-request-id header (last resort)

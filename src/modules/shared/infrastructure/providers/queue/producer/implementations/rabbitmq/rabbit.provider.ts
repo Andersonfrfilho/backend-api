@@ -1,10 +1,12 @@
+import {
+  LOGGER_PROVIDER,
+  type LoggerProviderInterface,
+  type LogPayload,
+} from '@adatechnology/logger';
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 import { Injectable, Inject } from '@nestjs/common';
 import { Observable, from, of } from 'rxjs';
 import { catchError, timeout } from 'rxjs/operators';
-
-import type { LogProviderInterface } from '@modules/shared/domain';
-import { LOGGER_PROVIDER } from '@adatechnology/logger';
 
 import type { QueueProducerMessageProviderInterface } from '../../producer.interface';
 import {
@@ -38,7 +40,7 @@ export class RabbitMQMessageProducer<T = any> implements QueueProducerMessagePro
 
   constructor(
     private readonly amqpConnection: AmqpConnection,
-    @Inject(LOGGER_PROVIDER) private readonly logger: LogProviderInterface,
+    @Inject(LOGGER_PROVIDER) private readonly logger: LoggerProviderInterface,
   ) {
     this.producerId = `rabbitmq-producer-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     this.config = {
@@ -147,12 +149,18 @@ export class RabbitMQMessageProducer<T = any> implements QueueProducerMessagePro
         correlationId: message.metadata?.correlationId,
       };
 
-      this.logger.debug({
+      const debugPayload: LogPayload = {
         message: `Message sent successfully: ${messageId} to exchange '${exchange}' with routing key '${routingKey}'`,
         context: 'RabbitMQMessageProducer.send',
-        requestId: message.metadata?.correlationId,
-        params: { messageId, exchange, routingKey, queueName },
-      });
+        meta: {
+          request: { requestId: message.metadata?.correlationId },
+          messageId,
+          exchange,
+          routingKey,
+          queueName,
+        },
+      };
+      this.logger.debug(debugPayload);
       return result;
     } catch (error) {
       this.metrics.totalFailed++;
@@ -164,12 +172,17 @@ export class RabbitMQMessageProducer<T = any> implements QueueProducerMessagePro
         timestamp: new Date(),
       };
 
-      this.logger.error({
+      const errorPayload: LogPayload = {
         message: `Failed to send message ${messageId} to ${queueName}`,
         context: 'RabbitMQMessageProducer.send',
-        requestId: message.metadata?.correlationId,
-        params: { messageId, queueName, error: error.message },
-      });
+        meta: {
+          request: { requestId: message.metadata?.correlationId },
+          messageId,
+          queueName,
+          error: error.message,
+        },
+      };
+      this.logger.error(errorPayload);
       return result;
     }
   }
@@ -231,11 +244,12 @@ export class RabbitMQMessageProducer<T = any> implements QueueProducerMessagePro
         duration: Date.now() - startTime,
       };
     } catch (error) {
-      this.logger.error({
+      const batchErrorPayload: LogPayload = {
         message: `Batch send failed for queue ${queueName}`,
         context: 'RabbitMQMessageProducer.sendBatch',
-        params: { queueName, error: error.message, totalMessages: messages.length },
-      });
+        meta: { queueName, error: error.message, totalMessages: messages.length },
+      };
+      this.logger.error(batchErrorPayload);
 
       return {
         successful,
@@ -344,7 +358,7 @@ export class RabbitMQMessageProducer<T = any> implements QueueProducerMessagePro
     this.logger.debug({
       message: `Delayed message sent successfully: ${publishOptions.messageId} to ${queueName} (delay: ${delay}ms)`,
       context: 'RabbitMQMessageProducer.sendDelayed',
-    });
+    } as LogPayload);
 
     return result;
   }
@@ -374,18 +388,20 @@ export class RabbitMQMessageProducer<T = any> implements QueueProducerMessagePro
     try {
       // RabbitMQ purgeQueue via management API or channel
       // For now, return 0 as this requires additional setup
-      this.logger.info({
+      const purgeInfo: LogPayload = {
         message: `Purge queue requested for ${queueName}`,
         context: 'RabbitMQMessageProducer.purgeQueue',
-        params: { queueName },
-      });
+        meta: { queueName },
+      };
+      this.logger.info(purgeInfo);
       return Promise.resolve(0);
     } catch (error) {
-      this.logger.error({
+      const purgeError: LogPayload = {
         message: `Failed to purge queue ${queueName}`,
         context: 'RabbitMQMessageProducer.purgeQueue',
-        params: { queueName, error: error.message },
-      });
+        meta: { queueName, error: error.message },
+      };
+      this.logger.error(purgeError);
       return Promise.resolve(0);
     }
   }
@@ -400,18 +416,20 @@ export class RabbitMQMessageProducer<T = any> implements QueueProducerMessagePro
   async close(): Promise<void> {
     try {
       // RabbitMQ connection is managed by the module
-      this.logger.info({
+      const closeInfo: LogPayload = {
         message: `Producer ${this.producerId} closed`,
         context: 'RabbitMQMessageProducer.close',
-        params: { producerId: this.producerId },
-      });
+        meta: { producerId: this.producerId },
+      };
+      this.logger.info(closeInfo);
       return Promise.resolve();
     } catch (error) {
-      this.logger.error({
+      const closeError: LogPayload = {
         message: `Error closing producer ${this.producerId}`,
         context: 'RabbitMQMessageProducer.close',
-        params: { producerId: this.producerId, error: error.message },
-      });
+        meta: { producerId: this.producerId, error: error.message },
+      };
+      this.logger.error(closeError);
       return Promise.resolve();
     }
   }
@@ -421,8 +439,8 @@ export class RabbitMQMessageProducer<T = any> implements QueueProducerMessagePro
     this.logger.info({
       message: `Producer ${this.producerId} reconnected`,
       context: 'RabbitMQMessageProducer.reconnect',
-      params: { producerId: this.producerId },
-    });
+      meta: { producerId: this.producerId },
+    } as LogPayload);
     return Promise.resolve();
   }
 
@@ -435,8 +453,8 @@ export class RabbitMQMessageProducer<T = any> implements QueueProducerMessagePro
     this.logger.debug({
       message: `Event listener added for ${event}`,
       context: 'RabbitMQMessageProducer.on',
-      params: { event, producerId: this.producerId },
-    });
+      meta: { event, producerId: this.producerId },
+    } as LogPayload);
   }
 
   off(
@@ -448,8 +466,8 @@ export class RabbitMQMessageProducer<T = any> implements QueueProducerMessagePro
     this.logger.debug({
       message: `Event listener removed for ${event}`,
       context: 'RabbitMQMessageProducer.off',
-      params: { event, producerId: this.producerId },
-    });
+      meta: { event, producerId: this.producerId },
+    } as LogPayload);
   }
 
   private generateMessageId(): string {
