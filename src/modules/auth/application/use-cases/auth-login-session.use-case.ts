@@ -1,3 +1,5 @@
+import { KEYCLOAK_CLIENT } from '@adatechnology/auth-keycloak';
+import type { KeycloakClientInterface } from '@adatechnology/auth-keycloak';
 import { Inject, Injectable } from '@nestjs/common';
 
 import { AuthLoginSessionUseCaseInterface } from '@modules/auth/domain/auth.login-session.interface';
@@ -7,14 +9,20 @@ import {
 } from '@modules/auth/shared/dtos';
 import type { LogProviderInterface } from '@modules/shared/domain';
 import { RequestContextService } from '@modules/shared/infrastructure/context/request-context.service';
-import { KeycloakClient } from '@modules/shared/infrastructure/keycloak/keycloak.client';
-import { LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/log.token';
+import { LOGGER_PROVIDER } from '@adatechnology/logger';
+
+// Extended client type to include helper methods present in the concrete
+// implementation but not declared on the exported interface.
+type ExtendedKeycloakClient = KeycloakClientInterface & {
+  getTokenWithCredentials?: (username: string, password: string) => Promise<any>;
+  clearTokenCache?: () => void;
+};
 
 @Injectable()
 export class AuthLoginSessionUseCase implements AuthLoginSessionUseCaseInterface {
-  @Inject(LOG_PROVIDER) private readonly loggerProvider: LogProviderInterface;
+  @Inject(LOGGER_PROVIDER) private readonly loggerProvider: LogProviderInterface;
   constructor(
-    private readonly keycloakClient: KeycloakClient,
+    @Inject(KEYCLOAK_CLIENT) private readonly keycloakClient: ExtendedKeycloakClient,
     private readonly requestContext: RequestContextService,
   ) {}
 
@@ -29,7 +37,10 @@ export class AuthLoginSessionUseCase implements AuthLoginSessionUseCaseInterface
     });
 
     try {
-      const body = await this.keycloakClient.getTokenWithCredentials(params.email, params.password);
+      const body = await this.keycloakClient.getTokenWithCredentials!(
+        params.email,
+        params.password,
+      );
 
       const result: AuthLoginSessionUseCaseResponseDto = {
         accessToken: body.access_token,

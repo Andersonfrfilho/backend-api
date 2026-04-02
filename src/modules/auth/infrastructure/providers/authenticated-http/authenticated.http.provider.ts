@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 
 import type { AuthProviderInterface } from '@modules/auth/domain/auth.interface';
 import { HTTP_PROVIDER } from '@modules/shared/infrastructure/providers/http/http.token';
-import { LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/log.token';
+import { LOGGER_PROVIDER } from '@adatechnology/logger';
 
 /**
  * Authenticated HTTP provider that automatically adds tokens to requests
@@ -19,7 +19,7 @@ export class AuthenticatedHttpProvider implements HttpProviderInterface {
     @Inject(HTTP_PROVIDER)
     private readonly httpProvider: HttpProviderInterface,
     private readonly authProvider: AuthProviderInterface,
-    @Inject(LOG_PROVIDER) private readonly loggerProvider?: any,
+    @Inject(LOGGER_PROVIDER) private readonly loggerProvider?: any,
   ) {}
 
   async get<T = any>(

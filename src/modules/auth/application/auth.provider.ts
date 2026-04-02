@@ -1,6 +1,5 @@
+import { LOGGER_PROVIDER } from '@adatechnology/logger';
 import { Inject, Injectable } from '@nestjs/common';
-
-import { LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/log.token';
 
 import type { AuthProviderInterface, AuthTokenResponse, UserInfo } from '../domain/auth.interface';
 import { AUTH_PROVIDER_TOKEN } from '../domain/auth.token';
@@ -13,7 +12,7 @@ export class AuthProvider implements AuthProviderInterface {
   constructor(
     @Inject(AUTH_PROVIDER_TOKEN)
     private readonly authProvider: AuthProviderInterface,
-    @Inject(LOG_PROVIDER) private readonly loggerProvider?: any,
+    @Inject(LOGGER_PROVIDER) private readonly loggerProvider?: any,
   ) {}
 
   /**

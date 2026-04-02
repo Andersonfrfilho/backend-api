@@ -1,6 +1,9 @@
+import { KEYCLOAK_CLIENT } from '@adatechnology/auth-keycloak';
+import type { KeycloakClientInterface } from '@adatechnology/auth-keycloak';
 import { Module } from '@nestjs/common';
+
 import { SharedInfrastructureKeycloakModule } from '@modules/shared/infrastructure/keycloak/keycloak.module';
-import { KeycloakClient } from '@modules/shared/infrastructure/keycloak/keycloak.client';
+
 import { AUTH_PROVIDER_TOKEN } from '../../../domain/auth.token';
 
 /**
@@ -11,14 +14,14 @@ import { AUTH_PROVIDER_TOKEN } from '../../../domain/auth.token';
   providers: [
     {
       provide: AUTH_PROVIDER_TOKEN,
-      useFactory: (keycloakClient: KeycloakClient) => ({
+      useFactory: (keycloakClient: KeycloakClientInterface & { clearTokenCache?: () => void }) => ({
         getAccessToken: () => keycloakClient.getAccessToken(),
         refreshToken: (refreshToken: string) => keycloakClient.refreshToken(refreshToken),
         validateToken: (token: string) => keycloakClient.validateToken(token),
         getUserInfo: (token: string) => keycloakClient.getUserInfo(token),
-        clearTokenCache: () => keycloakClient.clearTokenCache(),
+        clearTokenCache: () => keycloakClient.clearTokenCache?.(),
       }),
-      inject: [KeycloakClient],
+      inject: [KEYCLOAK_CLIENT],
     },
   ],
   exports: [AUTH_PROVIDER_TOKEN],

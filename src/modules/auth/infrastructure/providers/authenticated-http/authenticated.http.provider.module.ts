@@ -5,11 +5,11 @@ import type { AuthProviderInterface } from '@modules/auth/domain/auth.interface'
 import { AUTH_PROVIDER_TOKEN } from '@modules/auth/domain/auth.token';
 import type { LogProviderInterface } from '@modules/shared/domain/interfaces/log.interface';
 import { SharedInfrastructureProviderHttpModule } from '@modules/shared/infrastructure/providers/http/http.module';
-import { HttpProvider } from '@modules/shared/infrastructure/providers/http/http.provider';
+import type { HttpProviderInterface } from '@modules/shared/infrastructure/providers/http/http.interface';
 import { HTTP_PROVIDER } from '@modules/shared/infrastructure/providers/http/http.token';
 import { attachAuthTokenInterceptor } from '@modules/shared/infrastructure/providers/http/interceptors/interceptor.http.client.auth.token';
 import { SharedInfrastructureProviderLogModule } from '@modules/shared/infrastructure/providers/log/log.module';
-import { LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/log.token';
+import { LOGGER_PROVIDER } from '@adatechnology/logger';
 
 import { AuthenticatedHttpProvider } from './authenticated.http.provider';
 import { AUTHENTICATED_HTTP_PROVIDER } from './authenticated.http.provider.token';
@@ -27,7 +27,7 @@ import { AUTHENTICATED_HTTP_PROVIDER } from './authenticated.http.provider.token
     {
       provide: AUTHENTICATED_HTTP_PROVIDER,
       useFactory: (
-        httpProvider: HttpProvider,
+        httpProvider: HttpProviderInterface,
         authProvider: AuthProviderInterface,
         loggerProvider: LogProviderInterface,
       ) => {
@@ -43,7 +43,7 @@ import { AUTHENTICATED_HTTP_PROVIDER } from './authenticated.http.provider.token
 
         return new AuthenticatedHttpProvider(httpProvider, authProvider, loggerProvider);
       },
-      inject: [HTTP_PROVIDER, AUTH_PROVIDER_TOKEN, LOG_PROVIDER],
+      inject: [HTTP_PROVIDER, AUTH_PROVIDER_TOKEN, LOGGER_PROVIDER],
     },
   ],
   exports: [AUTHENTICATED_HTTP_PROVIDER],

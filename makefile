@@ -128,6 +128,14 @@ down: setup-env
 force-remove: setup-env
 	docker rm -f $(shell docker ps -a -q --filter "name=$(SERVICE_NAME)")
 
+clean: setup-env
+	@echo "🧹 Limpando containers, redes e volumes do projeto $(PROJECT_NAME)..."
+	docker-compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) down -v --remove-orphans
+	@echo "🧽 Removendo artifacts locais (./dist)"
+	- rm -rf ./dist
+	@echo "🗑 Removendo imagens órfãs"
+	- docker image prune -f
+
 clean-images: setup-env
 	docker rmi -f $(shell docker images --filter=reference="$(PROJECT_NAME)*" -q)
 
@@ -188,4 +196,4 @@ setup: setup-env
 	docker exec -it $(PROJECT_NAME)_api npm run migration:run
 	@echo "✅ Setup completo! Projeto pronto para usar."
 
-.PHONY: all rebuild-app setup-env clean-all clean-images force-remove down stop app sonar-up sonar-down sonar-scan sonar-setup sonar-token sonar-all clean-safe database_postgres database_mongo queue_rabbitmq keycloak keycloak-down keycloak-stop keycloak-logs keycloak-admin setup setup-e2e-databases test-e2e-ready test-e2e-docker 
+.PHONY: all rebuild-app setup-env clean clean-all clean-images force-remove down stop app sonar-up sonar-down sonar-scan sonar-setup sonar-token sonar-all clean-safe database_postgres database_mongo queue_rabbitmq keycloak keycloak-down keycloak-stop keycloak-logs keycloak-admin setup setup-e2e-databases test-e2e-ready test-e2e-docker

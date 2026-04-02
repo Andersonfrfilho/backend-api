@@ -1,12 +1,12 @@
 import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
+import { LOGGER_PROVIDER } from '@adatechnology/logger';
 import fastifyHelmet from '@fastify/helmet';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { SwaggerModule } from '@nestjs/swagger';
-import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import { register as tsConfigPathsRegister } from 'tsconfig-paths';
 
 import { swaggerCustomOptions } from '@config/swagger-custom.config';
@@ -62,7 +62,8 @@ async function bootstrap() {
       exceptionFactory: (errors) => AppErrorFactory.fromValidationErrors(errors),
     }),
   );
-  app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
+  // Use the external library's logger provider directly
+  app.useLogger(app.get(LOGGER_PROVIDER as any));
   const environment = app.get<EnvironmentProviderInterface>(ENVIRONMENT_SERVICE_PROVIDER);
   const document = SwaggerModule.createDocument(app, swaggerConfig(environment));
   SwaggerModule.setup('docs', app, document, swaggerCustomOptions(environment));

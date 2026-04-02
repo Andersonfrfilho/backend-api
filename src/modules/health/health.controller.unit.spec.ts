@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from '@jest/globals';
-import { CACHE_PROVIDER } from '@modules/shared/infrastructure/providers/cache/cache.token';
+import { CACHE_PROVIDER } from '@adatechnology/cache';
 import { QUEUE_PRODUCER_PROVIDER } from '@modules/shared/infrastructure/providers/queue/producer/producer.token';
 import { HEALTH_CHECK_SERVICE_PROVIDER } from '@modules/health/infrastructure/health.token';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -22,7 +22,7 @@ describe('HealthController - Unit Tests', () => {
     const mockCacheProvider = {
       set: jest.fn(),
       get: jest.fn(),
-      delete: jest.fn(),
+      del: jest.fn(),
     };
 
     const mockQueueProducer = {
@@ -136,7 +136,7 @@ describe('HealthController - Unit Tests', () => {
             useValue: {
               set: jest.fn(),
               get: jest.fn(),
-              delete: jest.fn(),
+              del: jest.fn(),
             },
           },
           {

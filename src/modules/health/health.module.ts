@@ -1,4 +1,3 @@
-import { SharedModule as SharedModuleLib } from '@backend/package-nestjs';
 import { Module } from '@nestjs/common';
 
 import { HealthApplicationModule } from '@modules/health/application/health-application.module';
@@ -10,10 +9,6 @@ import { SharedInfrastructureProviderQueueProducerModule } from '../shared/infra
 
 @Module({
   imports: [
-    SharedModuleLib.forRoot({
-      enabled: true,
-      prefix: 'health',
-    }),
     SharedInfrastructureProviderLogModule,
     SharedInfrastructureProviderCacheModule,
     SharedInfrastructureProviderQueueProducerModule,

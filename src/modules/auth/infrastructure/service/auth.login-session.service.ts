@@ -10,11 +10,11 @@ import {
   AuthLoginSessionResponseDto as AuthLoginSessionResponseServiceParams,
 } from '@modules/auth/shared/dtos';
 import type { LogProviderInterface } from '@modules/shared/domain';
-import { LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/log.token';
+import { LOGGER_PROVIDER } from '@adatechnology/logger';
 
 @Injectable()
 export class AuthLoginSessionService implements AuthLoginSessionServiceInterface {
-  @Inject(LOG_PROVIDER) private readonly loggerProvider: LogProviderInterface;
+  @Inject(LOGGER_PROVIDER) private readonly loggerProvider: LogProviderInterface;
   @Inject(AUTH_LOGIN_SESSION_USE_CASE_PROVIDE)
   private readonly authLoginSessionUseCase: AuthLoginSessionUseCaseInterface;
 

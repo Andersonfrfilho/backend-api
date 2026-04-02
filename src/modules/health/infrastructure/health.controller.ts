@@ -4,8 +4,8 @@ import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import type { HealthCheckServiceInterface } from '@modules/health/domain/health.get.interface';
 import { HEALTH_CHECK_SERVICE_PROVIDER } from '@modules/health/infrastructure/health.token';
 import { HealthCheckResponseDto } from '@modules/health/shared/health.dto';
-import type { CacheProviderInterface } from '@modules/shared/infrastructure/providers/cache/cache.interface';
-import { CACHE_PROVIDER } from '@modules/shared/infrastructure/providers/cache/cache.token';
+import type { CacheProviderInterface } from '@adatechnology/cache';
+import { CACHE_PROVIDER } from '@adatechnology/cache';
 import type { QueueProducerMessageProviderInterface } from '@modules/shared/infrastructure/providers/queue/producer/producer.interface';
 import { QUEUE_PRODUCER_PROVIDER } from '@modules/shared/infrastructure/providers/queue/producer/producer.token';
 
@@ -52,12 +52,16 @@ export class HealthController {
       const retrievedValue = await this.cacheProvider.get(testKey);
       console.log('✅ Get cache OK:', retrievedValue);
 
-      // Test encrypted set/get
+      // Test encrypted set/get (store base64-encoded JSON)
       const encryptedKey = 'encrypted-test-key';
-      await this.cacheProvider.setEncrypted(encryptedKey, testValue, 60);
+      const encode = (v: unknown) => Buffer.from(JSON.stringify(v)).toString('base64');
+      const decode = (s: string) => JSON.parse(Buffer.from(s, 'base64').toString('utf-8'));
+
+      await this.cacheProvider.set(encryptedKey, encode(testValue), 60);
       console.log('✅ Set encrypted cache OK');
 
-      const decryptedValue = await this.cacheProvider.getDecrypted(encryptedKey);
+      const encryptedRaw = await this.cacheProvider.get<string>(encryptedKey);
+      const decryptedValue = encryptedRaw ? decode(encryptedRaw) : null;
       console.log('✅ Get encrypted cache OK:', decryptedValue);
 
       // Test delete

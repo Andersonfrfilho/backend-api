@@ -13,12 +13,12 @@ import { AppError } from '@modules/error';
 import { APP_ERROR_TYPE } from '@modules/error/infrastructure/filters/error-filter.constant';
 import type { LogProviderInterface } from '@modules/shared/domain';
 import { requestContext } from '@modules/shared/infrastructure/context/request-context';
-import { LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/log.token';
+import { LOGGER_PROVIDER } from '@adatechnology/logger';
 
 @Catch()
 @Injectable()
 export class HttpExceptionFilter implements ExceptionFilter {
-  constructor(@Inject(LOG_PROVIDER) private readonly logProvider: LogProviderInterface) {}
+  constructor(@Inject(LOGGER_PROVIDER) private readonly logProvider: LogProviderInterface) {}
   logResponse(
     exception: AppError | HttpException | Error,
     request: FastifyRequest,

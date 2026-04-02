@@ -4,7 +4,7 @@ import { Observable, from, of } from 'rxjs';
 import { catchError, timeout } from 'rxjs/operators';
 
 import type { LogProviderInterface } from '@modules/shared/domain';
-import { LOG_PROVIDER } from '@modules/shared/infrastructure/providers/log/log.token';
+import { LOGGER_PROVIDER } from '@adatechnology/logger';
 
 import type { QueueProducerMessageProviderInterface } from '../../producer.interface';
 import {
@@ -38,7 +38,7 @@ export class RabbitMQMessageProducer<T = any> implements QueueProducerMessagePro
 
   constructor(
     private readonly amqpConnection: AmqpConnection,
-    @Inject(LOG_PROVIDER) private readonly logger: LogProviderInterface,
+    @Inject(LOGGER_PROVIDER) private readonly logger: LogProviderInterface,
   ) {
     this.producerId = `rabbitmq-producer-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     this.config = {
