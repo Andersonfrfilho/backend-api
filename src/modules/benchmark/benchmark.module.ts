@@ -1,3 +1,4 @@
+import { LoggerModule } from '@adatechnology/logger';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -15,6 +16,7 @@ import { IDStrategyBenchmarkController } from './presentation/controllers/id-str
 
 @Module({
   imports: [
+    LoggerModule.forRoot(),
     TypeOrmModule.forFeature(
       [
         BenchmarkUUIDv7Entity,

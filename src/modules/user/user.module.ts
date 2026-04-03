@@ -1,3 +1,4 @@
+import { LoggerModule } from '@adatechnology/logger';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -23,6 +24,7 @@ import {
 
 @Module({
   imports: [
+    LoggerModule.forRoot(),
     TypeOrmModule.forFeature([User, UserAddress], CONNECTIONS_NAMES.POSTGRES),
     SharedModule,
     PhoneModule,

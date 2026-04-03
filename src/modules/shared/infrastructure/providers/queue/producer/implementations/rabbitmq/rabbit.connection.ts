@@ -166,7 +166,13 @@ export const rabbitConnection = RabbitMQModule.forRootAsync({
     // Isso é necessário porque o @golevelup/nestjs-rabbitmq não cria bindings
     // automaticamente pela configuração - apenas via decorators @RabbitSubscribe
 
-    uri: `amqp://${configService.get('QUEUE_RABBITMQ_USER')}:${configService.get('QUEUE_RABBITMQ_PASS')}@${configService.get('QUEUE_RABBITMQ_HOST')}:${configService.get('QUEUE_RABBITMQ_PORT')}`,
+    // Provide sensible defaults so the app can run outside Docker (e.g. localhost)
+    // Env var names: QUEUE_RABBITMQ_USER, QUEUE_RABBITMQ_PASS, QUEUE_RABBITMQ_HOST, QUEUE_RABBITMQ_PORT
+    uri: `amqp://${configService.get('QUEUE_RABBITMQ_USER') || 'guest'}:${
+      configService.get('QUEUE_RABBITMQ_PASS') || 'guest'
+    }@${configService.get('QUEUE_RABBITMQ_HOST') || 'localhost'}:${
+      configService.get('QUEUE_RABBITMQ_PORT') || 5672
+    }`,
     connectionInitOptions: { wait: false },
   }),
   inject: [ConfigService],

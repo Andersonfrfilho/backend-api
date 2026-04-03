@@ -1,7 +1,7 @@
 import { KeycloakModule } from '@adatechnology/auth-keycloak';
 import { CacheModule } from '@adatechnology/cache';
 import { HttpModule } from '@adatechnology/http-client';
-import { LoggerModule } from '@adatechnology/logger';
+import { LoggerModule, RequestContextMiddleware } from '@adatechnology/logger';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { register as tsConfigPathsRegister } from 'tsconfig-paths';
 
@@ -15,6 +15,8 @@ import { SecurityHeadersMiddleware } from '@modules/shared/infrastructure/middle
 import * as tsConfig from '../tsconfig.json';
 
 import { BenchmarkModule } from './modules/benchmark/benchmark.module';
+import { KeycloakDemoModule } from './modules/keycloak-demo/keycloak-demo.module';
+import { PokemonModule } from './modules/pokemon/pokemon.module';
 import { SharedModule } from './modules/shared/shared.module';
 import { UserModule } from './modules/user/user.module';
 
@@ -39,10 +41,12 @@ tsConfigPathsRegister({
     HealthModule,
     UserModule,
     BenchmarkModule,
+    PokemonModule,
+    KeycloakDemoModule,
   ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(SecurityHeadersMiddleware).forRoutes('*');
+    consumer.apply(SecurityHeadersMiddleware, RequestContextMiddleware).forRoutes('*');
   }
 }

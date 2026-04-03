@@ -1,3 +1,4 @@
+import { LoggerModule } from '@adatechnology/logger';
 import { Module } from '@nestjs/common';
 
 import { SharedInfrastructureProviderQueueProducerModule } from '@app/modules/shared/infrastructure/providers/queue/producer/producer.module';
@@ -6,7 +7,7 @@ import { HealthInfrastructureServiceModule } from '@modules/health/infrastructur
 import { HealthController } from './health.controller';
 
 @Module({
-  imports: [HealthInfrastructureServiceModule, SharedInfrastructureProviderQueueProducerModule],
+  imports: [LoggerModule.forRoot(), HealthInfrastructureServiceModule, SharedInfrastructureProviderQueueProducerModule],
   controllers: [HealthController],
   exports: [HealthInfrastructureServiceModule],
 })

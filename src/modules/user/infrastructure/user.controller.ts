@@ -1,5 +1,6 @@
 import type { CacheProviderInterface } from '@adatechnology/cache';
 import { CACHE_PROVIDER } from '@adatechnology/cache';
+import { LOGGER_PROVIDER, type LoggerProviderInterface } from '@adatechnology/logger';
 import { Body, Controller, Get, Inject, Injectable, Post } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -21,6 +22,8 @@ export class UserController {
     private readonly userService: UserServiceInterface,
     @Inject(CACHE_PROVIDER)
     private readonly cacheProvider: CacheProviderInterface,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: LoggerProviderInterface,
   ) {}
 
   @Post()
@@ -37,14 +40,15 @@ export class UserController {
   @ApiBadRequestResponse()
   @ApiInternalServerErrorResponse()
   async create(@Body() params: CreateUserRequestDto): Promise<CreateUserResponseDto> {
+    const logContext = { className: UserController.name, methodName: this.create.name };
+
     const user = await this.userService.createUser(params);
 
-    // 🔥 INVALIDAR CACHE - Quando criar usuário, limpar cache da lista
     try {
       await this.cacheProvider.del('users:list');
-      console.log('✅ Cache invalidated: users:list');
+      this.logger.info({ message: 'Cache invalidated: users:list', context: UserController.name, meta: { logContext } });
     } catch (error) {
-      console.error('❌ Failed to invalidate cache:', error);
+      this.logger.error({ message: 'Failed to invalidate cache', context: UserController.name, meta: { error: error.message, logContext } });
     }
 
     return user;
@@ -62,14 +66,14 @@ export class UserController {
   })
   @ApiInternalServerErrorResponse()
   async findAll() {
+    const logContext = { className: UserController.name, methodName: this.findAll.name };
     const cacheKey = 'users:list';
 
     try {
-      // 🔥 TENTAR BUSCAR DO CACHE PRIMEIRO (stored as base64-encoded JSON)
       const encrypted = await this.cacheProvider.get<string>(cacheKey);
       if (encrypted) {
         const decoded = JSON.parse(Buffer.from(encrypted as any, 'base64').toString('utf8'));
-        console.log('✅ Users loaded from cache');
+        this.logger.info({ message: 'Users loaded from cache', context: UserController.name, meta: { logContext } });
         return {
           data: decoded,
           source: 'cache',
@@ -77,25 +81,22 @@ export class UserController {
         };
       }
     } catch (error) {
-      console.error('❌ Cache read error:', error);
+      this.logger.error({ message: 'Cache read error', context: UserController.name, meta: { error: error.message, logContext } });
     }
 
-    // 🔥 BUSCAR DO BANCO SE NÃO ESTIVER NO CACHE
-    console.log('📊 Loading users from database');
-    // Note: Aqui você precisaria implementar um método no service/repository
-    // Por enquanto, simulamos dados para demonstração
+    this.logger.info({ message: 'Loading users from database', context: UserController.name, meta: { logContext } });
+
     const users = [
       { id: '1', name: 'User 1', email: 'user1@example.com' },
       { id: '2', name: 'User 2', email: 'user2@example.com' },
     ];
 
-    // 🔥 SALVAR NO CACHE PARA PRÓXIMAS REQUISIÇÕES
     try {
       const encoded = Buffer.from(JSON.stringify(users)).toString('base64');
-      await this.cacheProvider.set(cacheKey, encoded, 300); // 5 minutos
-      console.log('✅ Users cached for 5 minutes');
+      await this.cacheProvider.set(cacheKey, encoded, 300);
+      this.logger.info({ message: 'Users cached for 5 minutes', context: UserController.name, meta: { logContext } });
     } catch (error) {
-      console.error('❌ Cache write error:', error);
+      this.logger.error({ message: 'Cache write error', context: UserController.name, meta: { error: error.message, logContext } });
     }
 
     return {

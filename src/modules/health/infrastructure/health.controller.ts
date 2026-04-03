@@ -1,11 +1,12 @@
+import type { CacheProviderInterface } from '@adatechnology/cache';
+import { CACHE_PROVIDER } from '@adatechnology/cache';
+import { LOGGER_PROVIDER, type LoggerProviderInterface } from '@adatechnology/logger';
 import { Controller, Get, Inject, Injectable } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 
 import type { HealthCheckServiceInterface } from '@modules/health/domain/health.get.interface';
 import { HEALTH_CHECK_SERVICE_PROVIDER } from '@modules/health/infrastructure/health.token';
 import { HealthCheckResponseDto } from '@modules/health/shared/health.dto';
-import type { CacheProviderInterface } from '@adatechnology/cache';
-import { CACHE_PROVIDER } from '@adatechnology/cache';
 import type { QueueProducerMessageProviderInterface } from '@modules/shared/infrastructure/providers/queue/producer/producer.interface';
 import { QUEUE_PRODUCER_PROVIDER } from '@modules/shared/infrastructure/providers/queue/producer/producer.token';
 
@@ -19,6 +20,8 @@ export class HealthController {
     private readonly cacheProvider: CacheProviderInterface,
     @Inject(QUEUE_PRODUCER_PROVIDER)
     private readonly messageProducer: QueueProducerMessageProviderInterface,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: LoggerProviderInterface,
   ) {}
 
   @Get()
@@ -39,35 +42,58 @@ export class HealthController {
     description: 'Testa as funcionalidades do cache Redis',
   })
   async testCache() {
-    console.log('✅ Cache test route called!');
+    const logContext = { className: HealthController.name, methodName: this.testCache.name };
+
+    this.logger.info({
+      message: 'Cache test route called',
+      context: HealthController.name,
+      meta: { logContext },
+    });
+
     const testKey = 'test-cache-key';
     const testValue = { message: 'Hello from Redis cache!', timestamp: new Date().toISOString() };
 
     try {
-      // Test set
       await this.cacheProvider.set(testKey, testValue, 60);
-      console.log('✅ Set cache OK');
+      this.logger.info({
+        message: 'Set cache OK',
+        context: HealthController.name,
+        meta: { logContext },
+      });
 
-      // Test get
       const retrievedValue = await this.cacheProvider.get(testKey);
-      console.log('✅ Get cache OK:', retrievedValue);
+      this.logger.info({
+        message: 'Get cache OK',
+        context: HealthController.name,
+        meta: { retrievedValue, logContext },
+      });
 
-      // Test encrypted set/get (store base64-encoded JSON)
       const encryptedKey = 'encrypted-test-key';
       const encode = (v: unknown) => Buffer.from(JSON.stringify(v)).toString('base64');
       const decode = (s: string) => JSON.parse(Buffer.from(s, 'base64').toString('utf-8'));
 
       await this.cacheProvider.set(encryptedKey, encode(testValue), 60);
-      console.log('✅ Set encrypted cache OK');
+      this.logger.info({
+        message: 'Set encrypted cache OK',
+        context: HealthController.name,
+        meta: { logContext },
+      });
 
       const encryptedRaw = await this.cacheProvider.get<string>(encryptedKey);
       const decryptedValue = encryptedRaw ? decode(encryptedRaw) : null;
-      console.log('✅ Get encrypted cache OK:', decryptedValue);
+      this.logger.info({
+        message: 'Get encrypted cache OK',
+        context: HealthController.name,
+        meta: { decryptedValue, logContext },
+      });
 
-      // Test delete
       await this.cacheProvider.del(testKey);
       await this.cacheProvider.del(encryptedKey);
-      console.log('✅ Delete cache OK');
+      this.logger.info({
+        message: 'Delete cache OK',
+        context: HealthController.name,
+        meta: { logContext },
+      });
 
       return {
         success: true,
@@ -86,7 +112,11 @@ export class HealthController {
         },
       };
     } catch (error) {
-      console.error('❌ Cache test error:', error);
+      this.logger.error({
+        message: 'Cache test error',
+        context: HealthController.name,
+        meta: { error: error.message, logContext },
+      });
       return {
         success: false,
         message: 'Redis cache test failed',
@@ -101,14 +131,22 @@ export class HealthController {
     description: 'Testa as funcionalidades da fila de mensagens RabbitMQ',
   })
   async testQueue() {
-    console.log('✅ Queue test route called!');
+    const logContext = { className: HealthController.name, methodName: this.testQueue.name };
+
+    this.logger.info({
+      message: 'Queue test route called',
+      context: HealthController.name,
+      meta: { logContext },
+    });
 
     try {
-      // Test producer health
       const health = await this.messageProducer.isHealthy();
-      console.log('✅ Producer health check OK:', health);
+      this.logger.info({
+        message: 'Producer health check OK',
+        context: HealthController.name,
+        meta: { health, logContext },
+      });
 
-      // Test send simple message
       const testMessage = {
         body: {
           type: 'health-test',
@@ -129,9 +167,12 @@ export class HealthController {
       const sendResult = await this.messageProducer.send('health.test', testMessage, {
         exchange: 'health',
       });
-      console.log('✅ Send message OK:', sendResult);
+      this.logger.info({
+        message: 'Send message OK',
+        context: HealthController.name,
+        meta: { sendResult, logContext },
+      });
 
-      // Test send batch
       const batchMessages = [
         {
           body: { type: 'batch-test-1', data: 'First message' },
@@ -146,9 +187,12 @@ export class HealthController {
       const batchResult = await this.messageProducer.sendBatch('health.test', batchMessages, {
         exchange: 'health',
       });
-      console.log('✅ Send batch OK:', batchResult);
+      this.logger.info({
+        message: 'Send batch OK',
+        context: HealthController.name,
+        meta: { batchResult, logContext },
+      });
 
-      // Test delayed message
       const delayedMessage = {
         body: {
           type: 'delayed-test',
@@ -161,11 +205,14 @@ export class HealthController {
       const delayedResult = await this.messageProducer.sendDelayed(
         'health.test',
         delayedMessage,
-        30000, // 30 seconds
+        30000,
       );
-      console.log('✅ Send delayed message OK:', delayedResult);
+      this.logger.info({
+        message: 'Send delayed message OK',
+        context: HealthController.name,
+        meta: { delayedResult, logContext },
+      });
 
-      // Test TTL message
       const ttlMessage = {
         body: {
           type: 'ttl-test',
@@ -175,25 +222,27 @@ export class HealthController {
         metadata: { correlationId: `ttl-${Date.now()}` },
       };
 
-      const ttlResult = await this.messageProducer.sendWithTTL(
-        'health.test',
-        ttlMessage,
-        300000, // 5 minutes
-      );
-      console.log('✅ Send TTL message OK:', ttlResult);
+      const ttlResult = await this.messageProducer.sendWithTTL('health.test', ttlMessage, 300000);
+      this.logger.info({
+        message: 'Send TTL message OK',
+        context: HealthController.name,
+        meta: { ttlResult, logContext },
+      });
 
-      // Get metrics
       const metrics = this.messageProducer.getMetrics();
-      console.log('✅ Producer metrics OK:', metrics);
+      this.logger.info({
+        message: 'Producer metrics OK',
+        context: HealthController.name,
+        meta: { metrics, logContext },
+      });
 
-      // Test retry strategy - send message that will fail
       const retryTestMessage = {
         body: {
           type: 'retry-test',
           message: 'This message will fail and retry',
           timestamp: new Date().toISOString(),
           testId: `retry-test-${Date.now()}`,
-          simulateFailure: true, // Flag para simular falha no consumer
+          simulateFailure: true,
         },
         headers: {
           'content-type': 'application/json',
@@ -208,9 +257,17 @@ export class HealthController {
       const retryResult = await this.messageProducer.send('email.welcome', retryTestMessage, {
         exchange: 'notifications',
       });
-      console.log('✅ Retry test message sent:', retryResult);
+      this.logger.info({
+        message: 'Retry test message sent',
+        context: HealthController.name,
+        meta: { retryResult, logContext },
+      });
     } catch (error) {
-      console.error('❌ Queue test error:', error);
+      this.logger.error({
+        message: 'Queue test error',
+        context: HealthController.name,
+        meta: { error: error.message, stack: error.stack, logContext },
+      });
       return {
         success: false,
         message: 'Message queue test failed',

@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Query } from '@nestjs/common';
+import { LOGGER_PROVIDER, type LoggerProviderInterface } from '@adatechnology/logger';
+import { Controller, Get, Inject, Post, Query } from '@nestjs/common';
 
 import { IDStrategyBenchmarkService } from '../../application/services/id-strategy-benchmark.service';
 
@@ -17,7 +18,11 @@ import { IDStrategyBenchmarkService } from '../../application/services/id-strate
  */
 @Controller('benchmark')
 export class IDStrategyBenchmarkController {
-  constructor(private benchmarkService: IDStrategyBenchmarkService) {}
+  constructor(
+    private benchmarkService: IDStrategyBenchmarkService,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: LoggerProviderInterface,
+  ) {}
 
   /**
    * Testa INSERT: Qual ID strategy insere mais rápido?
@@ -192,8 +197,9 @@ export class IDStrategyBenchmarkController {
     results: any;
     recommendations: string[];
   }> {
+    const logContext = { className: IDStrategyBenchmarkController.name, methodName: this.testAll.name };
     const start = new Date();
-    console.log(`\n⏱️ Iniciando benchmark completo às ${start.toISOString()}`);
+    this.logger.info({ message: `Iniciando benchmark completo às ${start.toISOString()}`, context: IDStrategyBenchmarkController.name, meta: { logContext } });
 
     const insertCountNum = parseInt(insertCount || '10000');
     const selectLimitNum = parseInt(selectLimit || '1000');
@@ -211,8 +217,7 @@ export class IDStrategyBenchmarkController {
 
     const recommendations = this.generateRecommendations(results);
 
-    console.log(`✅ Benchmark concluído às ${end.toISOString()}`);
-    console.log(`⏱️ Total: ${durationMin} minutos\n`);
+    this.logger.info({ message: `Benchmark concluído às ${end.toISOString()} — Total: ${durationMin} minutos`, context: IDStrategyBenchmarkController.name, meta: { logContext } });
 
     return {
       message: 'Benchmark completo das 3 estratégias de ID',
